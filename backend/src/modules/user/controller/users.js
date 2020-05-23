@@ -12,7 +12,7 @@ exports.createUser = async (req, res) => {
 
 	let filter = {}
 	try {
-		filter.email = req.body.email
+		filter.userName = req.body.userName
 		const user = await Users.findOne(filter)
 		if (user) {
 			return res

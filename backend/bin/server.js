@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 
 // router for modules
 const usersRouter = require('../src/modules/user/router/users');
+const gameRouter = require('../src/modules/game/router/game');
 
 // database connections
 require('../src/models/mongoDB/index');
@@ -41,6 +42,7 @@ app.use((req, res, next) => {
 
 // base routes for modules
 app.use('/users', usersRouter);
+app.use('/game', gameRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

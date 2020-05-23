@@ -9,21 +9,9 @@ const { port } = config;
 // database connections
 require('../src/models/mongoDB/index');
 
-//Whenever someone connects this gets executed
-io.on('connection', function (client) {
-	console.log('A user connected');
-
-	client.on('getValue', (interval) => {
-		console.log('client is subscribing to timer with interval ', interval);
-		client.emit('result', "Connected")
-	});
-
-	//Whenever someone disconnects this piece of code executed
-	client.on('disconnect', function () {
-		console.log('A user disconnected');
-	});
-});
-
+// Socket Listener
+import socketListener from '../src/modules/index'
+socketListener(io)
 
 // use cors to allow cross origin resource sharing
 app.use(cors({ origin: '*', credentials: false }));

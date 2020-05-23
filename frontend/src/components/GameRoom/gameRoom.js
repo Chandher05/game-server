@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router';
 import getValue from '../../APIs/getMessage'
 
-class Landing extends Component {
+class GameRoom extends Component {
 
 	constructor() {
 		super() 
@@ -11,21 +10,12 @@ class Landing extends Component {
 		}
 	}
 
-	// render() {
-	// 	if (this.props.location.pathname === '/') {
-	// 		return (<Redirect to="/login" />);
-	// 	}
-	// 	return (null);
-	// }
-
 	componentDidMount () {
 		getValue((err, message) => {
 			this.setState({
 				message: message
 			})
-			console.log("HERE")
 		})
-		console.log("AJSDas")
 	}
 
 	render() {
@@ -36,5 +26,5 @@ class Landing extends Component {
 	}
 
 }
-//export Landing Component
-export default Landing;
+//export GameRoom Component
+export default GameRoom;

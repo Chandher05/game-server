@@ -1,10 +1,10 @@
 import socket from './index'
 
 function getValue (cb) {
-    socket.on('result', data => {
+    socket.on('playersInGame', data => {
         cb(null, data)
     })
-    socket.emit('getValue', 1000)
+    socket.emit('getPlayers', localStorage.getItem('GameUserId'))
 }
 
 export default getValue;

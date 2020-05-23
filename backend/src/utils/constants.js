@@ -17,7 +17,7 @@ module.exports = {
 	},
 	MESSAGES: {
 		USER_NOT_FOUND: 'User not found',
-		USER_ALREADY_EXISTS: 'An account with this email id already exists',
+		USER_ALREADY_EXISTS: 'Username is taken',
 		AUTHORIZATION_FAILED: 'Authorization failed',
 		USER_VALUES_MISSING: 'Email must be provided',
 	}

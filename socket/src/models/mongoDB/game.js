@@ -3,9 +3,19 @@
 import mongoose from 'mongoose'
 
 const Game = new mongoose.Schema({
-    users: [mongoose.Types.ObjectId],
+    players: [mongoose.Types.ObjectId],
     isStarted: {
         type: Boolean,
+        required: true,
+        default: false
+    },
+    isEnded: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    gameId: {
+        type: String,
         required: true
     }
 }, { versionKey: false })

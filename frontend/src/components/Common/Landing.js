@@ -5,7 +5,7 @@ class Landing extends Component {
 
 	render() {
 		if (this.props.location.pathname === '/') {
-			return (<Redirect to="/gameRoom" />);
+			return (<Redirect to="/login" />);
 		}
 		return (null);
 	}

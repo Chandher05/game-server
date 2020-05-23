@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
 const Users = new mongoose.Schema({
-	username: {
+	userName: {
 		type: String,
 		maxlength: 50,
 		required: true,
@@ -12,6 +12,10 @@ const Users = new mongoose.Schema({
 	password: {
 		type: String,
 		required: true,
+	},
+	isActive: {
+		type: Boolean,
+		default: true
 	}
 }, { versionKey: false })
 
