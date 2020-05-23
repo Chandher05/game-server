@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import {Route} from 'react-router-dom';
-import Landing from './Landing/Landing';
+import {Route, Switch} from 'react-router-dom';
+import Landing from './Common/Landing';
+import GameRoom from './GameRoom/gameRoom';
+import ErrorPage from './Authentication/errorPage';
 
 //Create a Main Component
 class Main extends Component {
@@ -9,6 +11,10 @@ class Main extends Component {
             <div>
                 {/*Render Different Component based on Route*/}
                 <Route path="/" component={Landing}/>
+                <Switch>
+                    <Route path="/gameRoom" component={GameRoom}/>
+                    <Route component={ErrorPage}/>
+                </Switch>
             </div>
         )
     }
