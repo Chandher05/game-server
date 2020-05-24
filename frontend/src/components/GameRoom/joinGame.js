@@ -36,17 +36,24 @@ class JoinGame extends Component {
 			if (error.response) {
 				if (error.response.status === 409) {
 					this.setState({
-						redirect: `/game/${error.response.data}`
+						redirect: `/gameRoom/${error.response.data.gameId}`,
+						isFetched: true
 					})
 				}
 			}
 
 		})
 		setInterval(() => {
-			CreateGame((this.state.gameId), (err, players) => {
+			CreateGame((this.state.gameId), (err, players, isStarted) => {
+				
 				this.setState({
-					activePlayersInGame: players
+					activePlayersInGame: players,
 				})
+				if (isStarted === true) {
+					this.setState({
+						redirect: `/gameRoom/${this.state.gameId}`
+					})
+				}
 			})
 		}, 1000);
 	}
@@ -132,7 +139,10 @@ class JoinGame extends Component {
 	}
 
 	startGame = () => {
-
+		const reqBody = {
+			gameId: this.state.gameId
+		}
+		axios.post(`/game/start`, reqBody)
 	}
 
 	render() {
@@ -180,10 +190,10 @@ class JoinGame extends Component {
 				{
 					this.state.createdUser === localStorage.getItem('GameUserId')?
 					<div className="col-md-12 text-center">
-						<button className="btn btn-success w-25">Start Game</button>
+						<button className="btn btn-success w-25" onClick={this.startGame}>Start Game</button>
 					</div>:
 					<div className="col-md-12 text-center">
-						<img src="/loading.gif"  style={{ width: 25 + "px" }}/> Waiting for host to start the game
+						<img src="/loading.gif"  style={{ width: 25 + "px" }} alt="loading"/> Waiting for host to start the game
 					</div>
 				}
 			</div>

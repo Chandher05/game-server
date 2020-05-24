@@ -5,14 +5,26 @@ var socketListener = (io) => {
     io.on('connection', function (client) {
         console.log('A user connected');
     
-        client.on('getValue', (interval) => {
-            console.log('client is subscribing to timer with interval ', interval);
-            client.emit('result', "Connected")
-        });
-    
         client.on('getPlayers', async (gameId) => {
             let users = await startGame.getPlayersInGame(gameId)
             client.emit('playersInGame', users)
+        })
+        
+        client.on('getGameStatus', async (gameId) => {
+            let data,
+                game = await startGame.getGameStatus(gameId)
+
+            data = {
+                cardOnTop: game.game.openedCards.pop(),
+                previousDroppedCards: game.game.previousDroppedCards,
+                previousDroppedPlayer: game.game.previousDroppedPlayer
+            }
+            client.emit('currentCards', data)
+            
+            data = {
+                currentPlayer: game.game.currentPlayer
+            }
+            client.emit('currentPlayer', data)
         })
     
         //Whenever someone disconnects this piece of code executed

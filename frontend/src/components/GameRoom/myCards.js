@@ -1,0 +1,139 @@
+import React, { Component } from 'react';
+import CardValues from '../../constants/cardValues';
+import axios from 'axios';
+
+class MyCards extends Component {
+
+	constructor() {
+		super()
+		this.state = {
+			currentCards: [],
+			selected: []
+		}
+	}
+
+	componentDidMount() {
+		axios.get(`/player/cards/${this.props.gameId}/${localStorage.getItem('GameUserId')}`)
+		.then((response) => {
+			this.setState({
+				currentCards: response.data.currentCards
+			})
+		})
+	}
+
+	selectCard = (e) => {
+		let temp = this.state.selected
+		let index = this.state.selected.indexOf(e.target.id)
+		if (index === -1) {
+			if (temp.length === 0) {
+				temp.push(e.target.id)
+			} else {
+				var difference = parseInt(e.target.id, 10) - parseInt(temp[0], 10)
+				console.log(difference % 13)
+				if (difference % 13 === 0) {
+					temp.push(e.target.id)
+				}
+			}
+		} else {
+			temp.splice(index, 1)
+		}
+		this.setState({
+			selected: temp
+		})
+	}
+
+	dropCard = () => {
+		if (this.state.selected.length === 0) {
+			return
+		}
+		const reqBody = {
+			gameId: this.props.gameId,
+			userId: localStorage.getItem('GameUserId'),
+			selected: this.state.selected,
+			type: "New"
+		}
+		axios.post(`/player/dropCards`, reqBody)
+		.then((response) => {
+			this.setState({
+				currentCards: response.data.currentCards,
+				selected: []
+			})
+		})
+	}
+
+	dropCardAndPickUpFromTop = () => {
+		if (this.state.selected.length === 0) {
+			return
+		}
+		const reqBody = {
+			gameId: this.props.gameId,
+			userId: localStorage.getItem('GameUserId'),
+			selected: this.state.selected,
+			type: "Top"
+		}
+		axios.post(`/player/dropCards`, reqBody)
+		.then((response) => {
+			this.setState({
+				currentCards: response.data.currentCards,
+				selected: []
+			})
+		})
+	}
+
+	dropCardAndPickUpFromDeck = () => {
+		if (this.state.selected.length === 0) {
+			return
+		}
+		const reqBody = {
+			gameId: this.props.gameId,
+			userId: localStorage.getItem('GameUserId'),
+			selected: this.state.selected,
+			type: "Deck"
+		}
+		axios.post(`/player/dropCards`, reqBody)
+		.then((response) => {
+			this.setState({
+				currentCards: response.data.currentCards,
+				selected: []
+			})
+		})
+	}
+
+	render() {
+		let cardNames = []
+		for (var card of this.state.currentCards) {
+			if (this.state.selected.includes(card.toString())) {
+				cardNames.push(<p onClick={this.selectCard} id={card} className="text-danger">{CardValues[card]}</p>)
+			} else {
+				cardNames.push(<p onClick={this.selectCard} id={card}>{CardValues[card]}</p>)
+			}
+			// cardNames.push(<img onClick={this.selectCard} id="asdasd" src="/loading.gif" />)
+		}
+
+		return (
+			<div>
+				<p>{cardNames}</p>
+				{
+					this.state.currentCards.length === 0?
+						null:
+					this.state.currentCards.length === 6 && this.state.selected.length === 0?
+						<button className="btn btn-success" disabled>Drop card(s)</button>:
+					this.state.currentCards.length === 6?
+						<button className="btn btn-success" onClick={this.dropCard}>Drop card(s)</button>:
+					this.state.selected.length === 0?
+					<div>
+						<button className="btn btn-success" disabled>Drop card(s) and pick up from top</button>
+						<button className="btn btn-success" disabled>Drop card(s) and pick up from deck</button>
+					</div>:
+					<div>
+						<button className="btn btn-success" onClick={this.dropCardAndPickUpFromTop}>Drop card(s) and pick up from top</button>
+						<button className="btn btn-success" onClick={this.dropCardAndPickUpFromDeck}>Drop card(s) and pick up from deck</button>
+					</div>
+				}
+			</div>
+		);
+	}
+
+}
+//export MyCards Component
+export default MyCards;

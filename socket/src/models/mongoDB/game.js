@@ -17,7 +17,22 @@ const Game = new mongoose.Schema({
     gameId: {
         type: String,
         required: true
-    }
+    },
+    createdUser: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    },
+    currentPlayer: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    },
+    cardsInDeck: [Number],
+    openedCards: [Number],
+    previousDroppedCards: [Number],
+    previousDroppedPlayer: {
+        type: String,
+        required: true
+    },
 }, { versionKey: false })
 
 export default mongoose.model('game', Game)

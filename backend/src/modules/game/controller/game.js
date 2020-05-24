@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
 import Users from '../../../models/mongoDB/users';
 import Game from '../../../models/mongoDB/game';
+import GameMember from '../../../models/mongoDB/gameMember';
 import constants from '../../../utils/constants';
 import GenerateId from '../../../utils/generateId';
+import GetCards from '../../../utils/getCards';
 
 /**
  * Create game and save data in database.
@@ -141,6 +142,168 @@ exports.isUserPartOfGame = async (req, res) => {
 				createdUser: game.createdUser
 			})
 		}
+		return res
+		.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+		.send(null)
+
+	} catch (error) {
+		console.log(`Error while creating game ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Reset a game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.resetGame = async (req, res) => {
+	try {
+
+		let game
+		game = await Game.findOne({
+			gameId: req.params.gameId
+		})
+		if (!game) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send({
+					gameId: game.gameId,
+					createdUser: req.params.userId
+				})
+		}
+
+		for (var userId of game.players) {
+			await GameMember.findOneAndDelete({
+				userId: userId,
+				gameId: req.params.gameId
+			})
+		}
+		game = await Game.findOneAndUpdate(
+			{
+				gameId: req.params.gameId
+			},
+			{
+				isStarted: false,
+				cardsInDeck: [],
+				openedCards: []
+			}
+		)
+
+		if (game) {
+			return res
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send({
+				gameId: game.gameId,
+				createdUser: game.createdUser
+			})
+		}
+		return res
+		.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+		.send(null)
+
+	} catch (error) {
+		console.log(`Error while creating game ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+
+/**
+ * Start a game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.startGame = async (req, res) => {
+	try {
+
+		let game
+		game = await Game.findOne({
+			gameId: req.body.gameId
+		})
+		if (!game) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send({
+					gameId: game.gameId,
+					createdUser: req.body.userId
+				})
+		}
+		var availableCards = []
+		for (var index = 1; index < 53; index++) {
+			availableCards.push(index)
+		}
+
+		for (var userId of game.players) {
+			let result, cardsForPlayer
+				console.log(game.createdUser, userId)
+				if (game.createdUser.toString() == userId.toString()) {
+					result = GetCards.getCards(availableCards, 6)
+				} else {
+					result = GetCards.getCards(availableCards, 5)
+				}
+				cardsForPlayer = result.cardsForPlayer;
+				availableCards = result.availableCards;
+			let userObj = await Users.findById(userId)
+			let gameMemberObj = new GameMember({
+				gameId: req.body.gameId,
+				userId: userId,
+				userName: userObj.userName,
+				currentCards: cardsForPlayer
+			})
+			await gameMemberObj.save()
+		}
+		game = await Game.findOneAndUpdate(
+			{
+				gameId: req.body.gameId
+			},
+			{
+				currentPlayer: userId,
+				isStarted: true,
+				cardsInDeck: availableCards
+			}
+		)
+
+		if (game) {
+			return res
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send({
+				gameId: game.gameId,
+				createdUser: game.createdUser
+			})
+		}
+		return res
+		.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+		.send(null)
+
+	} catch (error) {
+		console.log(`Error while creating game ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+
+/**
+ * Check if the game ID is of a valid game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.validGame = async (req, res) => {
+	try {
+
+		let game
+		game = await Game.findOne({
+			gameId: req.params.gameId
+		})
+		if (!game) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send(null)
+		}
+
 		return res
 		.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
 		.send(null)

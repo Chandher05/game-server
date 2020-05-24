@@ -1,27 +1,46 @@
 import React, { Component } from 'react';
-import getValue from '../../APIs/getMessage'
+import CommonCards from './commonCards';
+import MyCards from './myCards';
+import axios from 'axios';
+import { Redirect } from 'react-router';
 
 class GameRoom extends Component {
 
 	constructor() {
 		super() 
 		this.state = {
-			message: ''
+			message: '',
+			invalidGame: false
 		}
 	}
 
 	componentDidMount () {
-		getValue((err, message) => {
+		axios.get(`/game/validGame/${this.props.match.params.gameId}`)
+		.catch(() => {
 			this.setState({
-				message: message
+				invalidGame: true
 			})
 		})
 	}
 
 	render() {
 
+		if (this.state.invalidGame === true) {
+			return (<Redirect to="/joinGame" />)
+		}
+
 		return (
-			<p>{this.state.message}</p>
+			<div className="row">
+				<div className="col-md-6">
+
+				</div>
+				<div className="col-md-3">
+					<CommonCards gameId={this.props.match.params.gameId} />
+				</div>
+				<div className="col-md-3">
+					<MyCards gameId={this.props.match.params.gameId} />
+				</div>
+			</div>
 		);
 	}
 

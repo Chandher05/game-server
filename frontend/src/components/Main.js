@@ -21,7 +21,7 @@ class Main extends Component {
                     <Route path="/create-account" component={CreateAccount}/>
 
                     <Route path="/joinGame" component={JoinGame}/>
-                    <Route path="/gameRoom/:id" component={GameRoom}/>
+                    <Route path="/gameRoom/:gameId" component={GameRoom}/>
 
                     <Route component={ErrorPage}/>
                 </Switch>
