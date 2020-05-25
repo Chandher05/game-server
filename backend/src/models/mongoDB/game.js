@@ -33,6 +33,14 @@ const Game = new mongoose.Schema({
         type: String,
         required: true
     },
+    lastPlayedTime: {
+        type: String,
+        required: true
+    },
+    lastPlayedAction: {
+        type: String,
+        required: true
+    }
 }, { versionKey: false })
 
 export default mongoose.model('game', Game)

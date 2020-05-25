@@ -1,56 +1,9 @@
-var cardValues = {
-    1: "Clubs A",
-    2: "Clubs 2",
-    3: "Clubs 3",
-    4: "Clubs 4",
-    5: "Clubs 5",
-    6: "Clubs 6",
-    7: "Clubs 7",
-    8: "Clubs 8",
-    9: "Clubs 9",
-    10: "Clubs 10",
-    11: "Clubs J",
-    12: "Clubs Q",
-    13: "Clubs K",
-    14: "Diamonds A",
-    15: "Diamonds 2",
-    16: "Diamonds 3",
-    17: "Diamonds 4",
-    18: "Diamonds 5",
-    19: "Diamonds 6",
-    20: "Diamonds 7",
-    21: "Diamonds 8",
-    22: "Diamonds 9",
-    23: "Diamonds 10",
-    24: "Diamonds J",
-    25: "Diamonds Q",
-    26: "Diamonds K",
-    27: "Heart A",
-    28: "Heart 2",
-    29: "Heart 3",
-    30: "Heart 4",
-    31: "Heart 5",
-    32: "Heart 6",
-    33: "Heart 7",
-    34: "Heart 8",
-    35: "Heart 9",
-    36: "Heart 10",
-    37: "Heart J",
-    38: "Heart Q",
-    39: "Heart K",
-    40: "Spades A",
-    41: "Spades 2",
-    42: "Spades 3",
-    43: "Spades 4",
-    44: "Spades 5",
-    45: "Spades 6",
-    46: "Spades 7",
-    47: "Spades 8",
-    48: "Spades 9",
-    49: "Spades 10",
-    50: "Spades J",
-    51: "Spades Q",
-    52: "Spades K"
+var cardValue = (number) => {
+    var pos = number % 13
+    if (pos === 0 || pos > 10) {
+        return 10
+    }
+    return pos
 }
 
-module.exports = cardValues;
+export default cardValue;

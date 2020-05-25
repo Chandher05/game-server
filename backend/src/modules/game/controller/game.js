@@ -4,6 +4,7 @@ import GameMember from '../../../models/mongoDB/gameMember';
 import constants from '../../../utils/constants';
 import GenerateId from '../../../utils/generateId';
 import GetCards from '../../../utils/getCards';
+import PlayCard from '../../../utils/playCard';
 
 /**
  * Create game and save data in database.
@@ -127,7 +128,7 @@ exports.isUserPartOfGame = async (req, res) => {
 					createdUser: req.body.userId
 				})
 		}
-		
+
 		game = await Game.findOne({
 			players: req.params.userId,
 			isStarted: false,
@@ -136,15 +137,15 @@ exports.isUserPartOfGame = async (req, res) => {
 
 		if (game) {
 			return res
-			.status(constants.STATUS_CODE.SUCCESS_STATUS)
-			.send({
-				gameId: game.gameId,
-				createdUser: game.createdUser
-			})
+				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+				.send({
+					gameId: game.gameId,
+					createdUser: game.createdUser
+				})
 		}
 		return res
-		.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-		.send(null)
+			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+			.send(null)
 
 	} catch (error) {
 		console.log(`Error while creating game ${error}`)
@@ -193,15 +194,15 @@ exports.resetGame = async (req, res) => {
 
 		if (game) {
 			return res
-			.status(constants.STATUS_CODE.SUCCESS_STATUS)
-			.send({
-				gameId: game.gameId,
-				createdUser: game.createdUser
-			})
+				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+				.send({
+					gameId: game.gameId,
+					createdUser: game.createdUser
+				})
 		}
 		return res
-		.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-		.send(null)
+			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+			.send(null)
 
 	} catch (error) {
 		console.log(`Error while creating game ${error}`)
@@ -236,17 +237,18 @@ exports.startGame = async (req, res) => {
 			availableCards.push(index)
 		}
 
+		var startedUser = null
 		for (var userId of game.players) {
 			let result, cardsForPlayer
-				console.log(game.createdUser, userId)
-				if (game.createdUser.toString() == userId.toString()) {
-					result = GetCards.getCards(availableCards, 6)
-				} else {
-					result = GetCards.getCards(availableCards, 5)
-				}
-				cardsForPlayer = result.cardsForPlayer;
-				availableCards = result.availableCards;
 			let userObj = await Users.findById(userId)
+			if (game.createdUser.toString() == userId.toString()) {
+				startedUser = userObj.userName
+				result = GetCards.getCards(availableCards, 6)
+			} else {
+				result = GetCards.getCards(availableCards, 5)
+			}
+			cardsForPlayer = result.cardsForPlayer;
+			availableCards = result.availableCards;
 			let gameMemberObj = new GameMember({
 				gameId: req.body.gameId,
 				userId: userId,
@@ -255,28 +257,35 @@ exports.startGame = async (req, res) => {
 			})
 			await gameMemberObj.save()
 		}
+		let timestamp = Date.now()
 		game = await Game.findOneAndUpdate(
 			{
 				gameId: req.body.gameId
 			},
 			{
-				currentPlayer: userId,
+				currentPlayer: game.createdUser,
 				isStarted: true,
-				cardsInDeck: availableCards
+				cardsInDeck: availableCards,
+				lastPlayedTime: timestamp,
+				previousDroppedPlayer: startedUser,
+				lastPlayedAction: "will start the game"
 			}
 		)
 
 		if (game) {
+			PlayCard.playRandom(timestamp, req.body.gameId, game.createdUser)
 			return res
-			.status(constants.STATUS_CODE.SUCCESS_STATUS)
-			.send({
-				gameId: game.gameId,
-				createdUser: game.createdUser
-			})
+				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+				.send({
+					gameId: game.gameId,
+					createdUser: game.createdUser
+				})
 		}
+
+		PlayCard.playRandom(timestamp, req.body.gameId, nextPlayer)
 		return res
-		.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-		.send(null)
+			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+			.send(null)
 
 	} catch (error) {
 		console.log(`Error while creating game ${error}`)
@@ -297,7 +306,9 @@ exports.validGame = async (req, res) => {
 
 		let game
 		game = await Game.findOne({
-			gameId: req.params.gameId
+			gameId: req.params.gameId,
+			isStarted: true,
+			isEnded: false
 		})
 		if (!game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
@@ -305,8 +316,8 @@ exports.validGame = async (req, res) => {
 		}
 
 		return res
-		.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-		.send(null)
+			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+			.send(null)
 
 	} catch (error) {
 		console.log(`Error while creating game ${error}`)

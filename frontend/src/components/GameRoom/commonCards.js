@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import GameCards from '../../APIs/gameCards';
-import CardValues from '../../constants/cardValues';
+import CardNames from '../../constants/cardNames';
 
 class CommonGameCards extends Component {
 
@@ -9,18 +9,20 @@ class CommonGameCards extends Component {
         this.state = {
             cardOnTop: null,
             previousDroppedCard: [],
-            previousDroppedPlayer: null
+            previousDroppedPlayer: null,
+            action: null
         }
     }
 
     componentDidMount() {
         setInterval(() => {
-            GameCards(this.props.gameId, (cardOnTop, previousDroppedCard, previousDroppedPlayer) => {
-                console.log(cardOnTop, previousDroppedCard, previousDroppedPlayer)
+            GameCards(this.props.gameId, (cardOnTop, previousDroppedCard, previousDroppedPlayer, action) => {
+                console.log(action)
                 this.setState({
                     cardOnTop: cardOnTop,
                     previousDroppedCard: previousDroppedCard,
-                    previousDroppedPlayer: previousDroppedPlayer
+                    previousDroppedPlayer: previousDroppedPlayer,
+                    action: action
                 })
             })
         }, 1000);
@@ -29,13 +31,14 @@ class CommonGameCards extends Component {
     render() {
         let cardNames = []
         for (var card of this.state.previousDroppedCard) {
-            cardNames.push(<p>{CardValues[card]}</p>)
+            cardNames.push(<p>{CardNames[card]}</p>)
         }
 
         return (
             <div>
-                <p>Card On Top: {CardValues[this.state.cardOnTop]}</p>
-                <p>Dropped by: {this.state.previousDroppedPlayer}</p>
+                <p>Card On Top: {CardNames[this.state.cardOnTop]}</p>
+                <p>{this.state.previousDroppedPlayer} {this.state.action}</p>
+                <p>Dropped cards</p>
                 <div>{cardNames}</div>
 
             </div>

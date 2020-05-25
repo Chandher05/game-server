@@ -10,21 +10,26 @@ var socketListener = (io) => {
             client.emit('playersInGame', users)
         })
         
-        client.on('getGameStatus', async (gameId) => {
+        client.on('getGameStatus', async (gameId, userId) => {
             let data,
-                game = await startGame.getGameStatus(gameId)
+                game 
+            if (userId != undefined) {
+                game = await startGame.getGameStatus(gameId, userId)
 
-            data = {
-                cardOnTop: game.game.openedCards.pop(),
-                previousDroppedCards: game.game.previousDroppedCards,
-                previousDroppedPlayer: game.game.previousDroppedPlayer
+                data = {
+                    cardOnTop: game.game.openedCards.pop(),
+                    previousDroppedCards: game.game.previousDroppedCards,
+                    previousDroppedPlayer: game.game.previousDroppedPlayer,
+                    action: game.game.lastPlayedAction
+                }
+                client.emit('currentCards', data)
+                
+                data = {
+                    currentPlayer: game.game.currentPlayer,
+                    playerCards: game.gameMember.currentCards
+                }
+                client.emit('currentPlayer', data)
             }
-            client.emit('currentCards', data)
-            
-            data = {
-                currentPlayer: game.game.currentPlayer
-            }
-            client.emit('currentPlayer', data)
         })
     
         //Whenever someone disconnects this piece of code executed

@@ -21,14 +21,21 @@ exports.getPlayersInGame = (gameId) => {
     }) 
 }
 
-exports.getGameStatus = (gameId) => {
+exports.getGameStatus = (gameId, userId) => {
     return new Promise( async (resolve) => {
+        
         let game = await Game.findOne({
             gameId: gameId
         })
 
+        let gameMember = await GameMember.findOne({
+            gameId: gameId,
+            userId: userId
+        })
+
         resolve({
-            game: game
+            game: game,
+            gameMember: gameMember
         })
     }) 
 }

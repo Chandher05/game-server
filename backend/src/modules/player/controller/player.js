@@ -3,6 +3,7 @@ import Game from '../../../models/mongoDB/game';
 import GameMember from '../../../models/mongoDB/gameMember';
 import constants from '../../../utils/constants';
 import GetCards from '../../../utils/getCards';
+import PlayCard from '../../../utils/playCard'
 
 /**
  * Create current cards of the player.
@@ -48,69 +49,24 @@ exports.dropCards = async (req, res) => {
 		})
 
 		var difference = []
-		console.log(req.body.selected)
-		for (var card of gameMember.currentCards) {
-			if (req.body.selected.includes(card.toString()) === false) {
-				console.log(card)
-				difference.push(card)
-			}
+		var timestamp = Date.now()
+        var nextPlayerIndex = (game.players.indexOf(gameMember.userId) + 1 ) % game.players.length
+		var nextPlayer = game.players[nextPlayerIndex]
+		var selected = []
+		for (var temp of req.body.selected) {
+			selected.push(parseInt(temp))
 		}
 
-		var result
 		if (req.body.type === "Deck") {
-			result = GetCards.getCards(game.cardsInDeck, 1);
-			difference = difference.concat(result.cardsForPlayer)
-			await Game.findOneAndUpdate(
-				{
-					gameId: req.body.gameId
-				},
-				{
-					cardsInDeck: result.availableCards,
-					$push: {
-						openedCards: req.body.selected,
-					},
-					previousDroppedCards: req.body.selected,
-					previousDroppedPlayer: gameMember.userName
-				}
-			)
+			difference = await PlayCard.fromDeck(game, gameMember, selected, timestamp, nextPlayer)
 		} else if (req.body.type === "Top") {
-			var openedCards = game.openedCards
-			difference.push(openedCards.pop())
-			openedCards = openedCards.concat(req.body.selected)
-			await Game.findOneAndUpdate(
-				{
-					gameId: req.body.gameId
-				},
-				{
-					openedCards: openedCards,
-					previousDroppedCards: req.body.selected,
-					previousDroppedPlayer: gameMember.userName
-				}
-			)
+			difference = await PlayCard.fromTop(game, gameMember, selected, timestamp, nextPlayer)
 		} else {
-			await Game.findOneAndUpdate(
-				{
-					gameId: req.body.gameId
-				},
-				{
-					openedCards: req.body.selected,
-					previousDroppedCards: req.body.selected,
-					previousDroppedPlayer: gameMember.userName
-				}
-			)			
+			difference = await PlayCard.firstTurn(game, gameMember, selected, timestamp, nextPlayer)
 		}
-		
-		await GameMember.findOneAndUpdate(
-			{
-				gameId: req.body.gameId,
-				userId: req.body.userId
-			},
-			{
-				currentCards: difference	
-			}
-		)
 
-		console.log(difference)
+		PlayCard.playRandom(timestamp, req.body.gameId, nextPlayer)
+
 		return res
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
 			.send({
