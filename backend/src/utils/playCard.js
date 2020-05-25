@@ -176,7 +176,7 @@ var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
 
 var playRandom = async (timestamp, gameId, userId) => {
     
-    await sleep(10)
+    await sleep(60)
     let game = await Game.findOne({
         gameId: gameId
     })
