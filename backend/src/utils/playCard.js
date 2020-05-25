@@ -208,8 +208,17 @@ var playRandom = async (timestamp, gameId, userId) => {
     // Pick cards from deck or top
     var random = Math.random()
     var timestamp = Date.now()
-    var nextPlayerIndex = (game.players.indexOf(gameMember.userId) + 1 ) % game.players.length
-    var nextPlayer = game.players[nextPlayerIndex]
+
+    var activePlayers = await GameMember.find({
+        gameId: gameId,
+        isAlive: true
+    })
+    var activePlayersIds = []
+    for (var player of activePlayers) {
+        activePlayersIds.push(player.userId.toString())
+    }
+    var nextPlayerIndex = (activePlayersIds.indexOf(userId) + 1 ) % activePlayersIds.length
+    var nextPlayer = activePlayersIds[nextPlayerIndex]
 
     if (game.openedCards.length === 0) {
         console.log(`\n\n\n${gameMember.userName} dropped ${selected} and played first turn`)

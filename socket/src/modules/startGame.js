@@ -13,10 +13,14 @@ exports.getPlayersInGame = (gameId) => {
                 let player = await Users.findById(userId)
                 users.push(player)
             } 
+            resolve({
+                players: users,
+                isStarted: game.isStarted
+            })
         }
         resolve({
             players: users,
-            isStarted: game.isStarted
+            isStarted: false
         })
     }) 
 }

@@ -75,7 +75,8 @@ class JoinGame extends Component {
 		.then((response) => {
 			this.setState({
 				gameId: response.data.gameId,
-				createdUser: response.data.createdUser
+				createdUser: response.data.createdUser,
+				showJoinGame: false
 			})
 		})
 		.catch((error) => {
@@ -145,6 +146,20 @@ class JoinGame extends Component {
 		axios.post(`/game/start`, reqBody)
 	}
 
+	quitGame = () => {
+		const reqBody = {
+			gameId: this.state.gameId,
+			userId: localStorage.getItem('GameUserId')
+		}
+		axios.post(`/game/quit`, reqBody)
+		.then(() => {
+			this.setState({
+				showJoinGame: true,
+				gameId: null
+			})
+		})
+	}
+
 	render() {
 		
 		if (this.state.isFetched === false) {
@@ -185,15 +200,32 @@ class JoinGame extends Component {
 
 		return (
 			<div className="row">
-				{playersInGame}
+				<div className="col-md-12">
+					<p className="display-4 text-center">Game ID: <span className="font-weight-bold">{this.state.gameId}</span></p>
+					{playersInGame}
+				</div>
 
 				{
 					this.state.createdUser === localStorage.getItem('GameUserId')?
+					playersInGame.length > 1?
 					<div className="col-md-12 text-center">
 						<button className="btn btn-success w-25" onClick={this.startGame}>Start Game</button>
 					</div>:
 					<div className="col-md-12 text-center">
+						<div>
+							<img src="/loading.gif"  style={{ width: 25 + "px" }} alt="loading"/> Waiting for players to join the game
+						</div>
+						<div>
+							<button className="btn btn-danger w-25" onClick={this.startGame}>Quit game</button>
+						</div>
+					</div>:
+					<div className="col-md-12 text-center">
+					<div>
 						<img src="/loading.gif"  style={{ width: 25 + "px" }} alt="loading"/> Waiting for host to start the game
+					</div>
+					<div>
+						<button className="btn btn-danger w-25" onClick={this.quitGame}>Quit game</button>
+					</div>
 					</div>
 				}
 			</div>

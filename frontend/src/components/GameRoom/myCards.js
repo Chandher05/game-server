@@ -48,7 +48,7 @@ class MyCards extends Component {
 					hostPlayer: hostPlayer
 				})
 			})
-			
+
 		}, 1000)
 	}
 
@@ -70,11 +70,11 @@ class MyCards extends Component {
 
 	getMyCards = () => {
 		axios.get(`/player/cards/${this.props.gameId}/${localStorage.getItem('GameUserId')}`)
-		.then((response) => {
-			this.setState({
-				currentCards: response.data.currentCards
+			.then((response) => {
+				this.setState({
+					currentCards: response.data.currentCards
+				})
 			})
-		})
 	}
 
 	selectCard = (e) => {
@@ -111,12 +111,12 @@ class MyCards extends Component {
 			type: "New"
 		}
 		axios.post(`/player/dropCards`, reqBody)
-		.then((response) => {
-			this.setState({
-				currentCards: response.data.currentCards,
-				selected: []
+			.then((response) => {
+				this.setState({
+					currentCards: response.data.currentCards,
+					selected: []
+				})
 			})
-		})
 	}
 
 	dropCardAndPickUpFromTop = () => {
@@ -130,12 +130,12 @@ class MyCards extends Component {
 			type: "Top"
 		}
 		axios.post(`/player/dropCards`, reqBody)
-		.then((response) => {
-			this.setState({
-				currentCards: response.data.currentCards,
-				selected: []
+			.then((response) => {
+				this.setState({
+					currentCards: response.data.currentCards,
+					selected: []
+				})
 			})
-		})
 	}
 
 	dropCardAndPickUpFromDeck = () => {
@@ -149,12 +149,12 @@ class MyCards extends Component {
 			type: "Deck"
 		}
 		axios.post(`/player/dropCards`, reqBody)
-		.then((response) => {
-			this.setState({
-				currentCards: response.data.currentCards,
-				selected: []
+			.then((response) => {
+				this.setState({
+					currentCards: response.data.currentCards,
+					selected: []
+				})
 			})
-		})
 	}
 
 	declare = () => {
@@ -163,6 +163,21 @@ class MyCards extends Component {
 			userId: localStorage.getItem('GameUserId')
 		}
 		axios.post(`/player/declare`, reqBody)
+		this.setState({
+			selected: []
+		})
+	}
+
+	startNextRound = () => {
+		const reqBody = {
+			gameId: this.props.gameId
+		}
+		axios.post(`/game/nextRound`, reqBody)
+			.then((response) => {
+				this.setState({
+					currentCards: response.data.createdUserCards
+				})
+			})
 	}
 
 	render() {
@@ -182,38 +197,37 @@ class MyCards extends Component {
 			<div>
 				<p>{cardNames}</p>
 				{
-					this.state.currentCards.length === 0 || this.state.myTurn === false?
-						null:
-					this.state.currentCards.length === 6 && this.state.selected.length === 0?
-						<button className="btn btn-success" disabled>Drop card(s)</button>:
-					this.state.currentCards.length === 6?
-						<button className="btn btn-success" onClick={this.dropCard}>Drop card(s)</button>:
-					this.state.selected.length === 0?
-					<div>
-						<button className="btn btn-success" disabled>Drop card(s) and pick up from top</button>
-						<button className="btn btn-success" disabled>Drop card(s) and pick up from deck</button>
-					</div>:
-					<div>
-						<button className="btn btn-success" onClick={this.dropCardAndPickUpFromTop}>Drop card(s) and pick up from top</button>
-						<button className="btn btn-success" onClick={this.dropCardAndPickUpFromDeck}>Drop card(s) and pick up from deck</button>
-					</div>
+					this.state.currentCards.length === 0 || this.state.myTurn === false ?
+						null :
+						this.state.currentCards.length === 6 && this.state.selected.length === 0 ?
+							<button className="btn btn-success" disabled>Drop card(s)</button> :
+							this.state.currentCards.length === 6 ?
+								<button className="btn btn-success" onClick={this.dropCard}>Drop card(s)</button> :
+								this.state.selected.length === 0 ?
+									<div>
+										<button className="btn btn-success" disabled>Drop card(s) and pick up from top</button>
+										<button className="btn btn-success" disabled>Drop card(s) and pick up from deck</button>
+									</div> :
+									<div>
+										<button className="btn btn-success" onClick={this.dropCardAndPickUpFromTop}>Drop card(s) and pick up from top</button>
+										<button className="btn btn-success" onClick={this.dropCardAndPickUpFromDeck}>Drop card(s) and pick up from deck</button>
+									</div>
 				}
 				{/* <p>Timer: {this.state.seconds}</p> */}
 				<p>Total: {total}</p>
 				{
-					total <= 15 && this.state.myTurn === true?
-					<button className="btn btn-warning" onClick={this.declare}>Declare</button>:
-					null
+					total <= 15 && this.state.myTurn === true ?
+						<button className="btn btn-warning" onClick={this.declare}>Declare</button> :
+						null
 				}
 				{
-					this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId')?
-					<button className="btn btn-success" >Start next round</button>:
-					null
-				}
-				{
-					this.state.isGameComplete === true?
-					<button className="btn btn-danger" >Close game</button>:
-					null
+					this.state.isGameComplete === true ?
+					<a href="/joinGame">
+						<button className="btn btn-danger">Close game</button>
+					</a>:
+					this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId') ?
+						<button className="btn btn-success" onClick={this.startNextRound}>Start next round</button> :
+						null
 				}
 			</div>
 		);

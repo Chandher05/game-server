@@ -47,7 +47,7 @@ exports.loginUser = async (req, res) => {
 
 		var isAuth = false
 		user = await Users.findOne({ 
-			email: req.body.email,
+			userName: req.body.userName,
 			isActive: true
 		})
 

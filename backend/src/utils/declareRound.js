@@ -2,6 +2,21 @@ import Game from '../models/mongoDB/game';
 import GameMember from '../models/mongoDB/gameMember';
 import CardValues from './cardValues';
 
+var endGame = (gameId, userName) => {
+    return new Promise( async(resolve) => {
+        await Game.findOneAndUpdate(
+            {
+                gameId: gameId
+            },
+            {
+                isEnded: true,
+                previousDroppedPlayer: userName,
+                lastPlayedAction: "has won the game"
+            }
+        )
+    })
+}
+
 var declareRound = (gameId, userId) => {
     return new Promise( async (resolve) => {
         let gameMembers = await GameMember.find({
@@ -39,16 +54,16 @@ var declareRound = (gameId, userId) => {
 					playerScore = total
 					lastPlayedAction = `declared with ${total} points` 
 				}
-			}
+			} else {
+                min = Math.min(total, min)
+            }
 			allScores[player.userId.toString()] = total
-			min = Math.min(total, min)
 		}
 
-		// Check if person declared has the lowest sum and reassign scores accordingly
+        // Check if person declared has the lowest sum and reassign scores accordingly
 		if (isPair == false && playerScore < min) {
 			allScores[userId] = 0
-		}
-		if (isPair == false && playerScore > min) {
+		} else if (isPair == false && playerScore > min) {
 			allScores[userId] = 50
 		} else if (isPair == false && playerScore == min) {
 			allScores[userId] *= 2
@@ -71,10 +86,15 @@ var declareRound = (gameId, userId) => {
 				lastPlayedAction: lastPlayedAction,
                 isRoundComplete: true,
                 previousDroppedCards: [],
-                lastPlayedTime: Date.now()
+                lastPlayedTime: Date.now(),
+                $inc: {
+                    roundsComplete: 1
+                }
 			}
         )
 
+        let numberOfActivePlayers = 0
+        let activePlayerName = "No one"
         // Update scores of all members
         for (var player in beforeScores) {
             var previousScore = beforeScores[player]
@@ -107,7 +127,8 @@ var declareRound = (gameId, userId) => {
                     }
                 )
             } else if (previousScore < 101) {
-                await GameMember.findOneAndUpdate(
+                numberOfActivePlayers += 1
+                var temp = await GameMember.findOneAndUpdate(
                     {
                         gameId: gameId,
                         userId: player
@@ -121,8 +142,14 @@ var declareRound = (gameId, userId) => {
                         }
                     }
                 )  
+                activePlayerName = temp.userName 
             }
 
+        }
+
+        // End the game if lesser than 2 players are active
+        if (numberOfActivePlayers < 2) {
+            await endGame(gameId, activePlayerName)
         }
 
         resolve()

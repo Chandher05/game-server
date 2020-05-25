@@ -18,7 +18,14 @@ exports.currentCards = async (req, res) => {
         let game = await GameMember.findOne({
             gameId: req.params.gameId,
             userId: req.params.userId
-        })
+		})
+		if (!game) {
+			return res
+			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+			.send({
+				currentCards: null
+			})	
+		}
 
 		return res
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
@@ -52,8 +59,18 @@ exports.dropCards = async (req, res) => {
 
 		var difference = []
 		var timestamp = Date.now()
-        var nextPlayerIndex = (game.players.indexOf(gameMember.userId) + 1 ) % game.players.length
-		var nextPlayer = game.players[nextPlayerIndex]
+    
+		var activePlayers = await GameMember.find({
+			gameId: req.body.gameId,
+			isAlive: true
+		})
+		var activePlayersIds = []
+		for (var player of activePlayers) {
+			activePlayersIds.push(player.userId.toString())
+		}
+		var nextPlayerIndex = (activePlayersIds.indexOf(req.body.userId) + 1 ) % activePlayersIds.length
+		var nextPlayer = activePlayersIds[nextPlayerIndex]
+
 		var selected = []
 		for (var temp of req.body.selected) {
 			selected.push(parseInt(temp))

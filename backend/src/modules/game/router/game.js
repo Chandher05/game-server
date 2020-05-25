@@ -11,5 +11,8 @@ router.get('/currentGame/:userId', gameController.isUserPartOfGame);
 router.post('/start', gameController.startGame);
 router.get('/reset/:gameId', gameController.resetGame);
 router.get('/validGame/:gameId', gameController.validGame);
+router.post('/nextRound', gameController.nextRound);
+router.get('/allCards', gameController.allCards);
+router.post('/quit', gameController.quit);
 
 module.exports = router;

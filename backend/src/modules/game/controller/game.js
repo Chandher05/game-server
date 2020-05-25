@@ -42,7 +42,15 @@ exports.createGame = async (req, res) => {
 		let gameId = await GenerateId(6)
 		const gameData = new Game({
 			players: [req.body.userId],
-			gameId: gameId
+			gameId: gameId,
+			createdUser: req.body.userId,
+			currentPlayer: req.body.userId,
+			cardsInDeck: [],
+			openedCards: [],
+			previousDroppedCards: [],
+			previousDroppedPlayer: " ",
+			lastPlayedTime: " ",
+			lastPlayedAction: " "
 		})
 
 		await gameData.save()
@@ -227,7 +235,7 @@ exports.startGame = async (req, res) => {
 		if (!game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 				.send({
-					gameId: game.gameId,
+					gameId: req.body.gameId,
 					createdUser: req.body.userId
 				})
 		}
@@ -281,7 +289,6 @@ exports.startGame = async (req, res) => {
 				})
 		}
 
-		PlayCard.playRandom(timestamp, req.body.gameId, nextPlayer)
 		return res
 			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
 			.send(null)
@@ -320,6 +327,188 @@ exports.validGame = async (req, res) => {
 
 	} catch (error) {
 		console.log(`Error game/validGame ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+
+/**
+ * Start next round of game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.nextRound = async (req, res) => {
+	try {
+
+		let game
+		game = await Game.findOne({
+			gameId: req.body.gameId
+		})
+		if (!game) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send({
+					gameId: req.body.gameId,
+					createdUser: req.body.userId
+				})
+		}
+		var availableCards = []
+		for (var index = 1; index < 53; index++) {
+			availableCards.push(index)
+		}
+
+		var activePlayers = await GameMember.find({
+			gameId: req.body.gameId,
+			isAlive: true
+		})
+		var nextPlayerToStart = activePlayers[game.roundsComplete % activePlayers.length]
+		var nextUserNameToStart = nextPlayerToStart.userName
+		var nextUserIdToStart = nextPlayerToStart.userId
+		
+		var result,
+			cardsForPlayer,
+			createdUserCards
+		for (var player of activePlayers) {
+			
+			if (nextUserIdToStart == player.userId) {
+				result = GetCards.getCards(availableCards, 6)
+			} else {
+				result = GetCards.getCards(availableCards, 5)
+			}
+			cardsForPlayer = result.cardsForPlayer;
+			availableCards = result.availableCards;
+			console.log(game.createdUser, player.userId, game.createdUser == player.userId)
+			if (game.createdUser.toString() == player.userId.toString()) {
+				createdUserCards = cardsForPlayer
+			}
+			await GameMember.findByIdAndUpdate(
+				player._id,
+				{
+					currentCards: cardsForPlayer
+				}
+			)
+		}
+
+		let timestamp = Date.now()
+		game = await Game.findOneAndUpdate(
+			{
+				gameId: req.body.gameId
+			},
+			{
+				currentPlayer: nextUserIdToStart,
+				isRoundComplete: false,
+				cardsInDeck: availableCards,
+				lastPlayedTime: timestamp,
+				previousDroppedPlayer: nextUserNameToStart,
+				lastPlayedAction: "will start the next round"
+			}
+		)
+
+		if (game) {
+			PlayCard.playRandom(timestamp, req.body.gameId, nextUserIdToStart)
+			console.log(createdUserCards)
+			return res
+				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+				.send({
+					createdUserCards: createdUserCards
+				})
+		}
+
+		return res
+			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+			.send(null)
+
+	} catch (error) {
+		console.log(`Error game/nextRound ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Show all cards in a game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.allCards = async (req, res) => {
+	try {
+
+		let game
+		game = await Game.findOne({
+			gameId: req.body.gameId
+		})
+		if (!game) {
+			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+				.send("Game does not exist")
+		} else if (game.players.includes(req.body.userId)) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send("User is already part of a game")
+		}
+
+		let gameMembers = await Game.find({
+			gameId: req.body.gameId
+		})
+
+		return res
+			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+			.send({
+				game: game,
+				gameMembers: gameMembers
+			})
+	} catch (error) {
+		console.log(`Error in game/allCards ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Quit a game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.quit = async (req, res) => {
+	try {
+
+		let game
+		game = await Game.findOne({
+			gameId: req.body.gameId
+		})
+		if (!game) {
+			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+				.send("Game does not exist")
+		}
+		
+		if (req.body.userId === game.createdUser.toString()) {
+			await Game.findOneAndDelete({
+				gameId: req.body.gameId
+			})
+		} else {
+			await Game.findOneAndUpdate(
+				{
+					gameId: req.body.gameId
+				},
+				{
+					$pull: {
+						players: req.body.userId
+					}
+				}
+			)
+		}
+
+		await GameMember.findOneAndDelete({
+			gameId: req.body.gameId,
+			userId: req.body.userId
+		})
+
+		return res
+			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+			.send(req.body.gameId)
+	} catch (error) {
+		console.log(`Error in game/quit ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)

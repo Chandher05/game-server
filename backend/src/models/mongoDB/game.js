@@ -45,6 +45,11 @@ const Game = new mongoose.Schema({
     lastPlayedAction: {
         type: String,
         required: true
+    },
+    roundsComplete: {
+        type: Number,
+        required: true,
+        default: 0
     }
 }, { versionKey: false })
 
