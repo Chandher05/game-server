@@ -23,7 +23,6 @@ exports.getPlayersInGame = (gameId) => {
 
 exports.getGameStatus = (gameId, userId) => {
     return new Promise( async (resolve) => {
-        
         let game = await Game.findOne({
             gameId: gameId
         })
@@ -39,3 +38,23 @@ exports.getGameStatus = (gameId, userId) => {
         })
     }) 
 }
+
+exports.playerScores = (gameId) => {
+    return new Promise( async (resolve) => {
+        let gameMembers = await GameMember.find({
+            gameId: gameId
+        })
+
+        let allScores = [],
+            data
+        for (var player of gameMembers) {
+            data = {
+                userName: player.userName,
+                score: player.score,
+                roundScores: player.roundScores
+            }
+            allScores.push(data)
+        }
+        resolve(allScores)
+    })
+} 

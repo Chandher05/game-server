@@ -12,7 +12,10 @@ class MyCards extends Component {
 			currentCards: [],
 			selected: [],
 			myTurn: false,
-			seconds: 10
+			seconds: 10,
+			isRoundComplete: false,
+			isGameComplete: false,
+			hostPlayer: null
 		}
 	}
 
@@ -22,9 +25,12 @@ class MyCards extends Component {
 
 		setInterval(() => {
 
-			CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand) => {
-				console.log(currentPlayer, cardsInHand)
-				if (currentPlayer === localStorage.getItem('GameUserId')) {
+			CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand, isRoundComplete, isGameComplete, hostPlayer) => {
+				if (isRoundComplete === true || isGameComplete === true) {
+					this.setState({
+						myTurn: false
+					})
+				} else if (currentPlayer === localStorage.getItem('GameUserId')) {
 					this.setState({
 						myTurn: true,
 						seconds: 10
@@ -36,6 +42,11 @@ class MyCards extends Component {
 						selected: []
 					})
 				}
+				this.setState({
+					isRoundComplete: isRoundComplete,
+					isGameComplete: isGameComplete,
+					hostPlayer: hostPlayer
+				})
 			})
 			
 		}, 1000)
@@ -146,6 +157,14 @@ class MyCards extends Component {
 		})
 	}
 
+	declare = () => {
+		const reqBody = {
+			gameId: this.props.gameId,
+			userId: localStorage.getItem('GameUserId')
+		}
+		axios.post(`/player/declare`, reqBody)
+	}
+
 	render() {
 		let cardNames = []
 		let total = 0
@@ -179,16 +198,21 @@ class MyCards extends Component {
 						<button className="btn btn-success" onClick={this.dropCardAndPickUpFromDeck}>Drop card(s) and pick up from deck</button>
 					</div>
 				}
-				{
-					this.state.myTurn === true?
-					<p>This is my turn</p>:
-					<p>Not my turn</p>
-				}
-				<p>Timer: {this.state.seconds}</p>
+				{/* <p>Timer: {this.state.seconds}</p> */}
 				<p>Total: {total}</p>
 				{
-					total > 15?
-					<button className="btn btn-warning">Declare</button>:
+					total <= 15 && this.state.myTurn === true?
+					<button className="btn btn-warning" onClick={this.declare}>Declare</button>:
+					null
+				}
+				{
+					this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId')?
+					<button className="btn btn-success" >Start next round</button>:
+					null
+				}
+				{
+					this.state.isGameComplete === true?
+					<button className="btn btn-danger" >Close game</button>:
 					null
 				}
 			</div>

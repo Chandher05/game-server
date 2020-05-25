@@ -20,6 +20,7 @@ const GameMember = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    roundScores: [Number],
     isAlive: {
         type: Boolean,
         default: true

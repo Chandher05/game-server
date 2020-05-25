@@ -3,7 +3,9 @@ import Game from '../../../models/mongoDB/game';
 import GameMember from '../../../models/mongoDB/gameMember';
 import constants from '../../../utils/constants';
 import GetCards from '../../../utils/getCards';
-import PlayCard from '../../../utils/playCard'
+import PlayCard from '../../../utils/playCard';
+import DeclareRound from '../../../utils/declareRound';
+import CardValues from '../../../utils/cardValues';
 
 /**
  * Create current cards of the player.
@@ -24,7 +26,7 @@ exports.currentCards = async (req, res) => {
 				currentCards: game.currentCards
 			})
 	} catch (error) {
-		console.log(`Error while creating game ${error}`)
+		console.log(`Error in player/currentCards ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
@@ -73,7 +75,27 @@ exports.dropCards = async (req, res) => {
 				currentCards: difference
 			})
 	} catch (error) {
-		console.log(`Error while creating game ${error}`)
+		console.log(`Error in player/dropCards ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Player shows their card and declares.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.declare = async (req, res) => {
+	try {
+
+		await DeclareRound(req.body.gameId, req.body.userId)
+		return res
+			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+			.send(null)
+	} catch (error) {
+		console.log(`Error in player/declare ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)

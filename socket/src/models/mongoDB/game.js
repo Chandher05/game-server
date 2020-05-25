@@ -14,6 +14,11 @@ const Game = new mongoose.Schema({
         required: true,
         default: false
     },
+    isRoundComplete: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     gameId: {
         type: String,
         required: true

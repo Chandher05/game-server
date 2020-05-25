@@ -11,10 +11,19 @@ const GameMember = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true
     },
+    userName: {
+        type: String,
+        required: true
+    },
     currentCards: [Number],
     score: {
         type: Number,
         default: 0
+    },
+    roundScores: [Number],
+    isAlive: {
+        type: Boolean,
+        default: true
     }
 }, { versionKey: false })
 

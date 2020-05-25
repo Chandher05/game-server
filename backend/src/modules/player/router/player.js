@@ -7,5 +7,6 @@ const router = express.Router();
 
 router.get('/cards/:gameId/:userId', playerController.currentCards);
 router.post('/dropCards', playerController.dropCards);
+router.post('/declare', playerController.declare);
 
 module.exports = router;

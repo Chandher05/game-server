@@ -100,7 +100,7 @@ exports.joinGame = async (req, res) => {
 				createdUser: game.createdUser
 			})
 	} catch (error) {
-		console.log(`Error while creating game ${error}`)
+		console.log(`Error while joining game ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
@@ -148,7 +148,7 @@ exports.isUserPartOfGame = async (req, res) => {
 			.send(null)
 
 	} catch (error) {
-		console.log(`Error while creating game ${error}`)
+		console.log(`Error in game/isUserPartOfGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
@@ -175,18 +175,17 @@ exports.resetGame = async (req, res) => {
 				})
 		}
 
-		for (var userId of game.players) {
-			await GameMember.findOneAndDelete({
-				userId: userId,
-				gameId: req.params.gameId
-			})
-		}
+		await GameMember.deleteMany({
+			gameId: req.params.gameId
+		})
 		game = await Game.findOneAndUpdate(
 			{
 				gameId: req.params.gameId
 			},
 			{
 				isStarted: false,
+				isRoundComplete: false,
+				isEnded: false,
 				cardsInDeck: [],
 				openedCards: []
 			}
@@ -205,7 +204,7 @@ exports.resetGame = async (req, res) => {
 			.send(null)
 
 	} catch (error) {
-		console.log(`Error while creating game ${error}`)
+		console.log(`Error game/resetGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
@@ -288,7 +287,7 @@ exports.startGame = async (req, res) => {
 			.send(null)
 
 	} catch (error) {
-		console.log(`Error while creating game ${error}`)
+		console.log(`Error game/startGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
@@ -320,7 +319,7 @@ exports.validGame = async (req, res) => {
 			.send(null)
 
 	} catch (error) {
-		console.log(`Error while creating game ${error}`)
+		console.log(`Error game/validGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)

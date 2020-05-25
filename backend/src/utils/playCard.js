@@ -194,6 +194,12 @@ var playRandom = async (timestamp, gameId, userId) => {
     if (game.lastPlayedTime != timestamp) {
         console.log(`\n\n\n${gameMember.userName} has already played`)
         return
+    } else if (game.isRoundComplete == true) {
+        console.log("\n\n\nRound has ended")
+        return
+    } else if (game.isEnded == true) {
+        console.log("\n\n\nGame has ended")
+        return
     }
 
     // Select cards from player

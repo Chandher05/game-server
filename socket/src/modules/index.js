@@ -26,10 +26,18 @@ var socketListener = (io) => {
                 
                 data = {
                     currentPlayer: game.game.currentPlayer,
-                    playerCards: game.gameMember.currentCards
+                    playerCards: game.gameMember.currentCards,
+                    isRoundComplete: game.game.isRoundComplete,
+                    isGameComplete: game.game.isEnded,
+                    hostPlayer: game.game.createdUser
                 }
                 client.emit('currentPlayer', data)
             }
+        })
+    
+        client.on('getScores', async (gameId) => {
+            let scores = await startGame.playerScores(gameId)
+            client.emit('score', scores)
         })
     
         //Whenever someone disconnects this piece of code executed

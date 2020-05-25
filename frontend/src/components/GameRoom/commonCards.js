@@ -17,7 +17,6 @@ class CommonGameCards extends Component {
     componentDidMount() {
         setInterval(() => {
             GameCards(this.props.gameId, (cardOnTop, previousDroppedCard, previousDroppedPlayer, action) => {
-                console.log(action)
                 this.setState({
                     cardOnTop: cardOnTop,
                     previousDroppedCard: previousDroppedCard,
@@ -38,7 +37,7 @@ class CommonGameCards extends Component {
             <div>
                 <p>Card On Top: {CardNames[this.state.cardOnTop]}</p>
                 <p>{this.state.previousDroppedPlayer} {this.state.action}</p>
-                <p>Dropped cards</p>
+                <p>Dropped card(s)</p>
                 <div>{cardNames}</div>
 
             </div>
