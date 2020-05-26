@@ -66,10 +66,10 @@ var updateDifferenceInPlayer = (gameId, userId, difference) => {
 var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
     return new Promise( async (resolve) => {
         
-        // console.log("cardsInDeck", game.cardsInDeck)
-        // console.log("openedCards", game.openedCards)
-        // console.log("inHand", gameMember.currentCards)
-        // console.log("selected", selected)
+        
+        
+        
+        
 
         var difference = getDifference(gameMember, selected)
 
@@ -92,9 +92,9 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
         )
         await updateDifferenceInPlayer(game.gameId, gameMember.userId, difference)
 
-        // console.log("cardsInDeck", result.availableCards)
-        // console.log("openedCards", openedCards)
-        // console.log("inHand", difference)
+        
+        
+        
 
         RestockDeck(game.gameId)
         resolve(difference)
@@ -105,10 +105,10 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
 var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
     return new Promise( async (resolve) => {
         
-        // console.log("cardsInDeck", game.cardsInDeck)
-        // console.log("openedCards", game.openedCards)
-        // console.log("inHand", gameMember.currentCards)
-        // console.log("selected", selected)
+        
+        
+        
+        
 
         var difference = getDifference(gameMember, selected)
 
@@ -133,9 +133,9 @@ var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
         )
         await updateDifferenceInPlayer(game.gameId, gameMember.userId, difference)
 
-        // console.log("cardsInDeck", game.cardsInDeck)
-        // console.log("openedCards", openedCards)
-        // console.log("inHand", difference)
+        
+        
+        
 
         RestockDeck(game.gameId)
         resolve(difference)
@@ -146,10 +146,10 @@ var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
 var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
     return new Promise( async (resolve) => {
         
-        // console.log("cardsInDeck", game.cardsInDeck)
-        // console.log("openedCards", game.openedCards)
-        // console.log("inHand", gameMember.currentCards)
-        // console.log("selected", selected)
+        
+        
+        
+        
 
         var difference = getDifference(gameMember, selected)
 
@@ -170,9 +170,9 @@ var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
         await updateDifferenceInPlayer(game.gameId, gameMember.userId, difference)
         
         
-        // console.log("cardsInDeck", game.cardsInDeck)
-        // console.log("openedCards", selected)
-        // console.log("inHand", difference)
+        
+        
+        
         resolve(difference)
 
     })
@@ -220,7 +220,7 @@ var playRandom = async (timestamp, gameId, userId) => {
     
     let playerTotal = calculateScore(gameMember.currentCards)
     var shouldDeclare = Math.random()
-    console.log(playerTotal, shouldDeclare)
+    
     if (playerTotal <= 15 && shouldDeclare <= 0.2) {
         console.log(`\n\n\n${gameMember.userName} has declared`)
         await DeclareRound(gameId, userId)

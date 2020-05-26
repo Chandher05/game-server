@@ -41,7 +41,7 @@ var declareRound = (gameId, userId) => {
             }
 			total = 0
 			for (var card of player.currentCards) {
-				// console.log(card)
+				
 				total += CardValues(card)
 			}
 			if (player.userId.toString() == userId) {

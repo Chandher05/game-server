@@ -10,9 +10,9 @@ var restockDeck = (gameId) => {
         }
 
         console.log(`Restocking deck for ${gameId}`)
-        console.log(game.openedCards)
-        console.log(game.previousDroppedCards)
-        console.log(game.cardsInDeck)
+        
+        
+        
 
         let openedCards = game.openedCards
         for (var card in game.previousDroppedCards) {

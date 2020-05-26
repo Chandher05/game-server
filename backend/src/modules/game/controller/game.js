@@ -21,7 +21,7 @@ exports.createGame = async (req, res) => {
 			isEnded: false
 		})
 		if (game.length > 0) {
-			console.log(game)
+			
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 				.send("User is already part of a game")
 		}
@@ -381,7 +381,7 @@ exports.nextRound = async (req, res) => {
 			}
 			cardsForPlayer = result.cardsForPlayer;
 			availableCards = result.availableCards;
-			console.log(game.createdUser, player.userId, game.createdUser == player.userId)
+			
 			if (game.createdUser.toString() == player.userId.toString()) {
 				createdUserCards = cardsForPlayer
 			}
