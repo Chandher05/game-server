@@ -88,6 +88,9 @@ exports.joinGame = async (req, res) => {
 		} else if (game.players.includes(req.body.userId)) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 				.send("User is already part of a game")
+		} else if (game.players.length === 5) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send("Game is full")
 		}
 		game = await Game.findOneAndUpdate(
 			{
@@ -407,7 +410,6 @@ exports.nextRound = async (req, res) => {
 
 		if (game) {
 			PlayCard.playRandom(timestamp, req.body.gameId, nextUserIdToStart)
-			console.log(createdUserCards)
 			return res
 				.status(constants.STATUS_CODE.SUCCESS_STATUS)
 				.send({
@@ -417,7 +419,9 @@ exports.nextRound = async (req, res) => {
 
 		return res
 			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-			.send(null)
+			.send({
+				createdUserCards: []
+			})
 
 	} catch (error) {
 		console.log(`Error game/nextRound ${error}`)
@@ -466,11 +470,11 @@ exports.allCards = async (req, res) => {
 }
 
 /**
- * Quit a game.
+ * Quit a game from the lobby.
  * @param  {Object} req request object
  * @param  {Object} res response object
  */
-exports.quit = async (req, res) => {
+exports.quitFromLobby = async (req, res) => {
 	try {
 
 		let game
@@ -499,16 +503,56 @@ exports.quit = async (req, res) => {
 			)
 		}
 
-		await GameMember.findOneAndDelete({
-			gameId: req.body.gameId,
-			userId: req.body.userId
+		return res
+			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+			.send(req.body.gameId)
+	} catch (error) {
+		console.log(`Error in game/quitFromLobby ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Quit a game from the game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.quitFromGame = async (req, res) => {
+	try {
+
+		let game
+		game = await Game.findOne({
+			gameId: req.body.gameId
 		})
+		if (!game) {
+			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+				.send("Game does not exist")
+		}
+		
+		if (req.body.userId === game.createdUser.toString()) {
+			await Game.findOneAndDelete({
+				gameId: req.body.gameId
+			})
+		} else {
+			await Game.findOneAndUpdate(
+				{
+					gameId: req.body.gameId
+				},
+				{
+					$pull: {
+						players: req.body.userId
+					}
+				}
+			)
+		}
 
 		return res
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
 			.send(req.body.gameId)
 	} catch (error) {
-		console.log(`Error in game/quit ${error}`)
+		console.log(`Error in game/quitFromGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)

@@ -104,6 +104,9 @@ class MyCards extends Component {
 		if (this.state.selected.length === 0) {
 			return
 		}
+		this.setState({
+			myTurn: false
+		})
 		const reqBody = {
 			gameId: this.props.gameId,
 			userId: localStorage.getItem('GameUserId'),
@@ -123,6 +126,9 @@ class MyCards extends Component {
 		if (this.state.selected.length === 0) {
 			return
 		}
+		this.setState({
+			myTurn: false
+		})
 		const reqBody = {
 			gameId: this.props.gameId,
 			userId: localStorage.getItem('GameUserId'),
@@ -142,6 +148,9 @@ class MyCards extends Component {
 		if (this.state.selected.length === 0) {
 			return
 		}
+		this.setState({
+			myTurn: false
+		})
 		const reqBody = {
 			gameId: this.props.gameId,
 			userId: localStorage.getItem('GameUserId'),

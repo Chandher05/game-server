@@ -62,3 +62,20 @@ exports.playerScores = (gameId) => {
         resolve(allScores)
     })
 } 
+
+exports.getOtherPlayers = (gameId) => {
+    return new Promise( async (resolve) => {
+        let game = await Game.findOne({
+            gameId: gameId
+        })
+
+        let gameMembers = await GameMember.find({
+            gameId: gameId
+        })
+
+        resolve({
+            game: game,
+            gameMembers: gameMembers
+        })
+    }) 
+}

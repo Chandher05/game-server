@@ -13,6 +13,7 @@ router.get('/reset/:gameId', gameController.resetGame);
 router.get('/validGame/:gameId', gameController.validGame);
 router.post('/nextRound', gameController.nextRound);
 router.get('/allCards', gameController.allCards);
-router.post('/quit', gameController.quit);
+router.post('/quitFromLobby', gameController.quitFromLobby);
+router.post('/quitFromGame', gameController.quitFromGame);
 
 module.exports = router;

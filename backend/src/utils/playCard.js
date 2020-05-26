@@ -176,10 +176,14 @@ var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
 
 var playRandom = async (timestamp, gameId, userId) => {
     
-    await sleep(60)
     let game = await Game.findOne({
         gameId: gameId
     })
+    if (game.players.includes(userId)) {
+        await sleep(60)
+    } else {
+        await sleep(1)
+    }
 
     // if (game.createdUser.toString() != userId.toString()) {
     //     await sleep(60)

@@ -23,7 +23,7 @@ exports.currentCards = async (req, res) => {
 			return res
 			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
 			.send({
-				currentCards: null
+				currentCards: []
 			})	
 		}
 
