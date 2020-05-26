@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import GameCards from '../../APIs/gameCards';
-import CardNames from '../../constants/cardNames';
+import CardImages from '../../constants/cardImages';
 
 class CommonGameCards extends Component {
 
@@ -37,23 +37,36 @@ class CommonGameCards extends Component {
 
         let cardNames = []
         for (var card of this.state.previousDroppedCard) {
-            cardNames.push(<p>{CardNames[card]}</p>)
+            // cardNames.push(<p>{CardNames[card]}</p>)				
+            cardNames.push(
+                <div className="col-md-3 p-1 text-center">
+                    <img src={CardImages[card]} alt="card" style={{height: 100 + "px"}} />
+                </div>
+            )
         }
 
         return (
             <div>
-                <p className={{minHeight: 1}}>Card On Top: {CardNames[this.state.cardOnTop]}</p>
+                {/* <p className={{minHeight: 1}}>Card On Top: {CardNames[this.state.cardOnTop]}</p> */}
                 <div className="row" style={{minHeight: 25 + "vh"}}>
-                    <div className="col-md-9">
+                    <div className="col-md-10">
                         <p className="display-4">{this.state.previousDroppedPlayer} {this.state.action}</p>
                     </div>
-                    <div className="col-md-3 text-center">
+                    <div className="col-md-2 text-center">
                         <img src="/deck.png" alt="cardDeck" style={{width: 100 + "%"}} />
                         <span className="font-weight-bold">Deck</span>
                     </div>
                 </div>
-                <p>Dropped card(s)</p>
-                <div className="">{cardNames}</div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <p className="font-weight-bold">Card(s) on the table</p>
+                    </div>
+                </div>
+                <div className="row" style={{height: 25 + "vh"}}>
+                    {cardNames}
+                </div>
+                {/* <p>Dropped card(s)</p>
+                <div className="">{cardNames}</div> */}
 
             </div>
         );

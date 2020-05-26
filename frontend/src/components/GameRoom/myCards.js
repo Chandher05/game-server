@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CardNames from '../../constants/cardNames';
+import CardImages from '../../constants/cardImages';
 import CardValues from '../../constants/cardValues';
 import axios from 'axios';
 import CurrentPlayer from '../../APIs/getCurrentPlayer';
@@ -214,25 +214,56 @@ class MyCards extends Component {
 
 		let cardNames = []
 		let total = 0
+		let temp = []
 		for (var card of this.state.currentCards) {
 			total += CardValues(card)
 			if (this.state.selected.includes(card.toString())) {
-				cardNames.push(<p onClick={this.selectCard} id={card} className="text-danger showPointer">{CardNames[card]}</p>)
+				// cardNames.push(<p onClick={this.selectCard} id={card} className="text-danger showPointer">{CardNames[card]}</p>)
+				temp.push(
+					<div className="col-md-4 bg-warning p-1">
+						<img src={CardImages[card]} alt="card" style={{width: 100 + "%"}} onClick={this.selectCard} className="showPointer" id={card} />
+					</div>
+				)
 			} else if (this.state.myTurn === true) {
-				cardNames.push(<p onClick={this.selectCard} id={card} className="showPointer">{CardNames[card]}</p>)
+				// cardNames.push(<p onClick={this.selectCard} id={card} className="showPointer">{CardNames[card]}</p>)
+				temp.push(
+					<div className="col-md-4 p-1">
+						<img src={CardImages[card]} alt="card" style={{width: 100 + "%"}} onClick={this.selectCard} className="showPointer" id={card} />
+					</div>
+				)
 			} else {
-				cardNames.push(<p onClick={this.selectCard} id={card}>{CardNames[card]}</p>)
+				temp.push(
+					<div className="col-md-4 p-1">
+						<img src={CardImages[card]} alt="card" style={{width: 100 + "%"}} className="showPointer" />
+					</div>
+				)
+			}
+			if (temp.length === 3) {
+				cardNames.push(
+					<div className="row mb-2">
+						{temp}
+					</div>
+				)
+				temp = []
 			}
 			// cardNames.push(<img onClick={this.selectCard} id="asdasd" src="/loading.gif" />)
 		}
+		if (temp.length > 0) {
+			cardNames.push(
+				<div className="row mb-2">
+					{temp}
+				</div>
+			)
+			temp = []
+		}
 
 		return (
-			<div className="pt-5">
+			<div className="p-5">
 				<p>{cardNames}</p>
 				{
 					this.state.myTurn === true?
 					<div>
-						<img src="/upArrow.gif" style={{width: 30 + "px"}} alt="upArrow" /> <span className="text-warning">Select cards</span>
+						<img src="/upArrow.gif" style={{maxWidth: 30 + "px"}} alt="upArrow" /> <span className="text-warning">Select cards</span>
 					</div>:
 					null
 				}
@@ -246,7 +277,7 @@ class MyCards extends Component {
 								this.state.selected.length === 0 ?
 									<div>
 										<p className="pt-3">
-											<button className="btn btn-success" disabled>Drop card(s) and pick up from top</button>
+											<button className="btn btn-success" disabled>Drop card(s) and pick up from the table</button>
 										</p>
 										<p className="pt-3">
 											<button className="btn btn-info" disabled>Drop card(s) and pick up from deck</button>
@@ -254,7 +285,7 @@ class MyCards extends Component {
 									</div> :
 									<div>
 										<p className="pt-3">
-											<button className="btn btn-success" onClick={this.dropCardAndPickUpFromTop}>Drop card(s) and pick up from top</button>
+											<button className="btn btn-success" onClick={this.dropCardAndPickUpFromTop}>Drop card(s) and pick up from the table</button>
 										</p>
 										<p className="pt-3">
 											<button className="btn btn-info" onClick={this.dropCardAndPickUpFromDeck}>Drop card(s) and pick up from deck</button>
