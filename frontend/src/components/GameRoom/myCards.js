@@ -110,7 +110,7 @@ class MyCards extends Component {
 	}
 
 	dropCard = () => {
-		if (this.state.selected.length === 0) {
+		if (this.state.selected === undefined || this.state.selected.length === 0) {
 			return
 		}
 		this.setState({

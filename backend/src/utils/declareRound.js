@@ -117,6 +117,7 @@ var declareRound = (gameId, userId) => {
                         userId: player
                     },
                     {
+                        currentCards: [],
                         $inc: {
                             score: allScores[player]
                         },
