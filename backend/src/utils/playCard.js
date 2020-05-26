@@ -1,6 +1,9 @@
 import Game from '../models/mongoDB/game';
 import GameMember from '../models/mongoDB/gameMember';
 import GetCards from './getCards';
+import CardValues from './cardValues';
+import DeclareRound from './declareRound';
+import RestockDeck from './restockDeck';
 
 function sleep(s) {
     var ms = s * 1000
@@ -93,6 +96,7 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
         // console.log("openedCards", openedCards)
         // console.log("inHand", difference)
 
+        RestockDeck(game.gameId)
         resolve(difference)
 
     })
@@ -133,6 +137,7 @@ var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
         // console.log("openedCards", openedCards)
         // console.log("inHand", difference)
 
+        RestockDeck(game.gameId)
         resolve(difference)
 
     })
@@ -168,10 +173,17 @@ var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
         // console.log("cardsInDeck", game.cardsInDeck)
         // console.log("openedCards", selected)
         // console.log("inHand", difference)
-
         resolve(difference)
 
     })
+}
+
+var calculateScore = (cards) => {
+    let total = 0
+    for (var card of cards) {
+        total += CardValues(card)
+    }
+    return total
 }
 
 var playRandom = async (timestamp, gameId, userId) => {
@@ -179,17 +191,17 @@ var playRandom = async (timestamp, gameId, userId) => {
     let game = await Game.findOne({
         gameId: gameId
     })
+
     if (game.players.includes(userId)) {
         await sleep(60)
     } else {
-        await sleep(1)
+        await sleep(2)
     }
 
-    // if (game.createdUser.toString() != userId.toString()) {
-    //     await sleep(60)
-    // } else {
-    //     return
-    // }
+    game = await Game.findOne({
+        gameId: gameId
+    })
+
     let gameMember = await GameMember.findOne({
         gameId: gameId,
         userId: userId
@@ -203,6 +215,15 @@ var playRandom = async (timestamp, gameId, userId) => {
         return
     } else if (game.isEnded == true) {
         console.log("\n\n\nGame has ended")
+        return
+    }
+    
+    let playerTotal = calculateScore(gameMember.currentCards)
+    var shouldDeclare = Math.random()
+    console.log(playerTotal, shouldDeclare)
+    if (playerTotal <= 15 && shouldDeclare <= 0.2) {
+        console.log(`\n\n\n${gameMember.userName} has declared`)
+        await DeclareRound(gameId, userId)
         return
     }
 

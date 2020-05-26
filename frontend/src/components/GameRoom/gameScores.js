@@ -63,7 +63,7 @@ class GameScoresComponent extends Component {
         for (person of this.state.scores) {
             temp.push(<div className={`${otherColClass} font-weight-bold`}>{person.userName}</div>)
         }
-        scoresRows.push(<div className="row border">{temp}</div>)
+        scoresRows.push(<div className="row">{temp}</div>)
 
         for (index = 0; index < numberOfRounds; index++) {
             temp = [<div className={firstColClass}>Round {index + 1}</div>]
@@ -74,14 +74,14 @@ class GameScoresComponent extends Component {
                     temp.push(<div className={`${otherColClass}`}>{person.roundScores[index]}</div>)
                 }
             }
-            scoresRows.push(<div className="row border">{temp}</div>)
+            scoresRows.push(<div className="row">{temp}</div>)
         }
 
         temp = [<div className={firstColClass}>Round {numberOfRounds + 1}</div>]
         for (person of this.state.scores) {
             temp.push(<div className={`${otherColClass}`}>-</div>)
         }
-        scoresRows.push(<div className="row border">{temp}</div>)
+        scoresRows.push(<div className="row">{temp}</div>)
 
         temp = [<div className={`${firstColClass} font-weight-bold`}>Total</div>]
         for (person of this.state.scores) {
@@ -91,10 +91,10 @@ class GameScoresComponent extends Component {
                 temp.push(<div className={`${otherColClass} font-weight-bold`}>{person.score}</div>)
             }
         }
-        scoresRows.push(<div className="row border">{temp}</div>)
+        scoresRows.push(<div className="row">{temp}</div>)
 
         return (
-            <div className="row border">
+            <div className="border">
                 {scoresRows}
             </div>
         );

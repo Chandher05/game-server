@@ -221,7 +221,7 @@ class JoinGame extends Component {
 					<div className="col-md-12">
 						<p className="display-4 text-center">
 							Game ID: <span className="font-weight-bold">{this.state.gameId}</span>
-							<i class="fas fa-copy ml-3 text-secondary display-4" id="showPointer" onClick={this.copyText}></i>
+							<i class="fas fa-copy ml-3 text-secondary display-4 showPointer" onClick={this.copyText}></i>
 						</p>
 					</div>
 				</div>

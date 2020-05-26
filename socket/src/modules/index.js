@@ -83,7 +83,9 @@ var socketListener = (io) => {
                     currentPlayer: data.game.currentPlayer,
                     playerCards: allCards,
                     hostPlayer: data.game.createdUser,
-                    gameStatus: data.game.isRoundComplete
+                    gameStatus: data.game.isRoundComplete,
+                    player: data.game.previousDroppedPlayer,
+                    action: data.game.lastPlayedAction
                 }
                 client.emit('allPlayers', data)
             })

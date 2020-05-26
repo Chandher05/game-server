@@ -8,11 +8,14 @@ class OtherPlayers extends Component {
     constructor() {
         super()
         this.state = {
+            isFetched: false,
             currentPlayer: null,
             cardsCount: null,
             hostPlayer: null,
             isRoundComplete: false,
-            redirect: null
+            redirect: null,
+            player: null,
+            action: null
         }
     }
 
@@ -20,12 +23,15 @@ class OtherPlayers extends Component {
 
         setInterval(() => {
 
-            AllPlayers(this.props.gameId, (currentPlayer, cardsCount, hostPlayer, isRoundComplete) => {
+            AllPlayers(this.props.gameId, (currentPlayer, cardsCount, hostPlayer, isRoundComplete, player, action) => {
                 this.setState({
                     currentPlayer: currentPlayer,
                     cardsCount: cardsCount,
                     hostPlayer: hostPlayer,
-                    isRoundComplete: isRoundComplete
+                    isRoundComplete: isRoundComplete,
+                    player: player,
+                    action: action,
+                    isFetched: true
                 })
             })
 
@@ -47,7 +53,7 @@ class OtherPlayers extends Component {
 
     render() {
 
-        if (this.state.cardsCount === null) {
+        if (this.state.cardsCount === null || this.state.isFetched === false) {
             return (null)
         } else if (this.state.redirect !== null) {
             return (this.state.redirect)
@@ -55,10 +61,14 @@ class OtherPlayers extends Component {
 
         let cards = [],
             background,
-            numberOfActivePlayers = 0
+            numberOfActivePlayers = 0,
+            currentPlayerUserName
 
         for (var player in this.state.cardsCount) {
             if (player === this.state.currentPlayer) {
+                currentPlayerUserName = this.state.cardsCount[player].userName
+            }
+            if (player === this.state.currentPlayer && this.state.isRoundComplete !== true) {
                 background = "bg-warning"
             } else {
                 background = "bg-light"
@@ -91,10 +101,12 @@ class OtherPlayers extends Component {
                 {
                     this.state.isRoundComplete === true ?
                         this.state.hostPlayer === localStorage.getItem('GameUserId') ?
-                            <div className="m-2">
+                            <div className="mt-5">
+                                <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start the next round
                     </div> :
-                            <div className="m-2">
+                            <div className="mt-5">
+                            <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Waiting for host to start the next round
                     </div> :
                         null

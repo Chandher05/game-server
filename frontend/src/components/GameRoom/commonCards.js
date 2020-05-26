@@ -10,7 +10,8 @@ class CommonGameCards extends Component {
             cardOnTop: null,
             previousDroppedCard: [],
             previousDroppedPlayer: null,
-            action: null
+            action: null,
+            isFetched: false
         }
     }
 
@@ -21,13 +22,19 @@ class CommonGameCards extends Component {
                     cardOnTop: cardOnTop,
                     previousDroppedCard: previousDroppedCard,
                     previousDroppedPlayer: previousDroppedPlayer,
-                    action: action
+                    action: action,
+                    isFetched: true
                 })
             })
         }, 1000);
     }
 
     render() {
+
+        if (this.state.isFetched === false) {
+            return (null)
+        }
+
         let cardNames = []
         for (var card of this.state.previousDroppedCard) {
             cardNames.push(<p>{CardNames[card]}</p>)
@@ -35,10 +42,18 @@ class CommonGameCards extends Component {
 
         return (
             <div>
-                <p>Card On Top: {CardNames[this.state.cardOnTop]}</p>
-                <p>{this.state.previousDroppedPlayer} {this.state.action}</p>
+                <p className={{minHeight: 1}}>Card On Top: {CardNames[this.state.cardOnTop]}</p>
+                <div className="row" style={{minHeight: 25 + "vh"}}>
+                    <div className="col-md-9">
+                        <p className="display-4">{this.state.previousDroppedPlayer} {this.state.action}</p>
+                    </div>
+                    <div className="col-md-3 text-center">
+                        <img src="/deck.png" alt="cardDeck" style={{width: 100 + "%"}} />
+                        <span className="font-weight-bold">Deck</span>
+                    </div>
+                </div>
                 <p>Dropped card(s)</p>
-                <div>{cardNames}</div>
+                <div className="">{cardNames}</div>
 
             </div>
         );

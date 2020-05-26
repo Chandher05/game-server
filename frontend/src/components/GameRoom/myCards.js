@@ -3,6 +3,7 @@ import CardNames from '../../constants/cardNames';
 import CardValues from '../../constants/cardValues';
 import axios from 'axios';
 import CurrentPlayer from '../../APIs/getCurrentPlayer';
+import '../Common/style.css';
 
 class MyCards extends Component {
 
@@ -35,6 +36,14 @@ class MyCards extends Component {
 						myTurn: true,
 						seconds: 10
 					})
+					for (var index in cardsInHand) {
+						if (cardsInHand[index] !== this.state.currentCards[index]) {
+							this.setState({
+								currentCards: cardsInHand
+							})
+							break
+						}
+					}
 				} else {
 					this.setState({
 						myTurn: false,
@@ -120,6 +129,9 @@ class MyCards extends Component {
 					selected: []
 				})
 			})
+		this.setState({
+			myTurn: false
+		})
 	}
 
 	dropCardAndPickUpFromTop = () => {
@@ -142,6 +154,9 @@ class MyCards extends Component {
 					selected: []
 				})
 			})
+		this.setState({
+			myTurn: false
+		})
 	}
 
 	dropCardAndPickUpFromDeck = () => {
@@ -164,6 +179,9 @@ class MyCards extends Component {
 					selected: []
 				})
 			})
+		this.setState({
+			myTurn: false
+		})
 	}
 
 	declare = () => {
@@ -190,12 +208,18 @@ class MyCards extends Component {
 	}
 
 	render() {
+		if (this.state.currentCards.length === 0) {
+			return (null)
+		}
+
 		let cardNames = []
 		let total = 0
 		for (var card of this.state.currentCards) {
 			total += CardValues(card)
 			if (this.state.selected.includes(card.toString())) {
-				cardNames.push(<p onClick={this.selectCard} id={card} className="text-danger">{CardNames[card]}</p>)
+				cardNames.push(<p onClick={this.selectCard} id={card} className="text-danger showPointer">{CardNames[card]}</p>)
+			} else if (this.state.myTurn === true) {
+				cardNames.push(<p onClick={this.selectCard} id={card} className="showPointer">{CardNames[card]}</p>)
 			} else {
 				cardNames.push(<p onClick={this.selectCard} id={card}>{CardNames[card]}</p>)
 			}
@@ -203,8 +227,15 @@ class MyCards extends Component {
 		}
 
 		return (
-			<div>
+			<div className="pt-5">
 				<p>{cardNames}</p>
+				{
+					this.state.myTurn === true?
+					<div>
+						<img src="/upArrow.gif" style={{width: 30 + "px"}} alt="upArrow" /> <span className="text-warning">Select cards</span>
+					</div>:
+					null
+				}
 				{
 					this.state.currentCards.length === 0 || this.state.myTurn === false ?
 						null :
@@ -214,16 +245,24 @@ class MyCards extends Component {
 								<button className="btn btn-success" onClick={this.dropCard}>Drop card(s)</button> :
 								this.state.selected.length === 0 ?
 									<div>
-										<button className="btn btn-success" disabled>Drop card(s) and pick up from top</button>
-										<button className="btn btn-success" disabled>Drop card(s) and pick up from deck</button>
+										<p className="pt-3">
+											<button className="btn btn-success" disabled>Drop card(s) and pick up from top</button>
+										</p>
+										<p className="pt-3">
+											<button className="btn btn-info" disabled>Drop card(s) and pick up from deck</button>
+										</p>
 									</div> :
 									<div>
-										<button className="btn btn-success" onClick={this.dropCardAndPickUpFromTop}>Drop card(s) and pick up from top</button>
-										<button className="btn btn-success" onClick={this.dropCardAndPickUpFromDeck}>Drop card(s) and pick up from deck</button>
+										<p className="pt-3">
+											<button className="btn btn-success" onClick={this.dropCardAndPickUpFromTop}>Drop card(s) and pick up from top</button>
+										</p>
+										<p className="pt-3">
+											<button className="btn btn-info" onClick={this.dropCardAndPickUpFromDeck}>Drop card(s) and pick up from deck</button>
+										</p>
 									</div>
 				}
 				{/* <p>Timer: {this.state.seconds}</p> */}
-				<p>Total: {total}</p>
+				<p className="font-weight-bold">Total: {total}</p>
 				{
 					total <= 15 && this.state.myTurn === true ?
 						<button className="btn btn-warning" onClick={this.declare}>Declare</button> :
