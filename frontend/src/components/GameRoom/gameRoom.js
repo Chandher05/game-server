@@ -27,6 +27,10 @@ class GameRoom extends Component {
 
 	render() {
 
+		if (!localStorage.getItem('GameUserId')) {
+			return (<Redirect to="/" />)
+		}
+
 		if (this.state.invalidGame === true) {
 			return (<Redirect to="/joinGame" />)
 		}
