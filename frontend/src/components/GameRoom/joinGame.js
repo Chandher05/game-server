@@ -255,7 +255,7 @@ class JoinGame extends Component {
 										<img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" className="m-4" /> Waiting for players to join the game
 							</div>
 									<div>
-										<button className="btn btn-danger w-25" onClick={this.startGame}>Quit game</button>
+										<button className="btn btn-danger w-25" onClick={this.quitGame}>Quit game</button>
 									</div>
 								</div> :
 							<div className="col-md-12 text-center">
