@@ -208,7 +208,7 @@ class MyCards extends Component {
 	}
 
 	render() {
-		if (this.state.currentCards.length === 0) {
+		if (this.state.currentCards === undefined || this.state.currentCards.length === 0) {
 			return (null)
 		}
 
