@@ -87,7 +87,7 @@ class Home extends Component {
                             </div>
                                 <div className="panel text-center">
                                     <p>or</p>
-                                    <p>Already have an account? <Link to="/login">Sign in</Link></p>
+                                    <p>Already have an account? <Link to={`/login${this.props.location.search}`}>Sign in</Link></p>
                                 </div>
                         </div>
                     </div>

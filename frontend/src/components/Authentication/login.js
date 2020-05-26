@@ -51,7 +51,7 @@ class Home extends Component {
 
     render() {
         if (localStorage.getItem('GameUserId')) {
-            return (<Redirect to="/joinGame" />)
+            return (<Redirect to={`/joinGame${this.props.location.search}`} />)
         }
 
         return (
@@ -81,7 +81,7 @@ class Home extends Component {
                             </div>
                             <div className="panel text-center">
                                 <p>or</p>
-                                <p><Link to="/create-account">Create account</Link></p>
+                                <p><Link to={`/create-account${this.props.location.search}`}>Create account</Link></p>
                             </div>
                         </div>
                     </div>

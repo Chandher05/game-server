@@ -173,7 +173,7 @@ class JoinGame extends Component {
 	render() {
 
 		if (!localStorage.getItem('GameUserId')) {
-			return (<Redirect to="/" />)
+			return (<Redirect to={`/login${this.props.location.search}`} />)
 		}
 
 		if (this.state.isFetched === false) {
