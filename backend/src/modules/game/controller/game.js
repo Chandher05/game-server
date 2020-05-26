@@ -558,3 +558,24 @@ exports.quitFromGame = async (req, res) => {
 			.send(error.message)
 	}
 }
+
+/**
+ * Reset all games.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.resetAllGames = async (req, res) => {
+	try {
+		await Game.deleteMany()
+		await GameMember.deleteMany()
+
+		return res
+			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+			.send(null)
+	} catch (error) {
+		console.log(`Error in game/quitFromGame ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
