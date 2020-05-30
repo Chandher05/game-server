@@ -22,6 +22,7 @@ class JoinGame extends Component {
 	componentDidMount() {
 		axios.get(`/game/currentGame/${localStorage.getItem('GameUserId')}`)
 			.then((response) => {
+				console.log(response.data)
 				if (response.status === 200) {
 					this.setState({
 						showJoinGame: false,
@@ -30,9 +31,8 @@ class JoinGame extends Component {
 					})
 				} else if (this.props.location.search) {
 					this.setState({
-						gameId: this.props.location.search.substr(1),
-						isFetched: true
-					})	
+						gameId: this.props.location.search.substr(1)
+					})
 				}
 				this.setState({
 					isFetched: true
@@ -42,11 +42,13 @@ class JoinGame extends Component {
 				if (error.response) {
 					if (error.response.status === 409) {
 						this.setState({
-							redirect: `/gameRoom/${error.response.data.gameId}`,
-							isFetched: true
+							redirect: `/gameRoom/${error.response.data.gameId}`
 						})
 					}
 				}
+				this.setState({
+					isFetched: true
+				})
 			})
 		setInterval(() => {
 			CreateGame((this.state.gameId), (err, players, isStarted) => {
@@ -54,7 +56,7 @@ class JoinGame extends Component {
 				this.setState({
 					activePlayersInGame: players,
 				})
-				if (isStarted === true) {
+				if (isStarted === true && players.includes(localStorage.getItem('GameUserId'))) {
 					this.setState({
 						redirect: `/gameRoom/${this.state.gameId}`
 					})
@@ -151,6 +153,23 @@ class JoinGame extends Component {
 		axios.post(`/game/start`, reqBody)
 	}
 
+	spectateGame = () => {
+		this.setState({
+			errMsg: ""
+		})
+		axios.get(`/game/validGame/${this.state.gameId}`)
+		.then(() => {
+			this.setState({
+				redirect: `/spectate/${this.state.gameId}`
+			})
+		})
+		.catch(() => {
+			this.setState({
+				errMsg: "Invalid game ID"
+			})
+		})
+	}
+
 	quitGame = () => {
 		const reqBody = {
 			gameId: this.state.gameId,
@@ -163,6 +182,12 @@ class JoinGame extends Component {
 					gameId: null
 				})
 			})
+	}
+
+	logout = () => {
+		localStorage.removeItem('GameUserId')
+		localStorage.removeItem('GameUserName')
+		window.location.reload()
 	}
 
 	copyText = () => {
@@ -188,22 +213,38 @@ class JoinGame extends Component {
 			return (
 				<div>
 					<div className="row p-5">
-						<div className="col-md-6 offset-md-3 text-center">
-							<img src="gameLogo.png" style={{ width: 100 + "%" }} alt="gameLogo" />
+						<div className="col-md-8 offset-md-2 text-center">
+							<p className="font-weight-bold">Sponsored by</p>
+							<a href="https://hostelit.in/" target="_blank" rel="noopener noreferrer">
+								<img src="hostelit.jpeg" style={{ width: 100 + "%" }} alt="gameLogo" />
+							</a>
+						</div>
+						<div className="col-md-2">
+							<div>
+								<button className="btn btn-danger w-100" onClick={this.logout}><i class="fas fa-sign-out-alt"></i> Logout</button>
+							</div>
+							<div className="pt-3">
+								<a href="/rules" target="_blank">
+									<button className="btn btn-dark w-100">View Rules</button>
+								</a>
+							</div>
 						</div>
 					</div>
 					<div className="text-center pt-5 row">
-						<div className="col-md-6 offset-md-3 text-center">
+						<div className="col-md-8 offset-md-2 text-center">
 							<button className="btn btn-success p-3 w-100" onClick={this.createGame}>Create new Game</button>
 						</div>
 					</div>
 					<div className="row p-5">
-						<div className="col-md-4 offset-md-3">
+						<div className="col-md-2 offset-md-2">
+							<button className="btn btn-info w-100 p-3" onClick={this.spectateGame}>Spectate</button>
+						</div>
+						<div className="col-md-4">
 							<input className="form-control" type="text" value={this.state.gameId} onChange={this.gameIdChangeHandler} placeholder="Enter game ID" />
 							<p className="text-danger text-center">{this.state.errMsg}</p>
 						</div>
 						<div className="col-md-2">
-							<button className="btn btn-primary w-100" onClick={this.joinGame}>Join Game</button>
+							<button className="btn btn-primary w-100 p-3" onClick={this.joinGame}>Join Game</button>
 						</div>
 					</div>
 				</div>
@@ -224,6 +265,7 @@ class JoinGame extends Component {
 				<div className="row p-5">
 					<div className="col-md-12">
 						<p className="display-4 text-center">
+							{/* <i class="fas fa-info-circle showPointer" data-toggle="modal" data-target="#exampleModal"></i><span> </span> */}
 							Game ID: <span className="font-weight-bold">{this.state.gameId}</span>
 							<i class="fas fa-copy ml-3 text-secondary display-4 showPointer" onClick={this.copyText}></i>
 						</p>
@@ -234,7 +276,7 @@ class JoinGame extends Component {
 						<textarea
 							ref={(textarea) => this.textArea = textarea}
 							value={window.location.origin.concat("/joinGame?").concat(this.state.gameId)}
-							style={{resize: "none"}}
+							style={{ resize: "none" }}
 							className="w-100 rounded text-center"
 						/>
 					</div>
@@ -269,7 +311,27 @@ class JoinGame extends Component {
 					}
 
 				</div>
-				
+
+
+				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">...</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary">Save changes</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
 			</div>
 		)
 

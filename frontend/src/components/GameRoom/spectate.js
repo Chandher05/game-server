@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import CommonCards from './commonCards';
-import MyCards from './myCards';
 import GameScores from './gameScores';
 import OtherPlayers from './otherPlayers';
 import axios from 'axios';
 import { Redirect } from 'react-router';
-import GameStatus from '../../APIs/gameStatus';
+import SpectateStatus from '../../APIs/spectateStatus';
 // import socket from '../../APIs/index';
 
 class GameRoom extends Component {
@@ -26,12 +25,14 @@ class GameRoom extends Component {
 				invalidGame: true
 			})
 		})
-		GameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
-			console.log(data)
-			this.setState({
-				gameState: data
+		setInterval(() => {
+			SpectateStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
+				console.log(data)
+				this.setState({
+					gameState: data
+				})
 			})
-		})
+		}, 1000)
 			
 	}
 
@@ -61,9 +62,6 @@ class GameRoom extends Component {
 					<div>
 						<GameScores gameId={this.props.match.params.gameId} scores={this.state.gameState.scores} />
 					</div>
-				</div>
-				<div className="col-md-3">
-					<MyCards gameId={this.props.match.params.gameId} />
 				</div>
 			</div>
 		);

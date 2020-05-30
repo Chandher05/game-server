@@ -6,8 +6,10 @@ import CreateAccount from './Authentication/createAccount';
 
 import JoinGame from './GameRoom/joinGame';
 import GameRoom from './GameRoom/gameRoom';
+import SpectateRoom from './GameRoom/spectate';
 
 import ErrorPage from './Authentication/errorPage';
+import Rules from './Common/Rules';
 
 //Create a Main Component
 class Main extends Component {
@@ -22,6 +24,9 @@ class Main extends Component {
 
                     <Route path="/joinGame" component={JoinGame}/>
                     <Route path="/gameRoom/:gameId" component={GameRoom}/>
+                    <Route path="/spectate/:gameId" component={SpectateRoom}/>
+
+                    <Route path="/rules" component={Rules}/>
 
                     <Route component={ErrorPage}/>
                 </Switch>

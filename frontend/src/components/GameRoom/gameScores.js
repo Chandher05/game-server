@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import GameScores from '../../APIs/gameScores';
 
 class GameScoresComponent extends Component {
 
@@ -10,19 +9,9 @@ class GameScoresComponent extends Component {
         }
     }
 
-    componentDidMount() {
-        setInterval(() => {
-            GameScores(this.props.gameId, (scores) => {
-                this.setState({
-                    scores: scores,
-                })
-            })
-        }, 1000);
-    }
-
     render() {
 
-        if (this.state.scores.length === 0) {
+        if (this.props.scores.length === 0) {
             return (null)
         }
 
@@ -31,11 +20,11 @@ class GameScoresComponent extends Component {
         // 4 - 2 - 2 - 2 - 2 - 2
         // 2 - 2 - 2 - 2 - 2 - 2 - 2
 
-        var numberOfRounds = this.state.scores[0].roundScores ? this.state.scores[0].roundScores.length : 0
+        var numberOfRounds = this.props.scores[0].roundScores ? this.props.scores[0].roundScores.length : 0
         var scoresRows = []
         var firstColClass,
             otherColClass
-        switch (this.state.scores.length) {
+        switch (this.props.scores.length) {
             case 2:
                 firstColClass = "col-md-4 text-center"
                 otherColClass = "col-md-4 text-center"
@@ -60,14 +49,14 @@ class GameScoresComponent extends Component {
             person,
             index
         temp = [<div className={`${firstColClass} font-weight-bold`}></div>]
-        for (person of this.state.scores) {
-            temp.push(<div className={`${otherColClass} font-weight-bold`}>{person.userName}</div>)
+        for (person of this.props.scores) {
+            temp.push(<div className={`${otherColClass} font-weight-bold text-justify`}>{person.userName}</div>)
         }
         scoresRows.push(<div className="row">{temp}</div>)
 
         for (index = 0; index < numberOfRounds; index++) {
             temp = [<div className={firstColClass}>Round {index + 1}</div>]
-            for (person of this.state.scores) {
+            for (person of this.props.scores) {
                 if (person.roundScores[index] === -1) {
                     temp.push(<div className={`${otherColClass}`}>-</div>)
                 } else {
@@ -78,13 +67,13 @@ class GameScoresComponent extends Component {
         }
 
         temp = [<div className={firstColClass}>Round {numberOfRounds + 1}</div>]
-        for (person of this.state.scores) {
+        for (person of this.props.scores) {
             temp.push(<div className={`${otherColClass}`}>-</div>)
         }
         scoresRows.push(<div className="row">{temp}</div>)
 
         temp = [<div className={`${firstColClass} font-weight-bold`}>Total</div>]
-        for (person of this.state.scores) {
+        for (person of this.props.scores) {
             if (person.score > 100) {
                 temp.push(<div className={`${otherColClass} font-weight-bold text-danger`}>{person.score}</div>)
             } else {

@@ -3,8 +3,9 @@ import './App.css';
 import Main from './components/Main';
 import {BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
+import backendURL from './constants/connection'
 
-axios.defaults.baseURL = 'http://localhost:9000';
+axios.defaults.baseURL = `${backendURL}:9000`;
 
 //App Component
 class App extends Component {

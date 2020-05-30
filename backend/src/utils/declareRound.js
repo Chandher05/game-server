@@ -19,6 +19,22 @@ var endGame = (gameId, userName) => {
 
 var declareRound = (gameId, userId) => {
     return new Promise( async (resolve) => {
+        let game = await Game.findOne({
+            gameId: gameId
+        })
+
+        if (game.isRoundComplete === true) {
+            console.log("ROund is complete")
+            resolve()
+            return
+        }
+        
+        if (game.currentPlayer.toString() != userId) {
+            console.log("Not current player")
+            resolve()
+            return
+        }
+
         let gameMembers = await GameMember.find({
             gameId: gameId
 		})
@@ -67,11 +83,6 @@ var declareRound = (gameId, userId) => {
 			allScores[userId] = 50
 		} else if (isPair == false && playerScore == min) {
 			allScores[userId] *= 2
-			for (var index in allScores) {
-				if (allScores[index] == min) {
-					allScores[index] = Math.floor(allScores[index] / 2)
-				}
-			}
 		} else {
 			allScores[userId] = -25
 		}
@@ -117,7 +128,6 @@ var declareRound = (gameId, userId) => {
                         userId: player
                     },
                     {
-                        currentCards: [],
                         $inc: {
                             score: allScores[player]
                         },

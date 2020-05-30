@@ -16,7 +16,8 @@ class MyCards extends Component {
 			seconds: 10,
 			isRoundComplete: false,
 			isGameComplete: false,
-			hostPlayer: null
+			hostPlayer: null,
+			showDeclare: true
 		}
 	}
 
@@ -34,7 +35,7 @@ class MyCards extends Component {
 				} else if (currentPlayer === localStorage.getItem('GameUserId')) {
 					this.setState({
 						myTurn: true,
-						seconds: 10
+						showDeclare: true
 					})
 					for (var index in cardsInHand) {
 						if (cardsInHand[index] !== this.state.currentCards[index]) {
@@ -58,23 +59,7 @@ class MyCards extends Component {
 				})
 			})
 
-		}, 1000)
-	}
-
-	sleep = (s) => {
-		var ms = s * 1000
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
-
-	startTimer = async () => {
-		var count = this.state.seconds
-		while (count >= 0) {
-			this.setState({
-				seconds: count
-			})
-			await this.sleep(1)
-			count--
-		}
+		}, 250)
 	}
 
 	getMyCards = () => {
@@ -113,78 +98,93 @@ class MyCards extends Component {
 		if (this.state.selected === undefined || this.state.selected.length === 0) {
 			return
 		}
+		const selectedCards = this.state.selected
 		this.setState({
-			myTurn: false
+			selected: []
 		})
 		const reqBody = {
 			gameId: this.props.gameId,
 			userId: localStorage.getItem('GameUserId'),
-			selected: this.state.selected,
+			selected: selectedCards,
 			type: "New"
 		}
 		axios.post(`/player/dropCards`, reqBody)
-			.then((response) => {
+			.then(() => {
 				this.setState({
-					currentCards: response.data.currentCards,
+					// currentCards: response.data.currentCards,
 					selected: []
 				})
 			})
-		this.setState({
-			myTurn: false
-		})
+			.catch(() => {
+				this.setState({
+					selected: selectedCards
+				})
+			})
 	}
 
 	dropCardAndPickUpFromTop = () => {
 		if (this.state.selected.length === 0) {
 			return
 		}
+		const selectedCards = this.state.selected
 		this.setState({
-			myTurn: false
+			selected: []
 		})
 		const reqBody = {
 			gameId: this.props.gameId,
 			userId: localStorage.getItem('GameUserId'),
-			selected: this.state.selected,
+			selected: selectedCards,
 			type: "Top"
 		}
 		axios.post(`/player/dropCards`, reqBody)
-			.then((response) => {
+			.then(() => {
 				this.setState({
-					currentCards: response.data.currentCards,
+					// currentCards: response.data.currentCards,
 					selected: []
 				})
 			})
-		this.setState({
-			myTurn: false
-		})
+			.catch(() => {
+				this.setState({
+					selected: selectedCards
+				})
+			})
 	}
 
 	dropCardAndPickUpFromDeck = () => {
 		if (this.state.selected.length === 0) {
 			return
 		}
+		const selectedCards = this.state.selected
 		this.setState({
-			myTurn: false
+			selected: []
 		})
 		const reqBody = {
 			gameId: this.props.gameId,
 			userId: localStorage.getItem('GameUserId'),
-			selected: this.state.selected,
+			selected: selectedCards,
 			type: "Deck"
 		}
 		axios.post(`/player/dropCards`, reqBody)
-			.then((response) => {
+			.then(() => {
 				this.setState({
-					currentCards: response.data.currentCards,
+					// currentCards: response.data.currentCards,
 					selected: []
 				})
 			})
+			.catch(() => {
+				this.setState({
+					selectCard: selectedCards
+				})
+			})
 		this.setState({
-			myTurn: false
+			showDeclare: false
 		})
 	}
 
 	declare = () => {
+		this.setState({
+			showDeclare: false
+		})
 		const reqBody = {
 			gameId: this.props.gameId,
 			userId: localStorage.getItem('GameUserId')
@@ -221,20 +221,20 @@ class MyCards extends Component {
 				// cardNames.push(<p onClick={this.selectCard} id={card} className="text-danger showPointer">{CardNames[card]}</p>)
 				temp.push(
 					<div className="col-md-4 bg-warning p-1">
-						<img src={CardImages[card]} alt="card" style={{width: 100 + "%"}} onClick={this.selectCard} className="showPointer" id={card} />
+						<img src={CardImages[card]} alt="card" style={{ width: 100 + "%" }} onClick={this.selectCard} className="showPointer" id={card} />
 					</div>
 				)
 			} else if (this.state.myTurn === true) {
 				// cardNames.push(<p onClick={this.selectCard} id={card} className="showPointer">{CardNames[card]}</p>)
 				temp.push(
 					<div className="col-md-4 p-1">
-						<img src={CardImages[card]} alt="card" style={{width: 100 + "%"}} onClick={this.selectCard} className="showPointer" id={card} />
+						<img src={CardImages[card]} alt="card" style={{ width: 100 + "%" }} onClick={this.selectCard} className="showPointer" id={card} />
 					</div>
 				)
 			} else {
 				temp.push(
 					<div className="col-md-4 p-1">
-						<img src={CardImages[card]} alt="card" style={{width: 100 + "%"}} className="showPointer" />
+						<img src={CardImages[card]} alt="card" style={{ width: 100 + "%" }} className="showPointer" />
 					</div>
 				)
 			}
@@ -261,11 +261,11 @@ class MyCards extends Component {
 			<div className="p-5">
 				<p>{cardNames}</p>
 				{
-					this.state.myTurn === true?
-					<div>
-						<img src="/upArrow.gif" style={{maxWidth: 30 + "px"}} alt="upArrow" /> <span className="text-warning">Select cards</span>
-					</div>:
-					null
+					this.state.myTurn === true ?
+						<div>
+							<img src="/upArrow.gif" style={{ maxWidth: 30 + "px" }} alt="upArrow" /> <span className="text-warning">Select cards</span>
+						</div> :
+						null
 				}
 				{
 					this.state.currentCards.length === 0 || this.state.myTurn === false ?
@@ -295,18 +295,20 @@ class MyCards extends Component {
 				{/* <p>Timer: {this.state.seconds}</p> */}
 				<p className="font-weight-bold">Total: {total}</p>
 				{
-					total <= 15 && this.state.myTurn === true ?
+					total < 15 && this.state.myTurn === true && this.state.showDeclare === true ?
 						<button className="btn btn-warning" onClick={this.declare}>Declare</button> :
-						null
+						this.state.currentCards.length === 2 && (this.state.currentCards[0] - this.state.currentCards[1]) % 13 === 0 ?
+							<button className="btn btn-warning" onClick={this.declare}>Declare</button> :
+							null
 				}
 				{
 					this.state.isGameComplete === true ?
-					<a href="/joinGame">
-						<button className="btn btn-danger">Close game</button>
-					</a>:
-					this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId') ?
-						<button className="btn btn-success" onClick={this.startNextRound}>Start next round</button> :
-						null
+						<a href="/joinGame">
+							<button className="btn btn-danger">Close game</button>
+						</a> :
+						this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId') ?
+							<button className="btn btn-success" onClick={this.startNextRound}>Start next round</button> :
+							null
 				}
 			</div>
 		);

@@ -1,4 +1,6 @@
 import openSocket from 'socket.io-client';
-const  socket = openSocket('http://localhost:8000/');
+import backendURL from '../constants/connection';
+
+const  socket = openSocket(`${backendURL}:8000/`);
 
 export default socket;

@@ -87,11 +87,22 @@ exports.joinGame = async (req, res) => {
 				.send("Game does not exist")
 		} else if (game.players.includes(req.body.userId)) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User is already part of a game")
+				.send("User has already joined game")
 		} else if (game.players.length === 5) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("Game is full")
+			.send("Game is full")
 		}
+			
+		game = await Game.findOne({
+			gameId: req.body.gameId,
+			players: req.body.userId,
+			isEnded: false
+		})
+		if (game) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send("User has already joined game")
+		}
+
 		game = await Game.findOneAndUpdate(
 			{
 				gameId: req.body.gameId
@@ -361,10 +372,22 @@ exports.nextRound = async (req, res) => {
 			availableCards.push(index)
 		}
 
-		var activePlayers = await GameMember.find({
-			gameId: req.body.gameId,
-			isAlive: true
+		var allPlayers = await GameMember.find({
+			gameId: req.body.gameId
 		})
+		var activePlayers = []
+		for (var player of allPlayers) {
+			if (player.isAlive == true) {
+				activePlayers.push(player)
+			} else {
+				await GameMember.findByIdAndUpdate(
+					player._id,
+					{
+						currentCards: []
+					}
+				)
+			}
+		}
 		var nextPlayerToStart = activePlayers[game.roundsComplete % activePlayers.length]
 		var nextUserNameToStart = nextPlayerToStart.userName
 		var nextUserIdToStart = nextPlayerToStart.userId
@@ -531,10 +554,23 @@ exports.quitFromGame = async (req, res) => {
 				.send("Game does not exist")
 		}
 		
-		if (req.body.userId === game.createdUser.toString()) {
+		if (req.body.userId === game.createdUser.toString() && game.players.length === 1) {
 			await Game.findOneAndDelete({
 				gameId: req.body.gameId
 			})
+		} else if (req.body.userId === game.createdUser.toString()) {
+			let newCreatedUser = game.players[1]
+			await Game.findOneAndUpdate(
+				{
+					gameId: req.body.gameId
+				},
+				{
+					$pull: {
+						players: req.body.userId
+					},
+					createdUser: newCreatedUser
+				}
+			)
 		} else {
 			await Game.findOneAndUpdate(
 				{
@@ -573,7 +609,7 @@ exports.resetAllGames = async (req, res) => {
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
 			.send(null)
 	} catch (error) {
-		console.log(`Error in game/quitFromGame ${error}`)
+		console.log(`Error in game/resetAllGames ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)

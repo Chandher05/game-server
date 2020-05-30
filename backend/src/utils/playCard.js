@@ -65,11 +65,12 @@ var updateDifferenceInPlayer = (gameId, userId, difference) => {
 
 var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
     return new Promise( async (resolve) => {
-        
-        
-        
-        
-        
+
+        if (game.currentPlayer.toString() != gameMember.userId.toString()) {
+            console.log("Not current player")
+            resolve()
+            return
+        }
 
         var difference = getDifference(gameMember, selected)
 
@@ -92,10 +93,6 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
         )
         await updateDifferenceInPlayer(game.gameId, gameMember.userId, difference)
 
-        
-        
-        
-
         RestockDeck(game.gameId)
         resolve(difference)
 
@@ -104,11 +101,12 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
 
 var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
     return new Promise( async (resolve) => {
-        
-        
-        
-        
-        
+
+        if (game.currentPlayer.toString() != gameMember.userId.toString()) {
+            console.log("Not current player")
+            resolve()
+            return
+        }
 
         var difference = getDifference(gameMember, selected)
 
@@ -128,14 +126,10 @@ var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
                 previousDroppedPlayer: gameMember.userName,
                 currentPlayer: nextPlayer,
                 lastPlayedTime: timestamp,
-				lastPlayedAction: "picked up from the top"
+				lastPlayedAction: "picked up from the table"
             }
         )
         await updateDifferenceInPlayer(game.gameId, gameMember.userId, difference)
-
-        
-        
-        
 
         RestockDeck(game.gameId)
         resolve(difference)
@@ -145,11 +139,11 @@ var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
 
 var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
     return new Promise( async (resolve) => {
-        
-        
-        
-        
-        
+
+        if (game.currentPlayer.toString() != gameMember.userId.toString()) {
+            resolve()
+            return
+        }
 
         var difference = getDifference(gameMember, selected)
 
@@ -168,11 +162,7 @@ var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
         )		
         
         await updateDifferenceInPlayer(game.gameId, gameMember.userId, difference)
-        
-        
-        
-        
-        
+
         resolve(difference)
 
     })
@@ -252,11 +242,9 @@ var playRandom = async (timestamp, gameId, userId) => {
         console.log(`\n\n\n${gameMember.userName} dropped ${selected} and picked from deck`)
         await fromDeck(game, gameMember, selected, timestamp, nextPlayer)
     } else {
-        console.log(`\n\n\n${gameMember.userName} dropped ${selected} and picked from the top`)
+        console.log(`\n\n\n${gameMember.userName} dropped ${selected} and picked from the table`)
         await fromTop(game, gameMember, selected, timestamp, nextPlayer)
     }
-
-    // Decide if player should declare 
 
     playRandom(timestamp, gameId, nextPlayer)
 

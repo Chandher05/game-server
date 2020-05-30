@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import AllPlayers from '../../APIs/allPlayers';
 import { Redirect } from 'react-router';
 
 class OtherPlayers extends Component {
@@ -19,25 +18,6 @@ class OtherPlayers extends Component {
         }
     }
 
-    componentDidMount() {
-
-        setInterval(() => {
-
-            AllPlayers(this.props.gameId, (currentPlayer, cardsCount, hostPlayer, isRoundComplete, player, action) => {
-                this.setState({
-                    currentPlayer: currentPlayer,
-                    cardsCount: cardsCount,
-                    hostPlayer: hostPlayer,
-                    isRoundComplete: isRoundComplete,
-                    player: player,
-                    action: action,
-                    isFetched: true
-                })
-            })
-
-        }, 1000)
-    }
-
     leaveGame = () => {
         const reqBody = {
             gameId: this.props.gameId,
@@ -52,77 +32,75 @@ class OtherPlayers extends Component {
     }
 
     render() {
-
-        if (this.state.cardsCount === null || this.state.isFetched === false) {
-            return (null)
-        } else if (this.state.redirect !== null) {
+        
+        if (this.state.redirect !== null) {
             return (this.state.redirect)
         }
 
         let cards = [],
             background,
-            numberOfActivePlayers = 0,
-            currentPlayerUserName
+            currentPlayerUserName,
+            hostPlayerName
 
-        for (var player in this.state.cardsCount) {
-            if (player === this.state.currentPlayer) {
-                currentPlayerUserName = this.state.cardsCount[player].userName
+        for (var player in this.props.allPlayers.cardsCount) {
+            if (player === this.props.allPlayers.currentPlayer) {
+                currentPlayerUserName = this.props.allPlayers.cardsCount[player].userName
             }
-            if (player === this.state.currentPlayer && this.state.isRoundComplete !== true) {
+            if (player === this.props.allPlayers.currentPlayer && this.props.allPlayers.isRoundComplete !== true) {
                 background = "bg-warning"
+            } else if (this.props.allPlayers.isRoundComplete === true) {
+                background = "bg-secondary text-white"
             } else {
                 background = "bg-light"
             }
             var showCards = []
-            for (var index = 0; index < this.state.cardsCount[player].count; index++) {
-                showCards.push(<i class="fas fa-square text-secondary p-1"></i>)
+            if (this.props.allPlayers.isRoundComplete === true) {
+                showCards.push(<p className="font-weight-bold text-center">{this.props.allPlayers.cardsCount[player].score}</p>)
+            } else {
+                for (var index = 0; index < this.props.allPlayers.cardsCount[player].count; index++) {
+                    showCards.push(<i class="fas fa-square text-secondary p-1"></i>)
+                }
             }
             cards.push(
                 <div className={`row p-2 ${background}`}>
-                    <div className="col-md-5">{this.state.cardsCount[player].userName}</div>
+                    <div className="col-md-5 text-justify">{this.props.allPlayers.cardsCount[player].userName}</div>
                     <div className="col-md-5">{showCards}</div>
                     {
-                        this.state.hostPlayer === player ?
+                        this.props.allPlayers.hostPlayer === player ?
                             <div className="col-md-2"><i className="fas fa-star"></i></div> :
-                            this.state.cardsCount[player].hasQuit === true ?
+                            this.props.allPlayers.cardsCount[player].hasQuit === true ?
                                 <div className="col-md-2"><i className="fas fa-running"></i></div> :
                                 null
                     }
                 </div>
             )
-            if (this.state.cardsCount[player].hasQuit) {
-                numberOfActivePlayers++
+            if (this.props.allPlayers.hostPlayer === player) {
+                hostPlayerName = this.props.allPlayers.cardsCount[player].userName
             }
         }
 
         return (
             <div className="m-5">
+                <a href="/rules" target="_blank">
+                    <button className="btn btn-dark mb-5 w-100">View Rules</button>
+                </a>
                 {cards}
                 {
-                    this.state.isRoundComplete === true ?
-                        this.state.hostPlayer === localStorage.getItem('GameUserId') ?
+                    this.props.allPlayers.isRoundComplete === true ?
+                        this.props.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
                             <div className="mt-5">
                                 <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start the next round
                     </div> :
                             <div className="mt-5">
-                            <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
-                                <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Waiting for host to start the next round
+                                <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
+                                <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Waiting for {hostPlayerName} to start the next round
                     </div> :
                         null
                 }
-                {
-                    this.state.hostPlayer === localStorage.getItem('GameUserId') ?
-                        numberOfActivePlayers === 1 ?
-                            <div className="text-center">
-                                <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
-                            </div> :
-                            null :
-                        <div className="text-center">
-                            <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
-                        </div>
-
-                }
+                <div className="text-center">
+                    <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
+                </div>
             </div>
         );
     }

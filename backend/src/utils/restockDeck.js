@@ -7,6 +7,7 @@ var restockDeck = (gameId) => {
         })
         if (game.cardsInDeck.length > 5) {
             resolve()
+            return
         }
 
         console.log(`Restocking deck for ${gameId}`)
