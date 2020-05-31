@@ -4,6 +4,31 @@ import { Redirect } from 'react-router';
 import CreateGame from '../../APIs/createGame';
 import '../Common/style.css';
 
+
+class UserInfo extends Component {
+
+	kickPlayer = () => {
+		const reqBody = {
+			gameId: this.props.gameId,
+			userId: this.props.player._id
+		}
+		axios.post(`/game/quitFromLobby`, reqBody)
+	}
+
+	render() {
+		return (
+			<div className="row">
+				<div className="col-md-6 text-right p-3">
+					<h3 className="font-weight-light">{this.props.player.userName}</h3>
+				</div>
+				<div className="col-md-6 text-left p-3">
+					<button className="btn btn-danger" onClick={this.kickPlayer}>Remove player</button>
+				</div>
+			</div>
+		)
+	}
+}
+
 class JoinGame extends Component {
 
 	constructor() {
@@ -56,9 +81,21 @@ class JoinGame extends Component {
 				this.setState({
 					activePlayersInGame: players,
 				})
-				if (isStarted === true && players.includes(localStorage.getItem('GameUserId'))) {
+				var isPartOfGame = false
+				for (var player of players) {
+					if (player._id === localStorage.getItem('GameUserId')) {
+						isPartOfGame = true
+						break
+					}
+				}
+				if (isStarted === true && isPartOfGame === true) {
 					this.setState({
 						redirect: `/gameRoom/${this.state.gameId}`
+					})
+				} else if (this.state.showJoinGame === false && isPartOfGame === false) {
+					this.setState({
+						gameId: null,
+						showJoinGame: true
 					})
 				}
 			})
@@ -253,7 +290,25 @@ class JoinGame extends Component {
 
 		let playersInGame = []
 		for (var player of this.state.activePlayersInGame) {
-			playersInGame.push(<div className="col-md-12 text-center p-3"><h3 className="font-weight-light">{player.userName}</h3></div>)
+			if (this.state.createdUser === player._id && this.state.createdUser === localStorage.getItem('GameUserId')) {
+				playersInGame.push(
+					<div className="row">
+						<div className="col-md-6 text-right p-3">
+							<h3 className="font-weight-light">{player.userName}</h3>
+						</div>
+					</div>
+				)
+			} else if (this.state.createdUser === localStorage.getItem('GameUserId')) {
+				playersInGame.push(<UserInfo gameId={this.state.gameId} player={player} />)
+			} else {
+				playersInGame.push(
+					<div className="row">
+						<div className="col-md-6 offset-md-3 text-center p-3">
+							<h3 className="font-weight-light">{player.userName}</h3>
+						</div>
+					</div>
+				)
+			}
 		}
 
 		if (playersInGame.length === 0) {
@@ -265,7 +320,6 @@ class JoinGame extends Component {
 				<div className="row p-5">
 					<div className="col-md-12">
 						<p className="display-4 text-center">
-							{/* <i class="fas fa-info-circle showPointer" data-toggle="modal" data-target="#exampleModal"></i><span> </span> */}
 							Game ID: <span className="font-weight-bold">{this.state.gameId}</span>
 							<i class="fas fa-copy ml-3 text-secondary display-4 showPointer" onClick={this.copyText}></i>
 						</p>
@@ -281,15 +335,15 @@ class JoinGame extends Component {
 						/>
 					</div>
 				</div>
+
+				{playersInGame}
+
 				<div className="row">
-					<div className="col-md-12">
-						{playersInGame}
-					</div>
 
 					{
 						this.state.createdUser === localStorage.getItem('GameUserId') ?
 							playersInGame.length > 1 ?
-								<div className="col-md-12 text-center">
+								<div className="col-md-12 text-center pt-5">
 									<button className="btn btn-success w-25" onClick={this.startGame}>Start Game</button>
 								</div> :
 								<div className="col-md-12 text-center">
@@ -310,25 +364,6 @@ class JoinGame extends Component {
 							</div>
 					}
 
-				</div>
-
-
-				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">...</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary">Save changes</button>
-							</div>
-						</div>
-					</div>
 				</div>
 
 
