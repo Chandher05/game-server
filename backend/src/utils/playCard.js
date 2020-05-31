@@ -182,30 +182,33 @@ var playRandom = async (timestamp, gameId, userId) => {
         gameId: gameId
     })
 
-    if (game.players.includes(userId)) {
-        await sleep(60)
-    } else {
-        await sleep(2)
-    }
-
-    game = await Game.findOne({
-        gameId: gameId
-    })
-
     let gameMember = await GameMember.findOne({
         gameId: gameId,
         userId: userId
     })
 
-    if (game.lastPlayedTime != timestamp) {
-        console.log(`\n\n\n${gameMember.userName} has already played`)
-        return
-    } else if (game.isRoundComplete == true) {
-        console.log("\n\n\nRound has ended")
-        return
-    } else if (game.isEnded == true) {
-        console.log("\n\n\nGame has ended")
-        return
+    if (game.players.includes(userId)) {
+        var count = 0
+        while (count < 60) {
+            await sleep(1)
+            count++
+            game = await Game.findOne({
+                gameId: gameId
+            })
+        
+            if (game.lastPlayedTime != timestamp) {
+                console.log(`\n\n\n${gameMember.userName} has already played`)
+                return
+            } else if (game.isRoundComplete == true) {
+                console.log("\n\n\nRound has ended")
+                return
+            } else if (game.isEnded == true) {
+                console.log("\n\n\nGame has ended")
+                return
+            }
+        }
+    } else {
+        await sleep(2)
     }
     
     let playerTotal = calculateScore(gameMember.currentCards)

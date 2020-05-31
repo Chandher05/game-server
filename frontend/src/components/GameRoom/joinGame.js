@@ -47,7 +47,6 @@ class JoinGame extends Component {
 	componentDidMount() {
 		axios.get(`/game/currentGame/${localStorage.getItem('GameUserId')}`)
 			.then((response) => {
-				console.log(response.data)
 				if (response.status === 200) {
 					this.setState({
 						showJoinGame: false,

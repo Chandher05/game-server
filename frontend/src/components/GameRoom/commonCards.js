@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import CardImages from '../../constants/cardImages';
+import AreCardsSame from '../../constants/areCardsSame';
 
 class CommonGameCards extends Component {
 
@@ -17,12 +18,14 @@ class CommonGameCards extends Component {
     render() {
 
         let cardNames = []
-        for (var card of this.props.currentCards.previousDroppedCard) {
-            cardNames.push(
-                <div className="col-md-3 p-1 text-center">
-                    <img src={CardImages[card]} alt="card" style={{height: 100 + "px"}} />
-                </div>
-            )
+        if (AreCardsSame(this.props.currentCards.previousDroppedCard)) {
+            for (var card of this.props.currentCards.previousDroppedCard) {
+                cardNames.push(
+                    <div className="col-md-3 p-1 text-center">
+                        <img src={CardImages[card]} alt="card" style={{height: 100 + "px"}} />
+                    </div>
+                )
+            }
         }
 
         return (

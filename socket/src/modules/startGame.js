@@ -97,7 +97,7 @@ exports.getGameStatus = (gameId, userId) => {
             gameMember
 
         for (var player of allGameMembers) {
-            if (player.userId.toString() == userId) {
+            if (player.userId.toString() == userId && game.players.includes(player.userId)) {
                 gameMember = player
             }
             data = {

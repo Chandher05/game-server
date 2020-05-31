@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CardImages from '../../constants/cardImages';
 import CardValues from '../../constants/cardValues';
+import RemoveDuplicates from '../../constants/removeDuplicates';
 import axios from 'axios';
 import CurrentPlayer from '../../APIs/getCurrentPlayer';
 import '../Common/style.css';
@@ -28,6 +29,7 @@ class MyCards extends Component {
 		setInterval(() => {
 
 			CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand, isRoundComplete, isGameComplete, hostPlayer) => {
+				cardsInHand = RemoveDuplicates(cardsInHand)
 				if (isRoundComplete === true || isGameComplete === true) {
 					this.setState({
 						myTurn: false
@@ -209,7 +211,15 @@ class MyCards extends Component {
 
 	render() {
 		if (this.state.currentCards === undefined || this.state.currentCards.length === 0) {
-			return (null)
+			if (this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId')) {
+				return (
+					<div className="p-5 m-5 text-center">
+						<button className="btn btn-success" onClick={this.startNextRound}>Start next round</button>
+					</div>
+				)
+			} else {
+				return (null)
+			}
 		}
 
 		let cardNames = []

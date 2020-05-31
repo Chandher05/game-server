@@ -27,7 +27,6 @@ class GameRoom extends Component {
 		})
 		setInterval(() => {
 			SpectateStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
-				console.log(data)
 				this.setState({
 					gameState: data
 				})
