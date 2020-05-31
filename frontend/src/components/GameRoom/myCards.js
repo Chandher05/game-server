@@ -297,7 +297,7 @@ class MyCards extends Component {
 				{
 					total < 15 && this.state.myTurn === true && this.state.showDeclare === true ?
 						<button className="btn btn-warning" onClick={this.declare}>Declare</button> :
-						this.state.currentCards.length === 2 && (this.state.currentCards[0] - this.state.currentCards[1]) % 13 === 0 ?
+						this.state.currentCards.length === 2 && (this.state.currentCards[0] - this.state.currentCards[1]) % 13 === 0 && this.state.myTurn === true ?
 							<button className="btn btn-warning" onClick={this.declare}>Declare</button> :
 							null
 				}
