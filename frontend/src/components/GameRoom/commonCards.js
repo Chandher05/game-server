@@ -32,7 +32,7 @@ class CommonGameCards extends Component {
             <div className="mt-5">
                 <div className="row" style={{minHeight: 25 + "vh"}}>
                     <div className="col-md-10">
-                        <p className="display-4">{this.props.currentCards.previousDroppedPlayer} {this.props.currentCards.action}</p>
+                        <p className="display-4 text-break">{this.props.currentCards.previousDroppedPlayer} {this.props.currentCards.action}</p>
                     </div>
                     <div className="col-md-2 text-center">
                         <img src="/deck.png" alt="cardDeck" style={{width: 100 + "%"}} />

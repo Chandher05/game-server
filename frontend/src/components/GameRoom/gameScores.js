@@ -50,7 +50,7 @@ class GameScoresComponent extends Component {
             index
         temp = [<div className={`${firstColClass} font-weight-bold`}></div>]
         for (person of this.props.scores) {
-            temp.push(<div className={`${otherColClass} font-weight-bold text-justify`}>{person.userName}</div>)
+            temp.push(<div className={`${otherColClass} font-weight-bold text-break`}>{person.userName}</div>)
         }
         scoresRows.push(<div className="row">{temp}</div>)
 

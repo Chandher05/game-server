@@ -63,7 +63,7 @@ class OtherPlayers extends Component {
             }
             cards.push(
                 <div className={`row p-2 ${background}`}>
-                    <div className="col-md-5 text-justify">{this.props.allPlayers.cardsCount[player].userName}</div>
+                    <div className="col-md-5 text-break">{this.props.allPlayers.cardsCount[player].userName}</div>
                     <div className="col-md-5">{showCards}</div>
                     {
                         this.props.allPlayers.hostPlayer === player ?
