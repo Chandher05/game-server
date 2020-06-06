@@ -108,7 +108,8 @@ var socketListener = (io) => {
                         cardsCount: data.allCards,
                         hostPlayer: data.game.createdUser,
                         isRoundComplete: data.game.isRoundComplete,
-                        player: data.game.previousDroppedPlayer,
+                        isRoundComplete: data.game.isRoundComplete,
+                        isEnded: data.game.isEnded,
                         action: data.game.lastPlayedAction
                     }
     

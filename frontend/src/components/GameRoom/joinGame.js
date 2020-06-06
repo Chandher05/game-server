@@ -54,7 +54,7 @@ class JoinGame extends Component {
 				})
 			})
 		setInterval(() => {
-			CreateGame((this.state.gameId), (err, players, isStarted) => {
+			CreateGame((this.state.gameId), (players, isStarted, createdUser) => {
 
 				this.setState({
 					activePlayersInGame: players,
@@ -76,6 +76,7 @@ class JoinGame extends Component {
 					})
 				} else if (this.state.showJoinGame === true && isPartOfGame === true) {
 					this.setState({
+						createdUser: createdUser,
 						showJoinGame: false
 					})
 				}

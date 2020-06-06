@@ -98,9 +98,13 @@ class OtherPlayers extends Component {
                             </div> :
                         null
                 }
-                <div className="text-center">
-                    <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
-                </div>
+                {
+                    this.props.allPlayers.isEnded === false?
+                    <div className="text-center">
+                        <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
+                    </div>:
+                    null
+                }
             </div>
         );
     }

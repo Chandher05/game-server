@@ -15,6 +15,7 @@ exports.getPlayersInGame = (gameId) => {
                 users.push(player)
             } 
             resolve({
+                createdUser: game.createdUser,
                 players: users,
                 isStarted: game.isStarted
             })
@@ -65,7 +66,7 @@ exports.getGameStatus = (gameId, userId) => {
                 userName: player.userName,
                 count: player.currentCards.length,
                 hasQuit: game.players.includes(player.userId) ? false : true,
-                score: calculateScore(player.currentCards)
+                score: game.isRoundComplete === true ? calculateScore(player.currentCards) : null
             }
         }
 
