@@ -107,7 +107,7 @@ exports.getUserProfile = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
 
 	try {
-		if (req.body.email == undefined) {
+		if (req.body.userName == undefined) {
 			return res
 				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
 				.send(constants.MESSAGES.USER_VALUES_MISSING)
@@ -117,7 +117,7 @@ exports.updateUserProfile = async (req, res) => {
 			_id: {
 				$ne: mongoose.Types.ObjectId(req.body.userId)
 			},
-			email: req.body.email
+			userName: req.body.userName
 		})
 		if (user) {
 			return res
@@ -137,10 +137,8 @@ exports.updateUserProfile = async (req, res) => {
 		let details = await Users.findByIdAndUpdate(
 			mongoose.Types.ObjectId(req.body.userId),
 			{
-				$set: userObj
-			},
-			null,
-			null
+				userName: req.body.userName
+			}
 		)
 		return res.status(200).send(details.toJSON())
 

@@ -10,7 +10,7 @@ class ErrorPage extends Component {
                     <img src="/notFound.gif" className="img-thumbnail rounded" alt="404" />
                 </div>
                 <div className="col-md-8">
-                    <p className="display-3 text-justify">The page you are looking for does not exist. Take me back <a href="/" className="text-decoration-none" style={{color: "#ff6600"}}>home</a></p>
+                    <p className="display-3 text-justify">The page you are looking for does not exist. Take me back <a href="/" className="text-decoration-none" style={{ color: "#ff6600" }}>home</a></p>
                 </div>
             </div>
         )

@@ -87,10 +87,13 @@ exports.joinGame = async (req, res) => {
 				.send("Game does not exist")
 		} else if (game.players.includes(req.body.userId)) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User has already joined game")
+				.send("User has already joined game. Please refresh the page")
 		} else if (game.players.length === 5) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 			.send("Game is full")
+		} else if (game.isStarted == true) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send("Game has already started")
 		}
 			
 		game = await Game.findOne({

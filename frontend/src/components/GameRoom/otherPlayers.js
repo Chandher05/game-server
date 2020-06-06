@@ -86,7 +86,7 @@ class OtherPlayers extends Component {
                 </a>
                 {cards}
                 {
-                    this.props.allPlayers.isRoundComplete === true ?
+                    this.props.allPlayers.isRoundComplete === true && this.props.allPlayers.isEnded === false ?
                         this.props.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
                             <div className="mt-5">
                                 <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
@@ -94,8 +94,8 @@ class OtherPlayers extends Component {
                     </div> :
                             <div className="mt-5">
                                 <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
-                                <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Waiting for {hostPlayerName} to start the next round
-                    </div> :
+                                <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start the next round</span>
+                            </div> :
                         null
                 }
                 <div className="text-center">

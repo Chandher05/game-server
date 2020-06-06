@@ -15,11 +15,18 @@ class Home extends Component {
         }
     }
 
-    userNameChangeHandler = (e) => {
-        this.setState({
-            userName: e.target.value
-        })
-    }
+	userNameChangeHandler = (e) => {
+		var length = e.target.value.length
+		if (length > 0 && e.target.value[length - 1] !== " ") {
+			this.setState({
+				userName: e.target.value
+			})
+		} else if (length === 0) {
+			this.setState({
+				userName: e.target.value
+			})
+		}
+	}
 
     passwordChangeHandler = (e) => {
         this.setState({

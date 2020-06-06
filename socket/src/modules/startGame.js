@@ -26,61 +26,6 @@ exports.getPlayersInGame = (gameId) => {
     }) 
 }
 
-exports.getGameStatus = (gameId, userId) => {
-    return new Promise( async (resolve) => {
-        let game = await Game.findOne({
-            gameId: gameId
-        })
-
-        let gameMember = await GameMember.findOne({
-            gameId: gameId,
-            userId: userId
-        })
-
-        resolve({
-            game: game,
-            gameMember: gameMember
-        })
-    }) 
-}
-
-exports.playerScores = (gameId) => {
-    return new Promise( async (resolve) => {
-        let gameMembers = await GameMember.find({
-            gameId: gameId
-        })
-
-        let allScores = [],
-            data
-        for (var player of gameMembers) {
-            data = {
-                userName: player.userName,
-                score: player.score,
-                roundScores: player.roundScores
-            }
-            allScores.push(data)
-        }
-        resolve(allScores)
-    })
-} 
-
-exports.getOtherPlayers = (gameId) => {
-    return new Promise( async (resolve) => {
-        let game = await Game.findOne({
-            gameId: gameId
-        })
-
-        let gameMembers = await GameMember.find({
-            gameId: gameId
-        })
-
-        resolve({
-            game: game,
-            gameMembers: gameMembers
-        })
-    }) 
-}
-
 
 exports.getGameStatus = (gameId, userId) => {
     return new Promise(async (resolve) => {
@@ -91,6 +36,12 @@ exports.getGameStatus = (gameId, userId) => {
         let allGameMembers = await GameMember.find({
             gameId: gameId
         })
+        
+
+        if (!game || !allGameMembers) {
+            resolve(null)
+            return
+        }
 
         let allScores = [],
             data,
@@ -108,10 +59,6 @@ exports.getGameStatus = (gameId, userId) => {
             allScores.push(data)
         }
 
-        if (!game || !allGameMembers || !gameMember) {
-            resolve(null)
-        }
-
         let allCards = {}
         for (var player of allGameMembers) {
             allCards[player.userId] = {
@@ -125,52 +72,6 @@ exports.getGameStatus = (gameId, userId) => {
         resolve({
             game: game,
             gameMember: gameMember,
-            allScores: allScores,
-            allGameMembers: allGameMembers,
-            allCards: allCards
-        })
-    })
-}
-
-
-exports.getSpectateStatus = (gameId) => {
-    return new Promise(async (resolve) => {
-        let game = await Game.findOne({
-            gameId: gameId
-        })
-
-        let allGameMembers = await GameMember.find({
-            gameId: gameId
-        })
-
-        let allScores = [],
-            data
-
-        for (var player of allGameMembers) {
-            data = {
-                userName: player.userName,
-                score: player.score,
-                roundScores: player.roundScores
-            }
-            allScores.push(data)
-        }
-
-        if (!game || !allGameMembers) {
-            resolve(null)
-        }
-
-        let allCards = {}
-        for (var player of allGameMembers) {
-            allCards[player.userId] = {
-                userName: player.userName,
-                count: player.currentCards.length,
-                hasQuit: game.players.includes(player.userId) ? false : true,
-                score: calculateScore(player.currentCards)
-            }
-        }
-
-        resolve({
-            game: game,
             allScores: allScores,
             allGameMembers: allGameMembers,
             allCards: allCards

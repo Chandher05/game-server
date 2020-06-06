@@ -103,14 +103,6 @@ var socketListener = (io) => {
                         action: data.game.lastPlayedAction
                     }
     
-                    let currentPlayer = {
-                        currentPlayer: data.game.currentPlayer,
-                        playerCards: data.gameMember.currentCards,
-                        isRoundComplete: data.game.isRoundComplete,
-                        isGameComplete: data.game.isEnded,
-                        hostPlayer: data.game.createdUser
-                    }
-    
                     let allPlayers = {
                         currentPlayer: data.game.currentPlayer,
                         cardsCount: data.allCards,
@@ -120,42 +112,34 @@ var socketListener = (io) => {
                         action: data.game.lastPlayedAction
                     }
     
-                    let returnValue = {
-                        currentCards: currentCards,
-                        currentPlayer: currentPlayer,
-                        scores: data.allScores,
-                        allPlayers: allPlayers
-                    }
-                    
-                    client.emit('status', returnValue)
-
-                } else {
-                    let data = await startGame.getSpectateStatus(gameId, userId)
-                    let currentCards = {
-                        cardOnTop: data.game.openedCards.pop(),
-                        previousDroppedCard: data.game.previousDroppedCards,
-                        previousDroppedPlayer: data.game.previousDroppedPlayer,
-                        action: data.game.lastPlayedAction
-                    }
+                    if (data.gameMember) {
+                        
+                        let currentPlayer = {
+                            currentPlayer: data.game.currentPlayer,
+                            playerCards: data.gameMember.currentCards,
+                            isRoundComplete: data.game.isRoundComplete,
+                            isGameComplete: data.game.isEnded,
+                            hostPlayer: data.game.createdUser
+                        }
+                        let returnValue = {
+                            currentCards: currentCards,
+                            currentPlayer: currentPlayer,
+                            scores: data.allScores,
+                            allPlayers: allPlayers
+                        }
+                        client.emit('status', returnValue)
+                    } else {
     
-                    let allPlayers = {
-                        currentPlayer: data.game.currentPlayer,
-                        cardsCount: data.allCards,
-                        hostPlayer: data.game.createdUser,
-                        isRoundComplete: data.game.isRoundComplete,
-                        player: data.game.previousDroppedPlayer,
-                        action: data.game.lastPlayedAction
-                    }
-    
-                    let returnValue = {
-                        currentCards: currentCards,
-                        scores: data.allScores,
-                        allPlayers: allPlayers
-                    }
-                    
-                    client.emit('spectate', returnValue)
+                        let returnValue = {
+                            currentCards: currentCards,
+                            scores: data.allScores,
+                            allPlayers: allPlayers
+                        }
+                        
+                        client.emit('spectate', returnValue)
 
-                }
+                    }
+                } 
             })
         } catch (error) {
 
