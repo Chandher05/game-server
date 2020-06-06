@@ -91,23 +91,34 @@ class UserOperations extends Component {
                 <div class="modal fade" id="updateAccoutnModal" tabindex="-1" role="dialog" aria-labelledby="updateAccoutnModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title text-center" id="updateAccoutnModalLabel">Update Account</h5>
+                            {/* <div class="modal-header">
+                                <h5 class="modal-title" id="updateAccoutnModalLabel">Update Account</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={this.resetUpdateAccountDetails}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
-                            </div>
-                            <div class="modal-body">
+                            </div> */}
+                            <div class="modal-body border">
                                 <div className="form-group">
                                     <label for="userName">Username <span className="text-danger">*</span></label>
                                     <input className="form-control" id="userName" value={this.state.userName} onChange={this.userNameChangeHandler} placeholder="User name"></input>
                                 </div>
-                                <p className="text-danger text-center">{this.state.updateUserError}</p>
-                                <p className="text-success text-center">{this.state.updateUserSuccess}</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={this.resetUpdateAccountDetails}>Close</button>
-                                <button type="button" class="btn btn-primary" onClick={this.updateUserDetails}>Save changes</button>
+                            {/* </div>
+                            <div class="modal-footer border"> */}
+								<div className="row p-2">
+									<div className="col-md-4">
+										<button type="button" class="btn btn-secondary w-100" data-dismiss="modal" onClick={this.resetUpdateAccountDetails}>Close</button>
+									</div>								
+									<div className="col-md-4 offset-md-4">
+										<button type="button" class="btn btn-primary w-100" onClick={this.updateUserDetails}>Save changes</button>
+									</div>
+								</div>
+								{
+									this.state.updateUserError !== null?
+									<p className="text-danger text-center">{this.state.updateUserError}</p>:
+									this.state.updateUserSuccess !== null?
+									<p className="text-success text-center">{this.state.updateUserSuccess}</p>:
+									<p>{null}</p>
+								}
                             </div>
                         </div>
                     </div>
