@@ -186,22 +186,31 @@ exports.reportBug = async (req, res) => {
 		}
 
 		let transporter = nodemailer.createTransport({
-			// host: 'smtp.gmail.com',
-			// port: 465,
-			// secure: true,
-			service: 'gmail',
+			host: 'smtp.gmail.com',
+			port: 465,
+			secure: true,
+			// service: 'gmail',
 			auth: {
 				user: config.nodemailer.EMAIL_ID,
 				pass: config.nodemailer.PASSWORD,
 			},
 		});
 
-		await transporter.sendMail({
+		transporter.sendMail({
 			from: config.nodemailer.EMAIL_ID,
 			to: "jayasurya1796@gmail.com",
 			subject: "A new bug report from declare game",
 			// text: "Hello world?", 
 			html: `<p><b>Email address: </b>${req.body.email}</p><p><b>Username: </b>${user.userName}</p><p>${req.body.description}</p>`,
+			attachments: attachments
+		});
+
+		transporter.sendMail({
+			from: config.nodemailer.EMAIL_ID,
+			to: req.body.email,
+			subject: "We have received your bug report",
+			// text: "Hello world?", 
+			html: `<p>Thank you for reporting. We will work on it as soon as possible.</p><p><b>Your description</b></p><p>${req.body.description}</p>`,
 			attachments: attachments
 		});
 
