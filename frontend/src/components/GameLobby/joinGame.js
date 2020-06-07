@@ -25,6 +25,23 @@ class JoinGame extends Component {
 	}
 
 	componentDidMount() {
+		axios.get(`/users/profile/${localStorage.getItem('GameUserId')}`)
+			.then((response) => {
+				if (response.status === 204) {
+					localStorage.removeItem('GameUserId')
+					localStorage.removeItem('GameUsername')
+					this.setState({
+						redirect: `/`
+					})
+				}
+			})
+			.catch(() => {
+				localStorage.removeItem('GameUserId')
+				localStorage.removeItem('GameUsername')
+				this.setState({
+					redirect: `/`
+				})
+			})
 		axios.get(`/game/currentGame/${localStorage.getItem('GameUserId')}`)
 			.then((response) => {
 				if (response.status === 200) {
@@ -101,15 +118,15 @@ class JoinGame extends Component {
 		if (!localStorage.getItem('GameUserId')) {
 			return (<Redirect to={`/login${this.props.location.search}`} />)
 		}
-		
+
 		if (this.state.isFetched === false) {
 			return (<WaitingScreen />)
 		}
-		
+
 		if (this.state.redirect !== null) {
 			return (<Redirect to={this.state.redirect} />)
 		}
-		
+
 		if (this.state.showJoinGame === true) {
 			return (
 				<div>
@@ -128,11 +145,11 @@ class JoinGame extends Component {
 				</div>
 			);
 		}
-		
+
 		return (
 			<GameLobby gameId={this.state.gameId} activePlayersInGame={this.state.activePlayersInGame} createdUser={this.state.createdUser} updateGameId={this.updateGameId} />
 		)
-			
+
 	}
 
 
