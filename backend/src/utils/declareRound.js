@@ -2,6 +2,7 @@ import Game from '../models/mongoDB/game';
 import Users from '../models/mongoDB/users';
 import GameMember from '../models/mongoDB/gameMember';
 import CardValues from './cardValues';
+import GamesCache from './gamesCache';
 
 var endGame = (gameId, userName, isAutoPlay) => {
     return new Promise( async(resolve) => {
@@ -69,7 +70,13 @@ var declareRound = (gameId, userId, isAutoPlay) => {
             console.log("Not current player")
             resolve()
             return
-        }
+        } else if (GamesCache[gameId]) {
+            if (GamesCache[gameId] != userId) {
+                console.log("Not current player")
+                resolve()
+                return
+            }
+        } 
 
         let gameMembers = await GameMember.find({
             gameId: gameId
@@ -199,7 +206,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
             await endGame(gameId, activePlayerName, isAutoPlay)
         }
         if (isAutoPlay == false) {
-            await updateStats(userId, playerScore)
+            await updateStats(userId, allScores[userId])
         }
 
         resolve()

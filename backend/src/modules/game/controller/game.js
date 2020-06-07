@@ -5,6 +5,7 @@ import constants from '../../../utils/constants';
 import GenerateId from '../../../utils/generateId';
 import GetCards from '../../../utils/getCards';
 import PlayCard from '../../../utils/playCard';
+import Shuffle from '../../../utils/shufflePlayer';
 
 /**
  * Create game and save data in database.
@@ -23,7 +24,7 @@ exports.createGame = async (req, res) => {
 		if (game.length > 0) {
 			
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User is already part of a game")
+				.send("User is already part of a game. Please refresh page")
 		}
 
 		game = await Game.findOne({
@@ -257,10 +258,7 @@ exports.startGame = async (req, res) => {
 		})
 		if (!game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send({
-					gameId: req.body.gameId,
-					createdUser: req.body.userId
-				})
+				.send("Game does not exist")
 		}
 		var availableCards = []
 		for (var index = 1; index < 53; index++) {
@@ -568,7 +566,13 @@ exports.quitFromGame = async (req, res) => {
 				gameId: req.body.gameId
 			})
 		} else if (req.body.userId === game.createdUser.toString()) {
-			let newCreatedUser = game.players[1]
+			let newCreatedUser
+			for (var player of game.players) {
+				if (player.toString() != game.createdUser.toString()) {
+					newCreatedUser = player
+					break
+				}
+			}
 			await Game.findOneAndUpdate(
 				{
 					gameId: req.body.gameId
@@ -619,6 +623,128 @@ exports.resetAllGames = async (req, res) => {
 			.send(null)
 	} catch (error) {
 		console.log(`Error in game/resetAllGames ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+
+/**
+ * Restart a game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.restartGame = async (req, res) => {
+	try {
+
+		let oldGame = await Game.findOne({
+			gameId: req.body.gameId
+		})
+		if (!oldGame) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send("Game does not exist")
+		} else if (oldGame.isEnded != true) {
+			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send("Game cannot be restarted until it has ended")
+		}
+		
+		let tempGameId = await GenerateId(6)
+		await Game.findOneAndUpdate(
+			{
+				gameId: req.body.gameId
+			},
+			{
+				gameId: tempGameId
+			}
+		)
+
+		await GameMember.updateMany(
+			{
+				gameId: req.body.gameId
+			},
+			{
+				gameId: tempGameId
+			}
+		)
+
+		var availableCards = []
+		for (var index = 1; index < 53; index++) {
+			availableCards.push(index)
+		}
+
+		let randomPlayerOrder = Shuffle(oldGame.players)
+		const newGameData = new Game({
+			players: randomPlayerOrder,
+			gameId: req.body.gameId,
+			createdUser: oldGame.createdUser,
+			currentPlayer: randomPlayerOrder[0],
+			cardsInDeck: [],
+			openedCards: [],
+			previousDroppedCards: [],
+			previousDroppedPlayer: " ",
+			lastPlayedTime: " ",
+			lastPlayedAction: " "
+		})
+		let newGame = await newGameData.save()
+
+		var startedUser = null
+		var createdUserCards = []
+		for (var userId of newGame.players) {
+			let result, cardsForPlayer
+			let userObj = await Users.findById(userId)
+			if (newGame.currentPlayer.toString() == userId.toString()) {
+				startedUser = userObj.userName
+				result = GetCards.getCards(availableCards, 6)
+			} else {
+				result = GetCards.getCards(availableCards, 5)
+			}
+			cardsForPlayer = result.cardsForPlayer;
+			availableCards = result.availableCards;
+
+			if (newGame.createdUser.toString() == userId.toString()) {
+				createdUserCards = cardsForPlayer
+			}
+			
+			let gameMemberObj = new GameMember({
+				gameId: req.body.gameId,
+				userId: userId,
+				userName: userObj.userName,
+				currentCards: cardsForPlayer
+			})
+			await gameMemberObj.save()
+		}
+		let timestamp = Date.now()
+		let game = await Game.findOneAndUpdate(
+			{
+				gameId: req.body.gameId
+			},
+			{
+				isStarted: true,
+				cardsInDeck: availableCards,
+				lastPlayedTime: timestamp,
+				previousDroppedPlayer: startedUser,
+				lastPlayedAction: "will start the game"
+			}
+		)
+
+		if (game) {
+			PlayCard.playRandom(timestamp, req.body.gameId, game.createdUser)
+			return res
+				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+				.send({
+					gameId: game.gameId,
+					createdUser: game.createdUser,
+					createdUserCards: createdUserCards
+				})
+		}
+
+		return res
+			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+			.send(null)
+
+	} catch (error) {
+		console.log(`Error game/restartGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)

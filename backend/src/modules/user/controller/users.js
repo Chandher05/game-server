@@ -211,7 +211,10 @@ exports.reportBug = async (req, res) => {
 			to: req.body.email,
 			subject: "We have received your bug report",
 			// text: "Hello world?", 
-			html: `<p>Thank you for reporting. We will work on it as soon as possible.</p><p><b>Your description</b></p><p>${req.body.description}</p>`,
+			html: `<p>Thank you for reporting. We will work on it as soon as possible. 
+			The good thing about this game is that you can create as many accounts as you wish. 
+			So if your game is not responding, we're sorry about it but please logout and create a new 
+			account to play more games</p><p><b>Your description of the bug</b></p><p>${req.body.description}</p>`,
 			attachments: attachments
 		});
 

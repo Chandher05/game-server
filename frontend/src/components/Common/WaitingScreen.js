@@ -1,13 +1,33 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router';
 import "./style.css";
 
 class WaitingScreen extends Component {
+
+    constructor() {
+        super()
+        this.state = {
+            redirect: null
+        }
+    }
 
     reloadPage = () => {
         window.location.reload()
     }
 
+    logout = () => {
+        localStorage.removeItem('GameUserId')
+        localStorage.removeItem('GameUsername')
+        this.setState({
+            redirect: <Redirect to="/login" />
+        })
+    }
+
     render() {
+
+        if (this.state.redirect) {
+            return (this.state.redirect)
+        }
 
         return (
             <div>
@@ -16,6 +36,9 @@ class WaitingScreen extends Component {
                 </div>
                 <div className="text-center m-5 p-5">
                     <a href="/report" target="_blank"><p className="text-danger">Report bug</p></a>
+                </div>
+                <div className="text-center m-5 p-5">
+                    <p className="showPointer" onClick={this.logout}>Logout</p>
                 </div>
             </div>
         )

@@ -4,6 +4,7 @@ import GetCards from './getCards';
 import CardValues from './cardValues';
 import DeclareRound from './declareRound';
 import RestockDeck from './restockDeck';
+import GamesCache from './gamesCache';
 
 function sleep(s) {
     var ms = s * 1000
@@ -70,8 +71,15 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
             console.log("Not current player")
             resolve()
             return
-        }
-
+        } else if (GamesCache[game.gameId]) {
+            if (GamesCache[game.gameId] != gameMember.userId) {
+                console.log("Not current player")
+                resolve()
+                return
+            }
+        } 
+        GamesCache[game.gameId] = nextPlayer
+        
         var difference = getDifference(gameMember, selected)
 
         var result = GetCards.getCards(game.cardsInDeck, 1);
@@ -101,12 +109,19 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
 
 var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
     return new Promise( async (resolve) => {
-
+        await sleep(5)
         if (game.currentPlayer.toString() != gameMember.userId.toString()) {
             console.log("Not current player")
             resolve()
             return
-        }
+        } else if (GamesCache[game.gameId]) {
+            if (GamesCache[game.gameId] != gameMember.userId) {
+                console.log("Not current player")
+                resolve()
+                return
+            }
+        } 
+        GamesCache[game.gameId] = nextPlayer
 
         var difference = getDifference(gameMember, selected)
 
@@ -143,7 +158,14 @@ var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
         if (game.currentPlayer.toString() != gameMember.userId.toString()) {
             resolve()
             return
-        }
+        } else if (GamesCache[game.gameId]) {
+            if (GamesCache[game.gameId] != gameMember.userId) {
+                console.log("Not current player")
+                resolve()
+                return
+            }
+        } 
+        GamesCache[game.gameId] = nextPlayer
 
         var difference = getDifference(gameMember, selected)
 
@@ -187,7 +209,10 @@ var playRandom = async (timestamp, gameId, userId) => {
         userId: userId
     })
 
-    if (game.players.includes(userId)) {
+    if (!game) {
+        console.log(`\n\n\nGame has ended`)
+        return
+    } else if (game.players.includes(userId)) {
         var count = 0
         while (count < 60) {
             await sleep(1)
@@ -196,7 +221,10 @@ var playRandom = async (timestamp, gameId, userId) => {
                 gameId: gameId
             })
         
-            if (game.lastPlayedTime != timestamp) {
+            if (!game) {
+                console.log(`\n\n\nGame has ended`)
+                return
+            } else if (game.lastPlayedTime != timestamp) {
                 console.log(`\n\n\n${gameMember.userName} has already played`)
                 return
             } else if (game.isRoundComplete == true) {

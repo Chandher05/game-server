@@ -1,6 +1,6 @@
 {
   "name": "game",
-  "version": "1.0.0",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "start": "./node_modules/.bin/nodemon index.js",

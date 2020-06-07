@@ -10,7 +10,7 @@ import SpectateRoom from './GameRoom/spectate';
 
 import ErrorPage from './Authentication/errorPage';
 import Rules from './Common/Rules';
-import WaitingScreen from './Common/WaitingScreen';
+// import WaitingScreen from './Common/WaitingScreen';
 import ReportError from './Common/ReportError';
 import PlayerStats from './Stats/completeStats';
 
@@ -30,7 +30,7 @@ class Main extends Component {
                     <Route path="/spectate/:gameId" component={SpectateRoom}/>
 
                     <Route path="/rules" component={Rules}/>
-                    <Route path="/waitingScreen" component={WaitingScreen}/>
+                    {/* <Route path="/waitingScreen" component={WaitingScreen}/> */}
                     <Route path="/report" component={ReportError}/>
                     <Route path="/stats" component={PlayerStats}/>
 

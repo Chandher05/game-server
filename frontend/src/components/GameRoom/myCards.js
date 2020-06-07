@@ -28,38 +28,38 @@ class MyCards extends Component {
 
 		// setInterval(() => {
 
-			CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand, isRoundComplete, isGameComplete, hostPlayer) => {
-				cardsInHand = RemoveDuplicates(cardsInHand)
-				if (isRoundComplete === true || isGameComplete === true) {
-					this.setState({
-						myTurn: false
-					})
-				} else if (currentPlayer === localStorage.getItem('GameUserId')) {
-					this.setState({
-						myTurn: true,
-						showDeclare: true
-					})
-					for (var index in cardsInHand) {
-						if (cardsInHand[index] !== this.state.currentCards[index]) {
-							this.setState({
-								currentCards: cardsInHand
-							})
-							break
-						}
-					}
-				} else {
-					this.setState({
-						myTurn: false,
-						currentCards: cardsInHand,
-						selected: []
-					})
-				}
+		CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand, isRoundComplete, isGameComplete, hostPlayer) => {
+			cardsInHand = RemoveDuplicates(cardsInHand)
+			if (isRoundComplete === true || isGameComplete === true) {
 				this.setState({
-					isRoundComplete: isRoundComplete,
-					isGameComplete: isGameComplete,
-					hostPlayer: hostPlayer
+					myTurn: false
 				})
+			} else if (currentPlayer === localStorage.getItem('GameUserId')) {
+				this.setState({
+					myTurn: true,
+					showDeclare: true
+				})
+				for (var index in cardsInHand) {
+					if (cardsInHand[index] !== this.state.currentCards[index]) {
+						this.setState({
+							currentCards: cardsInHand
+						})
+						break
+					}
+				}
+			} else {
+				this.setState({
+					myTurn: false,
+					currentCards: cardsInHand,
+					selected: []
+				})
+			}
+			this.setState({
+				isRoundComplete: isRoundComplete,
+				isGameComplete: isGameComplete,
+				hostPlayer: hostPlayer
 			})
+		})
 
 		// }, 250)
 	}
@@ -86,6 +86,8 @@ class MyCards extends Component {
 				var difference = parseInt(e.target.id, 10) - parseInt(temp[0], 10)
 				if (difference % 13 === 0) {
 					temp.push(e.target.id)
+				} else {
+					temp = [e.target.id]
 				}
 			}
 		} else {
@@ -209,6 +211,18 @@ class MyCards extends Component {
 			})
 	}
 
+	startNewGame = () => {
+		const reqBody = {
+			gameId: this.props.gameId
+		}
+		axios.post(`/game/restart`, reqBody)
+		.then((response) => {
+			this.setState({
+				currentCards: response.data.createdUserCards
+			})
+		})
+	}
+
 	render() {
 		if (this.state.currentCards === undefined || this.state.currentCards.length === 0) {
 			if (this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId')) {
@@ -313,9 +327,20 @@ class MyCards extends Component {
 				}
 				{
 					this.state.isGameComplete === true ?
-						<a href="/joinGame">
-							<button className="btn btn-danger">Close game</button>
-						</a> :
+						<div>
+							<div>
+								<a href="/joinGame">
+									<button className="btn btn-danger">Close game</button>
+								</a>
+							</div>
+							{
+								this.state.hostPlayer === localStorage.getItem('GameUserId') ?
+									<div>
+										<button className="btn btn-success mt-5" onClick={this.startNewGame}>Start new game</button> :
+									</div>:
+									null
+							}
+						</div> :
 						this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId') ?
 							<button className="btn btn-success" onClick={this.startNextRound}>Start next round</button> :
 							null

@@ -105,17 +105,6 @@ class OtherPlayers extends Component {
                 <PlayerDetails background={background} userName={this.props.allPlayers.cardsCount[player].userName}
                     showCards={showCards} hostPlayer={this.props.allPlayers.hostPlayer}
                     player={player} hasQuit={this.props.allPlayers.cardsCount[player].hasQuit} />
-                // <div className={`row p-2 ${background}`}>
-                //     <div className="col-md-5 text-break">{this.props.allPlayers.cardsCount[player].userName}</div>
-                //     <div className="col-md-5">{showCards}</div>
-                //     {
-                //         this.props.allPlayers.hostPlayer === player ?
-                //             <div className="col-md-2"><i className="fas fa-star"></i></div> :
-                //             this.props.allPlayers.cardsCount[player].hasQuit === true ?
-                //                 <div className="col-md-2"><i className="fas fa-running"></i></div> :
-                //                 null
-                //     }
-                // </div>
             )
             if (this.props.allPlayers.hostPlayer === player) {
                 hostPlayerName = this.props.allPlayers.cardsCount[player].userName
@@ -134,12 +123,21 @@ class OtherPlayers extends Component {
                             <div className="mt-5">
                                 <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start the next round
-                    </div> :
+                            </div> :
                             <div className="mt-5">
                                 <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start the next round</span>
                             </div> :
-                        null
+                    this.props.allPlayers.isEnded === true ?
+                        this.props.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
+                        <div className="mt-5">
+                            <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start new game
+                        </div> :
+                        <div className="mt-5">
+                            <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
+                            <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start new game</span>
+                        </div> :
+                    null
                 }
                 {
                     this.props.allPlayers.isEnded === false ?
