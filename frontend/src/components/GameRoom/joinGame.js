@@ -5,6 +5,7 @@ import CreateGame from '../../APIs/createGame';
 import UserOperations from './userOperations';
 import GameIdHandler from './gameIdHandler';
 import GameLobby from './gameLobby';
+import WaitingScreen from '../Common/WaitingScreen';
 import '../Common/style.css';
 
 
@@ -54,33 +55,38 @@ class JoinGame extends Component {
 				})
 			})
 		setInterval(() => {
-			CreateGame((this.state.gameId), (players, isStarted, createdUser) => {
-
-				this.setState({
-					activePlayersInGame: players,
-				})
-				var isPartOfGame = false
-				for (var player of players) {
-					if (player._id === localStorage.getItem('GameUserId')) {
-						isPartOfGame = true
-						break
+			if (this.state.gameId !== null) {
+				CreateGame((this.state.gameId), (players, isStarted, createdUser) => {
+					this.setState({
+						activePlayersInGame: players,
+					})
+					var isPartOfGame = false
+					for (var player of players) {
+						if (player._id === localStorage.getItem('GameUserId')) {
+							isPartOfGame = true
+							break
+						}
 					}
-				}
-				if (isStarted === true && isPartOfGame === true) {
-					this.setState({
-						redirect: `/gameRoom/${this.state.gameId}`
-					})
-				} else if (this.state.showJoinGame === false && isPartOfGame === false) {
-					this.setState({
-						showJoinGame: true
-					})
-				} else if (this.state.showJoinGame === true && isPartOfGame === true) {
-					this.setState({
-						createdUser: createdUser,
-						showJoinGame: false
-					})
-				}
-			})
+					if (isStarted === true && isPartOfGame === true) {
+						this.setState({
+							redirect: `/gameRoom/${this.state.gameId}`
+						})
+					} else if (this.state.showJoinGame === false && isPartOfGame === false) {
+						this.setState({
+							showJoinGame: true
+						})
+					} else if (this.state.showJoinGame === true && isPartOfGame === true) {
+						this.setState({
+							createdUser: createdUser,
+							showJoinGame: false
+						})
+					}
+				})
+			} else {
+				this.setState({
+					showJoinGame: true
+				})
+			}
 		}, 250);
 	}
 
@@ -97,7 +103,7 @@ class JoinGame extends Component {
 		}
 		
 		if (this.state.isFetched === false) {
-			return (null)
+			return (<WaitingScreen />)
 		}
 		
 		if (this.state.redirect !== null) {

@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
+import nodemailer from 'nodemailer';
 import Users from '../../../models/mongoDB/users';
 import constants from '../../../utils/constants';
+import S3 from '../../../utils/S3Operations';
+import config from '../../../../config';
+
 
 /**
  * Create user and save data in database.
@@ -46,7 +50,7 @@ exports.loginUser = async (req, res) => {
 		var user
 
 		var isAuth = false
-		user = await Users.findOne({ 
+		user = await Users.findOne({
 			userName: req.body.userName,
 			isActive: true
 		})
@@ -141,6 +145,63 @@ exports.updateUserProfile = async (req, res) => {
 			}
 		)
 		return res.status(200).send(details.toJSON())
+
+	} catch (error) {
+		console.log(`Error while getting user profile details ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+
+/**
+ * Update user details based on userid.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.reportBug = async (req, res) => {
+
+	try {
+		let user = await Users.findById(req.body.userId)
+		if (!user) {
+			return res
+				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send("Not a valid user")
+		}
+
+		var attachments = []
+		for (var file of req.files) {
+			if (file.size > 20971520) {
+				return res
+				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send("Single file cannot be more than 20 MB")
+			}
+			// var url = await S3.fileupload(user.userName, file)
+			attachments.push({
+				filename: file.originalname,
+				// path: url
+				content: new Buffer(file.buffer)
+			})
+		}
+
+		let transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: config.nodemailer.EMAIL_ID,
+				pass: config.nodemailer.PASSWORD,
+			},
+		});
+
+		await transporter.sendMail({
+			to: "jayasurya1796@gmail.com",
+			subject: "A new bug report from declare game",
+			// text: "Hello world?", 
+			html: `<p><b>Email address: </b>${req.body.email}</p><p><b>Username: </b>${user.userName}</p><p>${req.body.description}</p>`,
+			attachments: attachments
+		});
+
+		return res.status(200).send(null)
 
 	} catch (error) {
 		console.log(`Error while getting user profile details ${error}`)

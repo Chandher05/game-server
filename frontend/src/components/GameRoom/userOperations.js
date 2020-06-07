@@ -86,24 +86,21 @@ class UserOperations extends Component {
                 <div className="pt-3">
                     <button className="btn btn-secondary w-100" data-toggle="modal" data-target="#updateAccoutnModal"><i class="fas fa-cogs"></i> Update Account</button>
                 </div>
+                <div className="pt-3">
+                    <a href="/report" target="_blank">
+                        <button className="btn btn-warning w-100"><i class="fas fa-comment-alt"></i> Report bug</button>
+                    </a>
+                </div>
 
 
                 <div class="modal fade" id="updateAccoutnModal" tabindex="-1" role="dialog" aria-labelledby="updateAccoutnModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            {/* <div class="modal-header">
-                                <h5 class="modal-title" id="updateAccoutnModalLabel">Update Account</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={this.resetUpdateAccountDetails}>
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div> */}
                             <div class="modal-body border">
                                 <div className="form-group">
                                     <label for="userName">Username <span className="text-danger">*</span></label>
                                     <input className="form-control" id="userName" value={this.state.userName} onChange={this.userNameChangeHandler} placeholder="User name"></input>
                                 </div>
-                            {/* </div>
-                            <div class="modal-footer border"> */}
 								<div className="row p-2">
 									<div className="col-md-4">
 										<button type="button" class="btn btn-secondary w-100" data-dismiss="modal" onClick={this.resetUpdateAccountDetails}>Close</button>

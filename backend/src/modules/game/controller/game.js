@@ -140,6 +140,12 @@ exports.joinGame = async (req, res) => {
 exports.isUserPartOfGame = async (req, res) => {
 	try {
 
+		if (req.params.userId == "null") {
+			return res
+			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+			.send(null)
+		}
+
 		let game
 		game = await Game.findOne({
 			players: req.params.userId,

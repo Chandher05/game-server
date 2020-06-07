@@ -10,6 +10,8 @@ import SpectateRoom from './GameRoom/spectate';
 
 import ErrorPage from './Authentication/errorPage';
 import Rules from './Common/Rules';
+import WaitingScreen from './Common/WaitingScreen';
+import ReportError from './Common/ReportError';
 
 //Create a Main Component
 class Main extends Component {
@@ -27,6 +29,8 @@ class Main extends Component {
                     <Route path="/spectate/:gameId" component={SpectateRoom}/>
 
                     <Route path="/rules" component={Rules}/>
+                    <Route path="/waitingScreen" component={WaitingScreen}/>
+                    <Route path="/report" component={ReportError}/>
 
                     <Route component={ErrorPage}/>
                 </Switch>

@@ -24,7 +24,7 @@ var declareRound = (gameId, userId) => {
         })
 
         if (game.isRoundComplete === true) {
-            console.log("ROund is complete")
+            console.log("Round is complete")
             resolve()
             return
         }

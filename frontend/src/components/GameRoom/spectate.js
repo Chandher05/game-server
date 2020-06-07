@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import CommonCards from './commonCards';
 import GameScores from './gameScores';
 import OtherPlayers from './otherPlayers';
+import WaitingScreen from '../Common/WaitingScreen';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import SpectateStatus from '../../APIs/spectateStatus';
-// import socket from '../../APIs/index';
 
 class GameRoom extends Component {
 
@@ -46,7 +46,7 @@ class GameRoom extends Component {
 		}
 
 		if (!this.state.gameState) {
-			return (null)
+			return (<WaitingScreen />)
 		}
 
 		return (
