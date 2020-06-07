@@ -91,6 +91,11 @@ class UserOperations extends Component {
                         <button className="btn btn-warning w-100"><i class="fas fa-comment-alt"></i> Report bug</button>
                     </a>
                 </div>
+                <div className="pt-3">
+                    <a href="/stats">
+                        <button className="btn btn-info w-100"><i class="fas fa-crown"></i> View stats</button>
+                    </a>
+                </div>
 
 
                 <div class="modal fade" id="updateAccoutnModal" tabindex="-1" role="dialog" aria-labelledby="updateAccoutnModalLabel" aria-hidden="true">

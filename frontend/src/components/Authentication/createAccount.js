@@ -64,7 +64,7 @@ class Home extends Component {
 
     render() {
         if (localStorage.getItem('GameUserId')) {
-            return (<Redirect to="/joinGame" />)
+            return (<Redirect to={`/joinGame${this.props.location.search}`} />)
         }
 
         return (

@@ -1,8 +1,9 @@
 import Game from '../models/mongoDB/game';
+import Users from '../models/mongoDB/users';
 import GameMember from '../models/mongoDB/gameMember';
 import CardValues from './cardValues';
 
-var endGame = (gameId, userName) => {
+var endGame = (gameId, userName, isAutoPlay) => {
     return new Promise( async(resolve) => {
         await Game.findOneAndUpdate(
             {
@@ -14,10 +15,45 @@ var endGame = (gameId, userName) => {
                 lastPlayedAction: "has won the game"
             }
         )
+        
+        if (isAutoPlay == false) {
+            await Users.findOneAndUpdate(
+                {
+                    userName: userName
+                },
+                {
+                    $inc: {
+                        totalWins: 1
+                    }
+                }
+            )
+        }
+
+        resolve()
     })
 }
 
-var declareRound = (gameId, userId) => {
+var updateStats = (userId, score) => {
+    return new Promise(async(resolve) => {
+        let params = {
+                totalDeclares: 1
+        }
+        if (score == -25) {
+            params.totalPairs = 1
+        } else if (score == 50) {
+            params.totalFifties = 1
+        }
+        await Users.findByIdAndUpdate(
+            userId,
+            {
+                $inc: params
+            }
+        )
+        resolve()
+    })
+}
+
+var declareRound = (gameId, userId, isAutoPlay) => {
     return new Promise( async (resolve) => {
         let game = await Game.findOne({
             gameId: gameId
@@ -160,7 +196,10 @@ var declareRound = (gameId, userId) => {
 
         // End the game if lesser than 2 players are active
         if (numberOfActivePlayers < 2) {
-            await endGame(gameId, activePlayerName)
+            await endGame(gameId, activePlayerName, isAutoPlay)
+        }
+        if (isAutoPlay == false) {
+            await updateStats(userId, playerScore)
         }
 
         resolve()

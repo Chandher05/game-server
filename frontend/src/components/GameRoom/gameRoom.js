@@ -6,7 +6,7 @@ import OtherPlayers from './otherPlayers';
 import WaitingScreen from '../Common/WaitingScreen';
 import axios from 'axios';
 import { Redirect } from 'react-router';
-import GameStatus from '../../APIs/gameStatus';
+import GameStatus from '../../APIs/commonGameStatus';
 
 class GameRoom extends Component {
 
@@ -26,11 +26,13 @@ class GameRoom extends Component {
 				invalidGame: true
 			})
 		})
-		GameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
-			this.setState({
-				gameState: data
+		setInterval(() => {
+			GameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
+				this.setState({
+					gameState: data
+				})
 			})
-		})
+		}, 250)
 			
 	}
 

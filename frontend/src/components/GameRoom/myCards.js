@@ -26,7 +26,7 @@ class MyCards extends Component {
 
 		this.getMyCards();
 
-		setInterval(() => {
+		// setInterval(() => {
 
 			CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand, isRoundComplete, isGameComplete, hostPlayer) => {
 				cardsInHand = RemoveDuplicates(cardsInHand)
@@ -61,7 +61,7 @@ class MyCards extends Component {
 				})
 			})
 
-		}, 250)
+		// }, 250)
 	}
 
 	getMyCards = () => {

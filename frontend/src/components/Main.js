@@ -4,7 +4,7 @@ import Landing from './Common/Landing';
 import Login from './Authentication/login'; 
 import CreateAccount from './Authentication/createAccount'; 
 
-import JoinGame from './GameRoom/joinGame';
+import JoinGame from './GameLobby/joinGame';
 import GameRoom from './GameRoom/gameRoom';
 import SpectateRoom from './GameRoom/spectate';
 
@@ -12,6 +12,7 @@ import ErrorPage from './Authentication/errorPage';
 import Rules from './Common/Rules';
 import WaitingScreen from './Common/WaitingScreen';
 import ReportError from './Common/ReportError';
+import PlayerStats from './Stats/completeStats';
 
 //Create a Main Component
 class Main extends Component {
@@ -31,6 +32,7 @@ class Main extends Component {
                     <Route path="/rules" component={Rules}/>
                     <Route path="/waitingScreen" component={WaitingScreen}/>
                     <Route path="/report" component={ReportError}/>
+                    <Route path="/stats" component={PlayerStats}/>
 
                     <Route component={ErrorPage}/>
                 </Switch>

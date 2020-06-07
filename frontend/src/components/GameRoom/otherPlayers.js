@@ -1,6 +1,46 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import PlayerStats from '../Stats/playerStats';
+import "../Common/style.css";
+
+class PlayerDetails extends Component {
+
+    render() {
+        return (
+            <div>
+                <div className={`row p-2 ${this.props.background}`}>
+                    <div className="col-md-5 text-break showPointer" data-toggle="modal" data-target={`#${this.props.userName}_stats`}>{this.props.userName}</div>
+                    <div className="col-md-5">{this.props.showCards}</div>
+                    {
+                        this.props.hostPlayer === this.props.player ?
+                            <div className="col-md-2"><i className="fas fa-star"></i></div> :
+                            this.props.hasQuit === true ?
+                                <div className="col-md-2"><i className="fas fa-running"></i></div> :
+                                null
+                    }
+                </div>
+
+                <div class="modal fade" id={`${this.props.userName}_stats`} tabindex="-1" role="dialog" aria-labelledby={`${this.props.userName}_label`} aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id={`${this.props.userName}_label`}>{this.props.userName} <span className="font-weight-light"> - Stats</span></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body"><PlayerStats userId={this.props.player} /></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        )
+    }
+
+}
 
 class OtherPlayers extends Component {
 
@@ -32,7 +72,7 @@ class OtherPlayers extends Component {
     }
 
     render() {
-        
+
         if (this.state.redirect !== null) {
             return (this.state.redirect)
         }
@@ -62,17 +102,20 @@ class OtherPlayers extends Component {
                 }
             }
             cards.push(
-                <div className={`row p-2 ${background}`}>
-                    <div className="col-md-5 text-break">{this.props.allPlayers.cardsCount[player].userName}</div>
-                    <div className="col-md-5">{showCards}</div>
-                    {
-                        this.props.allPlayers.hostPlayer === player ?
-                            <div className="col-md-2"><i className="fas fa-star"></i></div> :
-                            this.props.allPlayers.cardsCount[player].hasQuit === true ?
-                                <div className="col-md-2"><i className="fas fa-running"></i></div> :
-                                null
-                    }
-                </div>
+                <PlayerDetails background={background} userName={this.props.allPlayers.cardsCount[player].userName}
+                    showCards={showCards} hostPlayer={this.props.allPlayers.hostPlayer}
+                    player={player} hasQuit={this.props.allPlayers.cardsCount[player].hasQuit} />
+                // <div className={`row p-2 ${background}`}>
+                //     <div className="col-md-5 text-break">{this.props.allPlayers.cardsCount[player].userName}</div>
+                //     <div className="col-md-5">{showCards}</div>
+                //     {
+                //         this.props.allPlayers.hostPlayer === player ?
+                //             <div className="col-md-2"><i className="fas fa-star"></i></div> :
+                //             this.props.allPlayers.cardsCount[player].hasQuit === true ?
+                //                 <div className="col-md-2"><i className="fas fa-running"></i></div> :
+                //                 null
+                //     }
+                // </div>
             )
             if (this.props.allPlayers.hostPlayer === player) {
                 hostPlayerName = this.props.allPlayers.cardsCount[player].userName
@@ -99,11 +142,11 @@ class OtherPlayers extends Component {
                         null
                 }
                 {
-                    this.props.allPlayers.isEnded === false?
-                    <div className="text-center">
-                        <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
-                    </div>:
-                    null
+                    this.props.allPlayers.isEnded === false ?
+                        <div className="text-center">
+                            <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
+                        </div> :
+                        null
                 }
             </div>
         );

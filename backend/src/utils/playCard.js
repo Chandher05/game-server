@@ -216,7 +216,7 @@ var playRandom = async (timestamp, gameId, userId) => {
     
     if (playerTotal <= 15 && shouldDeclare <= 0.2) {
         console.log(`\n\n\n${gameMember.userName} has declared`)
-        await DeclareRound(gameId, userId)
+        await DeclareRound(gameId, userId, true)
         return
     }
 

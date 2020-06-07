@@ -107,7 +107,7 @@ exports.dropCards = async (req, res) => {
 exports.declare = async (req, res) => {
 	try {
 
-		await DeclareRound(req.body.gameId, req.body.userId)
+		await DeclareRound(req.body.gameId, req.body.userId, false)
 		return res
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
 			.send(null)

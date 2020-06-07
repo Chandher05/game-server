@@ -1,7 +1,7 @@
 import socket from './index'
 
 var gameStatus = (gameId, userId, cb) => {
-    socket.on('status', data => {
+    socket.on('commonGameData', data => {
         cb(data)
     })
     socket.emit('getGameStatus', gameId, userId)

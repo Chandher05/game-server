@@ -5,7 +5,7 @@ import OtherPlayers from './otherPlayers';
 import WaitingScreen from '../Common/WaitingScreen';
 import axios from 'axios';
 import { Redirect } from 'react-router';
-import SpectateStatus from '../../APIs/spectateStatus';
+import CommonGameStatus from '../../APIs/commonGameStatus';
 
 class GameRoom extends Component {
 
@@ -26,7 +26,7 @@ class GameRoom extends Component {
 			})
 		})
 		setInterval(() => {
-			SpectateStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
+			CommonGameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
 				this.setState({
 					gameState: data
 				})

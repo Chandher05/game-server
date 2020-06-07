@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
-import CreateGame from '../../APIs/createGame';
+import CreateGame from '../../APIs/gameLobby';
 import UserOperations from './userOperations';
 import GameIdHandler from './gameIdHandler';
 import GameLobby from './gameLobby';

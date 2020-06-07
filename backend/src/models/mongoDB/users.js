@@ -16,6 +16,22 @@ const Users = new mongoose.Schema({
 	isActive: {
 		type: Boolean,
 		default: true
+	},
+	totalWins: {
+		type: Number,
+		default: 0
+	},
+	totalDeclares: {
+		type: Number,
+		default: 0
+	},
+	totalFifties: {
+		type: Number,
+		default: 0
+	},
+	totalPairs: {
+		type: Number,
+		default: 0
 	}
 }, { versionKey: false })
 

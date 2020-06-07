@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
 import Users from '../../../models/mongoDB/users';
+import GameMember from '../../../models/mongoDB/gameMember';
 import constants from '../../../utils/constants';
 import S3 from '../../../utils/S3Operations';
 import config from '../../../../config';
@@ -215,6 +216,48 @@ exports.reportBug = async (req, res) => {
 		});
 
 		return res.status(200).send(null)
+
+	} catch (error) {
+		console.log(`Error while getting user profile details ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+
+/**
+ * Get user profile details based on userid.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.getStats = async (req, res) => {
+	try {
+
+		let user = await Users.findById(
+			mongoose.Types.ObjectId(req.params.userId)
+		)
+		let numberOfGames = await GameMember.find({
+			userId: req.params.userId
+		})
+
+		if (!user) {
+			return res
+			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+			.send("User does not exist")
+		}
+
+		const returnValue = {
+			gamesCount: numberOfGames.length,
+			totalWins: user.totalWins,
+			totalDeclares: user.totalDeclares,
+			totalFifties: user.totalFifties,
+			totalPairs: user.totalPairs,
+		}
+
+		return res
+		.status(constants.STATUS_CODE.SUCCESS_STATUS)
+		.send(returnValue)
 
 	} catch (error) {
 		console.log(`Error while getting user profile details ${error}`)
