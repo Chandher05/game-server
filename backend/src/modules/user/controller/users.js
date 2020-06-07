@@ -196,6 +196,7 @@ exports.reportBug = async (req, res) => {
 		});
 
 		await transporter.sendMail({
+			from: config.nodemailer.EMAIL_ID,
 			to: "jayasurya1796@gmail.com",
 			subject: "A new bug report from declare game",
 			// text: "Hello world?", 

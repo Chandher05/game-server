@@ -1,6 +1,9 @@
 /frontend/node_modules/
 /frontend/.env
+/frontend/package-lock.json
 /backend/node_modules/
 /backend/.env
+/backend/package-lock.json
 /socket/node_modules/
 /socket/.env
+/socket/package-lock.json
