@@ -186,9 +186,10 @@ exports.reportBug = async (req, res) => {
 		}
 
 		let transporter = nodemailer.createTransport({
-			host: 'smtp.gmail.com',
-			port: 465,
-			secure: true,
+			// host: 'smtp.gmail.com',
+			// port: 465,
+			// secure: true,
+			service: 'gmail',
 			auth: {
 				user: config.nodemailer.EMAIL_ID,
 				pass: config.nodemailer.PASSWORD,
