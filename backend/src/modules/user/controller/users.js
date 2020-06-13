@@ -86,9 +86,11 @@ exports.loginUser = async (req, res) => {
 exports.getUserProfile = async (req, res) => {
 	try {
 
-		let details = await Users.findById(
-			mongoose.Types.ObjectId(req.params.userId)
-		)
+		if (req.params.userId == "null") {
+			return res.status(204).json()
+		}
+
+		let details = await Users.findById(req.params.userId)
 		if (details) {
 			details = details.toJSON()
 			delete details.password
@@ -148,7 +150,7 @@ exports.updateUserProfile = async (req, res) => {
 		return res.status(200).send(details.toJSON())
 
 	} catch (error) {
-		console.log(`Error while getting user profile details ${error}`)
+		console.log(`Error while updating user profile details ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
@@ -221,7 +223,7 @@ exports.reportBug = async (req, res) => {
 		return res.status(200).send(null)
 
 	} catch (error) {
-		console.log(`Error while getting user profile details ${error}`)
+		console.log(`Error while reporting bug ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
@@ -263,7 +265,7 @@ exports.getStats = async (req, res) => {
 		.send(returnValue)
 
 	} catch (error) {
-		console.log(`Error while getting user profile details ${error}`)
+		console.log(`Error while getting stats ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
