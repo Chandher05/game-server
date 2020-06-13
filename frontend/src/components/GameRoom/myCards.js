@@ -245,11 +245,24 @@ class MyCards extends Component {
 		
 		if (this.state.currentCards === undefined || this.state.currentCards.length === 0) {
 			if (this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId')) {
-				return (
-					<div className="p-5 m-5 text-center">
-						<button className="btn btn-success" onClick={this.startNextRound}>Start next round</button>
-					</div>
-				)
+				if (this.state.isGameComplete === true) {
+					return (
+						<div>
+							<a href="/joinGame">
+								<button className="btn btn-danger" onClick={this.leaveGame}>Close game</button>
+							</a>
+							<div>
+								<button className="btn btn-success mt-5" onClick={this.startNewGame}>Start new game</button> :
+							</div>
+						</div>
+					)
+				} else {
+					return (
+						<div className="p-5 m-5 text-center">
+							<button className="btn btn-success" onClick={this.startNextRound}>Start next round</button>
+						</div>
+					)
+				}
 			} else {
 				return (null)
 			}
