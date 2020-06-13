@@ -109,7 +109,7 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
 
 var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
     return new Promise( async (resolve) => {
-        await sleep(5)
+
         if (game.currentPlayer.toString() != gameMember.userId.toString()) {
             console.log("Not current player")
             resolve()

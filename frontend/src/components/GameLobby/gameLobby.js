@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router'
+import { Redirect } from 'react-router';
+import IsValidUser from '../Authentication/isValidUser';
 
 class UserInfo extends Component {
 
@@ -97,6 +98,7 @@ class GameLobby extends Component {
 
         return (
             <div>
+                {/* <IsValidUser /> */}
                 <div className="row p-5">
                     <div className="col-md-12">
                         <p className="display-4 text-center">

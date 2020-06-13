@@ -6,6 +6,7 @@ import GetCards from '../../../utils/getCards';
 import PlayCard from '../../../utils/playCard';
 import DeclareRound from '../../../utils/declareRound';
 import CardValues from '../../../utils/cardValues';
+import { compareSync } from 'bcryptjs';
 
 /**
  * Create current cards of the player.
@@ -85,7 +86,7 @@ exports.dropCards = async (req, res) => {
 		}
 
 		PlayCard.playRandom(timestamp, req.body.gameId, nextPlayer)
-
+console.log("HERE")
 		return res
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
 			.send({

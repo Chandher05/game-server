@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import IsValidUser from '../Authentication/isValidUser';
 
 class PlayerStats extends Component {
 
@@ -28,9 +29,15 @@ class PlayerStats extends Component {
             return (<img src="/loading.gif" style={{ width: 50 + "px" }} alt="loading" className="m-4" />)
         }
 
-        const average = this.state.stats.totalDeclares / this.state.stats.gamesCount
+        let average;
+        if (this.state.stats.gamesCount === 0) {
+            average = 0
+        }  else {
+            average = this.state.stats.totalDeclares / this.state.stats.gamesCount
+        }
         return (
             <div>
+                {/* <IsValidUser /> */}
                 <h4>Total games played: {this.state.stats.gamesCount}</h4>
                 <h4>Total wins: {this.state.stats.totalWins}</h4>
                 <h4>Total number of declares: {this.state.stats.totalDeclares}</h4>

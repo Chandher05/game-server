@@ -209,6 +209,8 @@ var declareRound = (gameId, userId, isAutoPlay) => {
             await updateStats(userId, allScores[userId])
         }
 
+        delete GamesCache[gameId]
+
         resolve()
     })
 

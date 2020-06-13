@@ -9,9 +9,9 @@ import GameRoom from './GameRoom/gameRoom';
 import SpectateRoom from './GameRoom/spectate';
 
 import ErrorPage from './Authentication/errorPage';
-import Rules from './Common/Rules';
+import Rules from './OtherFeatures/Rules';
 // import WaitingScreen from './Common/WaitingScreen';
-import ReportError from './Common/ReportError';
+import ReportError from './OtherFeatures/ReportError';
 import PlayerStats from './Stats/completeStats';
 
 //Create a Main Component

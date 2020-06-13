@@ -29,7 +29,12 @@ class CompleteStats extends Component {
             return (<WaitingScreen />)
         }
 
-        const average = this.state.stats.totalDeclares / this.state.stats.gamesCount
+        let average;
+        if (this.state.stats.gamesCount === 0) {
+            average = 0
+        }  else {
+            average = this.state.stats.totalDeclares / this.state.stats.gamesCount
+        }
         return (
             <div>
                 <h2>Total games played: {this.state.stats.gamesCount}</h2>

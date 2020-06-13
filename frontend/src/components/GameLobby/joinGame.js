@@ -6,6 +6,7 @@ import UserOperations from './userOperations';
 import GameIdHandler from './gameIdHandler';
 import GameLobby from './gameLobby';
 import WaitingScreen from '../Common/WaitingScreen';
+import IsValidUser from '../Authentication/isValidUser';
 import '../Common/style.css';
 
 
@@ -25,23 +26,6 @@ class JoinGame extends Component {
 	}
 
 	componentDidMount() {
-		axios.get(`/users/profile/${localStorage.getItem('GameUserId')}`)
-			.then((response) => {
-				if (response.status === 204) {
-					localStorage.removeItem('GameUserId')
-					localStorage.removeItem('GameUsername')
-					this.setState({
-						redirect: `/`
-					})
-				}
-			})
-			.catch(() => {
-				localStorage.removeItem('GameUserId')
-				localStorage.removeItem('GameUsername')
-				this.setState({
-					redirect: `/`
-				})
-			})
 		axios.get(`/game/currentGame/${localStorage.getItem('GameUserId')}`)
 			.then((response) => {
 				if (response.status === 200) {
@@ -104,7 +88,7 @@ class JoinGame extends Component {
 					showJoinGame: true
 				})
 			}
-		}, 250);
+		}, 1000);
 	}
 
 	updateGameId = (gameId) => {
@@ -130,6 +114,7 @@ class JoinGame extends Component {
 		if (this.state.showJoinGame === true) {
 			return (
 				<div>
+					{/* <IsValidUser /> */}
 					<div className="row p-5">
 						<div className="col-md-8 offset-md-2 text-center">
 							<p className="font-weight-bold">Sponsored by</p>
