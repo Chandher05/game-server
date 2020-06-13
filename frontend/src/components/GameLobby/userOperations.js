@@ -98,12 +98,12 @@ class UserOperations extends Component {
                 </div>
 
 
-                <div className="modal fade" id="updateAccoutnModal" tabindex="-1" role="dialog" aria-labelledby="updateAccoutnModalLabel" aria-hidden="true">
+                <div className="modal fade" id="updateAccoutnModal" tabIndex="-1" role="dialog" aria-labelledby="updateAccoutnModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-body border">
                                 <div className="form-group">
-                                    <label for="userName">Username <span className="text-danger">*</span></label>
+                                    <label htmlFor="userName">Username <span className="text-danger">*</span></label>
                                     <input className="form-control" id="userName" value={this.state.userName} onChange={this.userNameChangeHandler} placeholder="User name"></input>
                                 </div>
 								<div className="row p-2">

@@ -7,6 +7,7 @@ import WaitingScreen from '../Common/WaitingScreen';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import GameStatus from '../../APIs/commonGameStatus';
+import IsValidPlayer from '../Authentication/isValidUser';
 
 class GameRoom extends Component {
 
@@ -54,6 +55,7 @@ class GameRoom extends Component {
 
 		return (
 			<div className="row">
+				<IsValidPlayer />
 				<div className="col-md-3">
 					<OtherPlayers gameId={this.props.match.params.gameId} />
 				</div>

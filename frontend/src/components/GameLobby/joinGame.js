@@ -25,6 +25,23 @@ class JoinGame extends Component {
 	}
 
 	componentDidMount() {
+		axios.get(`/users/profile/${localStorage.getItem('GameUserId')}`)
+        .then((response) => {
+            if (response.status === 204) {
+                localStorage.removeItem('GameUserId')
+                localStorage.removeItem('GameUsername')
+                this.setState({
+                    redirect: "/"
+                })
+            }
+        })
+        .catch(() => {
+            localStorage.removeItem('GameUserId')
+            localStorage.removeItem('GameUsername')
+            this.setState({
+                redirect:  "/"
+            })
+        })
 		axios.get(`/game/currentGame/${localStorage.getItem('GameUserId')}`)
 			.then((response) => {
 				if (response.status === 200) {
@@ -87,7 +104,7 @@ class JoinGame extends Component {
 					showJoinGame: true
 				})
 			}
-		}, 1000);
+		}, 250);
 	}
 
 	updateGameId = (gameId) => {

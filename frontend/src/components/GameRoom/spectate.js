@@ -6,6 +6,7 @@ import WaitingScreen from '../Common/WaitingScreen';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import CommonGameStatus from '../../APIs/commonGameStatus';
+import IsValidPlayer from '../Authentication/isValidUser';
 
 class GameRoom extends Component {
 
@@ -27,9 +28,11 @@ class GameRoom extends Component {
 		})
 		setInterval(() => {
 			CommonGameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
-				this.setState({
-					gameState: data
-				})
+				if (this.state.gameState === null) {
+					this.setState({
+						gameState: true
+					})
+				}
 			})
 		}, 1000)
 			
@@ -51,6 +54,7 @@ class GameRoom extends Component {
 
 		return (
 			<div className="row">
+				<IsValidPlayer />
 				<div className="col-md-3">
 					<OtherPlayers gameId={this.props.match.params.gameId} allPlayers={this.state.gameState.allPlayers} />
 				</div>

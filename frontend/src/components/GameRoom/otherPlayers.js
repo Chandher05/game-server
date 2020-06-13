@@ -105,7 +105,7 @@ class OtherPlayers extends Component {
             }
             var showCards = []
             if (this.state.allPlayers.isRoundComplete === true) {
-                showCards.push(<p className="font-weight-bold text-center" key={player.userName}>{this.state.allPlayers.cardsCount[player].score}</p>)
+                showCards.push(<p className="font-weight-bold text-center" key={player.userName + "Score"}>{this.state.allPlayers.cardsCount[player].score}</p>)
             } else {
                 for (var index = 0; index < this.state.allPlayers.cardsCount[player].count; index++) {
                     showCards.push(<i className="fas fa-square text-secondary p-1" key={player.userName + "Card" + index}></i>)
