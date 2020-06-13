@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import PlayerStats from '../Stats/playerStats';
+import GameStatus from '../../APIs/commonGameStatus';
 import "../Common/style.css";
 
 class PlayerDetails extends Component {
@@ -21,16 +22,16 @@ class PlayerDetails extends Component {
                     }
                 </div>
 
-                <div class="modal fade" id={`${this.props.userName}_stats`} tabindex="-1" role="dialog" aria-labelledby={`${this.props.userName}_label`} aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id={`${this.props.userName}_label`}>{this.props.userName} <span className="font-weight-light"> - Stats</span></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <div className="modal fade" id={`${this.props.userName}_stats`} tabIndex="-1" role="dialog" aria-labelledby={`${this.props.userName}_label`} aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id={`${this.props.userName}_label`}>{this.props.userName} <span className="font-weight-light"> - Stats</span></h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body"><PlayerStats userId={this.props.player} /></div>
+                            <div className="modal-body"><PlayerStats userId={this.props.player} /></div>
                         </div>
                     </div>
                 </div>
@@ -54,8 +55,17 @@ class OtherPlayers extends Component {
             isRoundComplete: false,
             redirect: null,
             player: null,
-            action: null
+            action: null,
+            allPlayers: []
         }
+    }
+
+    componentDidMount() {
+        GameStatus(this.props.gameId, localStorage.getItem('GameUserId'), (data) => {
+            this.setState({
+                allPlayers: data.allPlayers
+            })
+        })
     }
 
     leaveGame = () => {
@@ -82,32 +92,32 @@ class OtherPlayers extends Component {
             currentPlayerUserName,
             hostPlayerName
 
-        for (var player in this.props.allPlayers.cardsCount) {
-            if (player === this.props.allPlayers.currentPlayer) {
-                currentPlayerUserName = this.props.allPlayers.cardsCount[player].userName
+        for (var player in this.state.allPlayers.cardsCount) {
+            if (player === this.state.allPlayers.currentPlayer) {
+                currentPlayerUserName = this.state.allPlayers.cardsCount[player].userName
             }
-            if (player === this.props.allPlayers.currentPlayer && this.props.allPlayers.isRoundComplete !== true) {
+            if (player === this.state.allPlayers.currentPlayer && this.state.allPlayers.isRoundComplete !== true) {
                 background = "bg-warning"
-            } else if (this.props.allPlayers.isRoundComplete === true) {
+            } else if (this.state.allPlayers.isRoundComplete === true) {
                 background = "bg-secondary text-white"
             } else {
                 background = "bg-light"
             }
             var showCards = []
-            if (this.props.allPlayers.isRoundComplete === true) {
-                showCards.push(<p className="font-weight-bold text-center">{this.props.allPlayers.cardsCount[player].score}</p>)
+            if (this.state.allPlayers.isRoundComplete === true) {
+                showCards.push(<p className="font-weight-bold text-center" key={player.userName}>{this.state.allPlayers.cardsCount[player].score}</p>)
             } else {
-                for (var index = 0; index < this.props.allPlayers.cardsCount[player].count; index++) {
-                    showCards.push(<i class="fas fa-square text-secondary p-1"></i>)
+                for (var index = 0; index < this.state.allPlayers.cardsCount[player].count; index++) {
+                    showCards.push(<i className="fas fa-square text-secondary p-1" key={player.userName + "Card" + index}></i>)
                 }
             }
             cards.push(
-                <PlayerDetails background={background} userName={this.props.allPlayers.cardsCount[player].userName}
-                    showCards={showCards} hostPlayer={this.props.allPlayers.hostPlayer}
-                    player={player} hasQuit={this.props.allPlayers.cardsCount[player].hasQuit} />
+                <PlayerDetails background={background} userName={this.state.allPlayers.cardsCount[player].userName}
+                    showCards={showCards} hostPlayer={this.state.allPlayers.hostPlayer}
+                    player={player} hasQuit={this.state.allPlayers.cardsCount[player].hasQuit} key={this.state.allPlayers.cardsCount[player].userName + "Details"}/>
             )
-            if (this.props.allPlayers.hostPlayer === player) {
-                hostPlayerName = this.props.allPlayers.cardsCount[player].userName
+            if (this.state.allPlayers.hostPlayer === player) {
+                hostPlayerName = this.state.allPlayers.cardsCount[player].userName
             }
         }
 
@@ -118,8 +128,8 @@ class OtherPlayers extends Component {
                 </a>
                 {cards}
                 {
-                    this.props.allPlayers.isRoundComplete === true && this.props.allPlayers.isEnded === false ?
-                        this.props.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
+                    this.state.allPlayers.isRoundComplete === true && this.state.allPlayers.isEnded === false ?
+                        this.state.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
                             <div className="mt-5">
                                 <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start the next round
@@ -128,8 +138,8 @@ class OtherPlayers extends Component {
                                 <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start the next round</span>
                             </div> :
-                    this.props.allPlayers.isEnded === true ?
-                        this.props.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
+                    this.state.allPlayers.isEnded === true ?
+                        this.state.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
                         <div className="mt-5">
                             <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start new game
                         </div> :
@@ -140,7 +150,7 @@ class OtherPlayers extends Component {
                     null
                 }
                 {
-                    this.props.allPlayers.isEnded === false ?
+                    this.state.allPlayers.isEnded === false ?
                         <div className="text-center">
                             <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
                         </div> :

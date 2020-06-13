@@ -7,7 +7,6 @@ import WaitingScreen from '../Common/WaitingScreen';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import GameStatus from '../../APIs/commonGameStatus';
-import IsValidUser from '../Authentication/isValidUser';
 
 class GameRoom extends Component {
 
@@ -28,12 +27,14 @@ class GameRoom extends Component {
 			})
 		})
 		setInterval(() => {
-			GameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
-				this.setState({
-					gameState: data
-				})
+			GameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), () => {
+				if (this.state.gameState === null) {
+					this.setState({
+						gameState: true
+					})
+				}
 			})
-		}, 500)
+		}, 250)
 			
 	}
 
@@ -53,16 +54,15 @@ class GameRoom extends Component {
 
 		return (
 			<div className="row">
-				{/* <IsValidUser /> */}
 				<div className="col-md-3">
-					<OtherPlayers gameId={this.props.match.params.gameId} allPlayers={this.state.gameState.allPlayers} />
+					<OtherPlayers gameId={this.props.match.params.gameId} />
 				</div>
 				<div className="col-md-6">
 					<div>
-						<CommonCards gameId={this.props.match.params.gameId} currentCards={this.state.gameState.currentCards} />
+						<CommonCards gameId={this.props.match.params.gameId} />
 					</div>
 					<div>
-						<GameScores gameId={this.props.match.params.gameId} scores={this.state.gameState.scores} />
+						<GameScores gameId={this.props.match.params.gameId} />
 					</div>
 				</div>
 				<div className="col-md-3">

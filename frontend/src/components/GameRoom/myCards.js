@@ -4,6 +4,7 @@ import CardValues from '../../constants/cardValues';
 import RemoveDuplicates from '../../constants/removeDuplicates';
 import axios from 'axios';
 import CurrentPlayer from '../../APIs/getCurrentPlayer';
+import {Redirect } from 'react-router';
 import '../Common/style.css';
 
 class MyCards extends Component {
@@ -18,7 +19,8 @@ class MyCards extends Component {
 			isRoundComplete: false,
 			isGameComplete: false,
 			hostPlayer: null,
-			showDeclare: true
+			showDeclare: true,
+			redirect: null
 		}
 	}
 
@@ -185,6 +187,19 @@ class MyCards extends Component {
 		})
 	}
 
+	leaveGame = () => {
+        const reqBody = {
+            gameId: this.props.gameId,
+            userId: localStorage.getItem('GameUserId')
+        }
+        axios.post(`/game/quitFromGame`, reqBody)
+            .then(() => {
+                this.setState({
+                    redirect: <Redirect to="/joinGame" />,
+                })
+            })
+    }
+
 	declare = () => {
 		this.setState({
 			showDeclare: false
@@ -224,6 +239,10 @@ class MyCards extends Component {
 	}
 
 	render() {
+		if (this.state.redirect) {
+			return (this.state.redirect)
+		}
+		
 		if (this.state.currentCards === undefined || this.state.currentCards.length === 0) {
 			if (this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId')) {
 				return (
@@ -257,14 +276,14 @@ class MyCards extends Component {
 				)
 			} else {
 				temp.push(
-					<div className="col-md-4 p-1">
-						<img src={CardImages[card]} alt="card" style={{ width: 100 + "%" }} className="showPointer" />
+					<div className="col-md-4 p-1" key={card}>
+						<img src={CardImages[card]} alt="card" style={{ width: 100 + "%" }} className="showPointer"/>
 					</div>
 				)
 			}
 			if (temp.length === 3) {
 				cardNames.push(
-					<div className="row mb-2">
+					<div className="row mb-2" key={total}>
 						{temp}
 					</div>
 				)
@@ -274,7 +293,7 @@ class MyCards extends Component {
 		}
 		if (temp.length > 0) {
 			cardNames.push(
-				<div className="row mb-2">
+				<div className="row mb-2" key={total}>
 					{temp}
 				</div>
 			)
@@ -283,7 +302,7 @@ class MyCards extends Component {
 
 		return (
 			<div className="p-5">
-				<p>{cardNames}</p>
+				<div>{cardNames}</div>
 				{
 					this.state.myTurn === true ?
 						<div>
@@ -330,7 +349,7 @@ class MyCards extends Component {
 						<div>
 							<div>
 								<a href="/joinGame">
-									<button className="btn btn-danger">Close game</button>
+									<button className="btn btn-danger" onClick={this.leaveGame}>Close game</button>
 								</a>
 							</div>
 							{

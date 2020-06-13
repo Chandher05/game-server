@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
-import IsValidUser from '../Authentication/isValidUser';
 
 class UserInfo extends Component {
 
@@ -98,12 +97,11 @@ class GameLobby extends Component {
 
         return (
             <div>
-                {/* <IsValidUser /> */}
                 <div className="row p-5">
                     <div className="col-md-12">
                         <p className="display-4 text-center">
                             Game ID: <span className="font-weight-bold">{this.props.gameId}</span>
-                            <i class="fas fa-copy ml-3 text-secondary display-4 showPointer" onClick={this.copyText}></i>
+                            <i className="fas fa-copy ml-3 text-secondary display-4 showPointer" onClick={this.copyText}></i>
                         </p>
                     </div>
                 </div>

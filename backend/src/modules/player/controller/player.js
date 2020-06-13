@@ -86,7 +86,7 @@ exports.dropCards = async (req, res) => {
 		}
 
 		PlayCard.playRandom(timestamp, req.body.gameId, nextPlayer)
-console.log("HERE")
+		
 		return res
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
 			.send({

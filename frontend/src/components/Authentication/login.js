@@ -55,7 +55,7 @@ class Home extends Component {
         }
 
         return (
-            <div class="p-5 ">
+            <div className="p-5 ">
 
                 <div className="row pt-5 mb-5">
                     <div className="col-md-4 offset-md-4 p-5 shadow">

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
-import IsValidUser from '../Authentication/isValidUser';
 
 class PlayerStats extends Component {
 
@@ -37,7 +36,6 @@ class PlayerStats extends Component {
         }
         return (
             <div>
-                {/* <IsValidUser /> */}
                 <h4>Total games played: {this.state.stats.gamesCount}</h4>
                 <h4>Total wins: {this.state.stats.totalWins}</h4>
                 <h4>Total number of declares: {this.state.stats.totalDeclares}</h4>

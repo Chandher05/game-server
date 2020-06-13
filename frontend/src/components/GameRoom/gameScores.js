@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import GameStatus from '../../APIs/commonGameStatus';
 
 class GameScoresComponent extends Component {
 
@@ -9,9 +10,17 @@ class GameScoresComponent extends Component {
         }
     }
 
+    componentDidMount() {
+        GameStatus(this.props.gameId, localStorage.getItem('GameUserId'), (data) => {
+            this.setState({
+                scores: data.scores
+            })
+        })
+    }
+
     render() {
 
-        if (this.props.scores.length === 0) {
+        if (this.state.scores.length === 0) {
             return (null)
         }
 
@@ -20,11 +29,11 @@ class GameScoresComponent extends Component {
         // 4 - 2 - 2 - 2 - 2 - 2
         // 2 - 2 - 2 - 2 - 2 - 2 - 2
 
-        var numberOfRounds = this.props.scores[0].roundScores ? this.props.scores[0].roundScores.length : 0
+        var numberOfRounds = this.state.scores[0].roundScores ? this.state.scores[0].roundScores.length : 0
         var scoresRows = []
         var firstColClass,
             otherColClass
-        switch (this.props.scores.length) {
+        switch (this.state.scores.length) {
             case 2:
                 firstColClass = "col-md-4 text-center"
                 otherColClass = "col-md-4 text-center"
@@ -48,39 +57,39 @@ class GameScoresComponent extends Component {
         var temp,
             person,
             index
-        temp = [<div className={`${firstColClass} font-weight-bold`}></div>]
-        for (person of this.props.scores) {
-            temp.push(<div className={`${otherColClass} font-weight-bold text-break`}>{person.userName}</div>)
+        temp = [<div className={`${firstColClass} font-weight-bold`} key="Heading"></div>]
+        for (person of this.state.scores) {
+            temp.push(<div className={`${otherColClass} font-weight-bold text-break`} key={person.userName}>{person.userName}</div>)
         }
-        scoresRows.push(<div className="row">{temp}</div>)
+        scoresRows.push(<div className="row" key={person.userName}>{temp}</div>)
 
         for (index = 0; index < numberOfRounds; index++) {
-            temp = [<div className={firstColClass}>Round {index + 1}</div>]
-            for (person of this.props.scores) {
+            temp = [<div className={firstColClass} key={index}>Round {index + 1}</div>]
+            for (person of this.state.scores) {
                 if (person.roundScores[index] === -1) {
-                    temp.push(<div className={`${otherColClass}`}>-</div>)
+                    temp.push(<div className={`${otherColClass}`} key={person.userName+index}>-</div>)
                 } else {
-                    temp.push(<div className={`${otherColClass}`}>{person.roundScores[index]}</div>)
+                    temp.push(<div className={`${otherColClass}`} key={person.userName+index}>{person.roundScores[index]}</div>)
                 }
             }
-            scoresRows.push(<div className="row">{temp}</div>)
+            scoresRows.push(<div className="row"  key={index + "Row"}>{temp}</div>)
         }
 
-        temp = [<div className={firstColClass}>Round {numberOfRounds + 1}</div>]
-        for (person of this.props.scores) {
-            temp.push(<div className={`${otherColClass}`}>-</div>)
+        temp = [<div className={firstColClass} key={numberOfRounds + 1}>Round {numberOfRounds + 1}</div>]
+        for (person of this.state.scores) {
+            temp.push(<div className={`${otherColClass}`} key={person.userName + numberOfRounds + 1}>-</div>)
         }
-        scoresRows.push(<div className="row">{temp}</div>)
+        scoresRows.push(<div className="row" key={person.userName + numberOfRounds + 1}>{temp}</div>)
 
-        temp = [<div className={`${firstColClass} font-weight-bold`}>Total</div>]
-        for (person of this.props.scores) {
+        temp = [<div className={`${firstColClass} font-weight-bold`} key="Total">Total</div>]
+        for (person of this.state.scores) {
             if (person.score > 100) {
-                temp.push(<div className={`${otherColClass} font-weight-bold text-danger`}>{person.score}</div>)
+                temp.push(<div className={`${otherColClass} font-weight-bold text-danger`} key={person.userName}>{person.score}</div>)
             } else {
-                temp.push(<div className={`${otherColClass} font-weight-bold`}>{person.score}</div>)
+                temp.push(<div className={`${otherColClass} font-weight-bold`} key={person.userName}>{person.score}</div>)
             }
         }
-        scoresRows.push(<div className="row">{temp}</div>)
+        scoresRows.push(<div className="row" key={"TotalRow"}>{temp}</div>)
 
         return (
             <div className="border">

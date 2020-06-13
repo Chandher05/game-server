@@ -6,7 +6,6 @@ import UserOperations from './userOperations';
 import GameIdHandler from './gameIdHandler';
 import GameLobby from './gameLobby';
 import WaitingScreen from '../Common/WaitingScreen';
-import IsValidUser from '../Authentication/isValidUser';
 import '../Common/style.css';
 
 
@@ -114,7 +113,6 @@ class JoinGame extends Component {
 		if (this.state.showJoinGame === true) {
 			return (
 				<div>
-					{/* <IsValidUser /> */}
 					<div className="row p-5">
 						<div className="col-md-8 offset-md-2 text-center">
 							<p className="font-weight-bold">Sponsored by</p>
