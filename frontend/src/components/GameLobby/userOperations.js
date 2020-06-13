@@ -88,7 +88,7 @@ class UserOperations extends Component {
                 </div>
                 <div className="pt-3">
                     <a href="/report" target="_blank">
-                        <button className="btn btn-warning w-100"><i className="fas fa-comment-alt"></i> Report bug</button>
+                        <button className="btn btn-warning w-100"><i className="fas fa-comment-alt"></i> Give Feedback</button>
                     </a>
                 </div>
                 <div className="pt-3">

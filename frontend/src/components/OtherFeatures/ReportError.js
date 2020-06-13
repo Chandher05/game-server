@@ -131,11 +131,14 @@ class ReportIssue extends Component {
                     </div>
                     <div className="form-group">
                         <label>Description</label>
-                        <textarea className="form-control" rows="8" style={{ resize: "none" }} value={this.state.description} onChange={this.descriptionChangeHandler} placeholder="Please help us understand the problem better and attach files if needed"></textarea>
+                        <textarea className="form-control" rows="8" style={{ resize: "none" }} value={this.state.description} onChange={this.descriptionChangeHandler} placeholder="Please type in your feedback or help us understand the problem better and attach files if needed"></textarea>
                     </div>
                     <div>
                         <Input type="file" name="image" id="image" multiple="true" onChange={this.onChangeFileUpload} value={this.state.filename} />
                         <FormText color="muted">Attach files</FormText>
+                    </div>
+                    <div className="text-center">
+                        <FormText>Close the tab after you finish :)</FormText>
                     </div>
                     <div className="text-center mt-3 p-3 border-top">
                         <button className="btn btn-primary w-25" onClick={this.submitReport}>Submit</button>
