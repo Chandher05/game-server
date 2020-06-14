@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Redirect } from 'react-router';
 import PlayerStats from '../Stats/playerStats';
 import GameStatus from '../../APIs/commonGameStatus';
+import RoundStatus from './roundStatus';
 import "../Common/style.css";
 
 class PlayerDetails extends Component {
@@ -131,20 +132,21 @@ class OtherPlayers extends Component {
                     this.state.allPlayers.isRoundComplete === true && this.state.allPlayers.isEnded === false ?
                         this.state.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
                             <div className="mt-5">
-                                <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
+                                <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start the next round
                             </div> :
                             <div className="mt-5">
-                                <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
+                                <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start the next round</span>
                             </div> :
                     this.state.allPlayers.isEnded === true ?
                         this.state.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
                         <div className="mt-5">
+                            <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
                             <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start new game
                         </div> :
                         <div className="mt-5">
-                            <p className="font-weight-bold text-center">{currentPlayerUserName} has declared</p>
+                                <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
                             <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start new game</span>
                         </div> :
                     null

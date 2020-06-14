@@ -1,0 +1,63 @@
+.pair {
+    animation-name: pairAnimation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes pairAnimation {
+    0% {background-color: #B9F6CA;}
+    14% {background-color: #69F0AE;}
+    29% {background-color: #00E676;}
+    43% {background-color: #00C853;}
+    68% {background-color: #00E676;}
+    83% {background-color: #69F0AE;}
+    100% {background-color: #B9F6CA;}
+}
+
+.bamboozled {
+    animation-name: bamboozledAnimation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes bamboozledAnimation {
+    0% {background-color: #FF9E80;}
+    14% {background-color: #FF6E40;}
+    29% {background-color: #FF3D00;}
+    43% {background-color: #DD2C00;}
+    68% {background-color: #FF3D00;}
+    83% {background-color: #FF6E40;}
+    100% {background-color: #FF9E80;}
+}
+
+.equalScore {
+    animation-name: equalScoreAnimation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes equalScoreAnimation {
+    0% {background-color: #FFFF8D;}
+    14% {background-color: #FFFF00;}
+    29% {background-color: #FFEA00;}
+    43% {background-color: #FFD600;}
+    68% {background-color: #FFEA00;}
+    83% {background-color: #FFFF00;}
+    100% {background-color: #FFFF8D;}
+}
+
+.declare {
+    animation-name: declareAnimation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes declareAnimation {
+    0% {background-color: #80D8FF;}
+    14% {background-color: #40C4FF;}
+    29% {background-color: #00B0FF;}
+    43% {background-color: #0091EA;}
+    68% {background-color: #00B0FF;}
+    83% {background-color: #40C4FF;}
+    100% {background-color: #80D8FF;}
+}

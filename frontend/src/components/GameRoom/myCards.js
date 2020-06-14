@@ -249,7 +249,7 @@ class MyCards extends Component {
 					return (
 						<div>
 							<a href="/joinGame">
-								<button className="btn btn-danger" onClick={this.leaveGame}>Close game</button>
+								<button className="btn btn-danger mt-5" onClick={this.leaveGame}>Close game</button>
 							</a>
 							<div>
 								<button className="btn btn-success mt-5" onClick={this.startNewGame}>Start new game</button> :

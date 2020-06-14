@@ -2,6 +2,7 @@ import Game from '../models/mongoDB/game'
 import GameMember from '../models/mongoDB/gameMember'
 import Users from '../models/mongoDB/users'
 import calculateScore from '../../utils/calculateScore'
+import RoundStatus from '../../utils/roundStatus'
 
 exports.getPlayersInGame = (gameId) => {
     return new Promise( async (resolve) => {
@@ -75,7 +76,8 @@ exports.getGameStatus = (gameId, userId) => {
             gameMember: gameMember,
             allScores: allScores,
             allGameMembers: allGameMembers,
-            allCards: allCards
+            allCards: allCards,
+            roundStatus: game.isRoundComplete === true ? RoundStatus(allGameMembers) : null
         })
     })
 }

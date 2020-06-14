@@ -38,7 +38,8 @@ var socketListener = (io) => {
                     let returnValue = {
                         currentCards: currentCards,
                         scores: data.allScores,
-                        allPlayers: allPlayers
+                        allPlayers: allPlayers,
+                        roundStatus: data.roundStatus
                     }
                     
                     client.emit('commonGameData', returnValue)
