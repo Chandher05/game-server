@@ -35,7 +35,7 @@ class GameRoom extends Component {
 					})
 				}
 			})
-		}, 250)
+		}, 500)
 			
 	}
 
