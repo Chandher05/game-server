@@ -12,5 +12,6 @@ router.get('/profile/:userId', userController.getUserProfile);
 router.put('/update', userController.updateUserProfile);
 router.post('/report', upload.array('files', 10), userController.reportBug);
 router.get('/stats/:userId', userController.getStats);
+router.get('/leaderboard', userController.leaderboard);
 
 module.exports = router;

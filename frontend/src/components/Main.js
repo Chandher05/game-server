@@ -13,6 +13,7 @@ import Rules from './OtherFeatures/Rules';
 // import WaitingScreen from './Common/WaitingScreen';
 import ReportError from './OtherFeatures/ReportError';
 import PlayerStats from './Stats/completeStats';
+import Leaderboard from './Stats/leaderboard';
 
 //Create a Main Component
 class Main extends Component {
@@ -33,6 +34,7 @@ class Main extends Component {
                     {/* <Route path="/waitingScreen" component={WaitingScreen}/> */}
                     <Route path="/report" component={ReportError}/>
                     <Route path="/stats" component={PlayerStats}/>
+                    <Route path="/leaderboard" component={Leaderboard}/>
 
                     <Route component={ErrorPage}/>
                 </Switch>

@@ -91,9 +91,14 @@ class UserOperations extends Component {
                         <button className="btn btn-warning w-100"><i className="fas fa-comment-alt"></i> Give Feedback</button>
                     </a>
                 </div>
-                <div className="pt-3">
+                {/* <div className="pt-3">
                     <a href="/stats">
                         <button className="btn btn-info w-100"><i className="fas fa-crown"></i> View stats</button>
+                    </a>
+                </div> */}
+                <div className="pt-3">
+                    <a href="/leaderboard">
+                        <button className="btn btn-info w-100"><i className="fas fa-trophy"></i> Leaderboard</button>
                     </a>
                 </div>
 

@@ -147,6 +147,17 @@ exports.updateUserProfile = async (req, res) => {
 				userName: req.body.userName
 			}
 		)
+		let gameMembers = await GameMember.find({
+			userId: req.body.userId
+		})
+		for (var game of gameMembers) {
+			await GameMember.findByIdAndUpdate(
+				game._id,
+				{
+					userName: req.body.userName
+				}
+			)
+		}
 		return res.status(200).send(details.toJSON())
 
 	} catch (error) {
@@ -266,6 +277,76 @@ exports.getStats = async (req, res) => {
 
 	} catch (error) {
 		console.log(`Error while getting stats ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Get leaderboard for all users.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.leaderboard = async (req, res) => {
+	try {
+
+		let data = await GameMember.aggregate(
+			[
+				{
+					$group: {
+						_id: "$userId",
+						count: { $sum: 1 }
+					}
+				}
+			]
+		)
+
+		let userGameCount = {}
+
+		for (var game of data) {
+			userGameCount[game._id] = game.count
+		}
+
+		let allUsers = await Users.find(),
+			user,
+			userId,
+			numberOfGames,
+			allUsersData = []
+
+
+		for (user of allUsers) {
+			userId = user._id
+
+			numberOfGames = 0 
+			if (userGameCount[userId]) {
+				numberOfGames = userGameCount[userId]
+			}
+
+			let ratio = 0
+            if (numberOfGames > 0) {
+                ratio = user.totalDeclares / numberOfGames
+			}
+			ratio = ratio.toFixed(2)
+			
+			allUsersData.push({
+				userId: userId,
+				userName: user.userName,
+				gamesCount: numberOfGames,
+				totalWins: user.totalWins,
+				totalDeclares: user.totalDeclares,
+				ratio: ratio,
+				totalFifties: user.totalFifties,
+				totalPairs: user.totalPairs,
+			})
+		}
+
+		return res
+		.status(constants.STATUS_CODE.SUCCESS_STATUS)
+		.send(allUsersData)
+
+	} catch (error) {
+		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)
