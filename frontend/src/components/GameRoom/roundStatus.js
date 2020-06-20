@@ -27,8 +27,8 @@ class RoundStatus extends Component {
         console.log(this.state.roundStatus)
 
         
-        // var didCurrentPlayerDeclare = false,
-        var declarePlayerUserId
+        var didCurrentPlayerDeclare = false,
+            declarePlayerUserId
         for (var player in this.state.roundStatus) {
             if (this.props.declarePlayerUsername === this.state.roundStatus[player].userName) {
                 if (localStorage.getItem('GameUserId') === player) {
