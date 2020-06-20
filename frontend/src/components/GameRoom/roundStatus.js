@@ -27,8 +27,8 @@ class RoundStatus extends Component {
         console.log(this.state.roundStatus)
 
         
-        var didCurrentPlayerDeclare = false,
-        declarePlayerUserId
+        // var didCurrentPlayerDeclare = false,
+        var declarePlayerUserId
         for (var player in this.state.roundStatus) {
             if (this.props.declarePlayerUsername === this.state.roundStatus[player].userName) {
                 if (localStorage.getItem('GameUserId') === player) {
@@ -60,7 +60,7 @@ class RoundStatus extends Component {
         }
 
         // Is lowest and same. Not so fast
-        if (this.state.roundStatus[declarePlayerUserId].isLowest === true && this.state.roundStatus[declarePlayerUserId]    .isSame === true) {
+        if (this.state.roundStatus[declarePlayerUserId].isLowest === true && this.state.roundStatus[declarePlayerUserId].isSame === true) {
             return (
                 <div className="mt-5 p-3 font-weight-bold text-center equalScore">
                     Slow down {this.state.roundStatus[declarePlayerUserId].userName}!
