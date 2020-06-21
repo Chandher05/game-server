@@ -62,6 +62,11 @@ class GameLobby extends Component {
         document.execCommand('Copy')
     }
 
+    copyGameId = () => {
+        this.gameIdtextArea.select()
+        document.execCommand('Copy')
+    }
+
     render() {
 
         if (this.state.redirect !== null) {
@@ -97,22 +102,37 @@ class GameLobby extends Component {
 
         return (
             <div>
-                <div className="row p-5">
+                <div className="row pt-5 pb-2">
                     <div className="col-md-12">
                         <p className="display-4 text-center">
                             Game ID: <span className="font-weight-bold">{this.props.gameId}</span>
-                            <i className="fas fa-copy ml-3 text-secondary display-4 showPointer" onClick={this.copyText}></i>
                         </p>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-md-6 offset-md-3">
+                <div className="row p-2">
+                    <div className="col-md-5 offset-md-3">
+                        <textarea
+                            ref={(textarea) => this.gameIdtextArea = textarea}
+                            value={this.props.gameId}
+                            style={{ resize: "none" }}
+                            className="w-100 rounded text-center"
+                        />
+                    </div>
+                    <div className="col-md-1">
+                        <i className="fas fa-copy ml-3 text-secondary display-4 showPointer" onClick={this.copyGameId}></i>
+                    </div>
+                </div>
+                <div className="row p-2">
+                    <div className="col-md-5 offset-md-3">
                         <textarea
                             ref={(textarea) => this.textArea = textarea}
                             value={window.location.origin.concat("/joinGame?").concat(this.props.gameId)}
                             style={{ resize: "none" }}
                             className="w-100 rounded text-center"
                         />
+                    </div>
+                    <div className="col-md-1">
+                        <i className="fas fa-copy ml-3 text-secondary display-4 showPointer" onClick={this.copyText}></i>
                     </div>
                 </div>
 
