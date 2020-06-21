@@ -7,12 +7,12 @@ import RoundStatus from './roundStatus';
 import "../Common/style.css";
 
 class PlayerDetails extends Component {
-
+    
     render() {
         return (
             <div>
                 <div className={`row p-2 ${this.props.background}`}>
-                    <div className="col-md-5 text-break showPointer" data-toggle="modal" data-target={`#${this.props.userName}_stats`}>{this.props.userName}</div>
+                    <div className="col-md-5 text-break showPointer" data-toggle="modal" data-target={`#User_${this.props.count}_stats`}>{this.props.userName}</div>
                     <div className="col-md-5">{this.props.showCards}</div>
                     {
                         this.props.hostPlayer === this.props.player ?
@@ -23,11 +23,11 @@ class PlayerDetails extends Component {
                     }
                 </div>
 
-                <div className="modal fade" id={`${this.props.userName}_stats`} tabIndex="-1" role="dialog" aria-labelledby={`${this.props.userName}_label`} aria-hidden="true">
+                <div className="modal fade" id={`User_${this.props.count}_stats`} tabIndex="-1" role="dialog" aria-labelledby={`User_${this.props.count}_label`} aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id={`${this.props.userName}_label`}>{this.props.userName} <span className="font-weight-light"> - Stats</span></h5>
+                                <h5 className="modal-title" id={`User_${this.props.count}_label`}>{this.props.userName} <span className="font-weight-light"> - Stats</span></h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -91,7 +91,8 @@ class OtherPlayers extends Component {
         let cards = [],
             background,
             currentPlayerUserName,
-            hostPlayerName
+            hostPlayerName,
+            count = 1
 
         for (var player in this.state.allPlayers.cardsCount) {
             if (player === this.state.allPlayers.currentPlayer) {
@@ -114,7 +115,7 @@ class OtherPlayers extends Component {
             }
             cards.push(
                 <PlayerDetails background={background} userName={this.state.allPlayers.cardsCount[player].userName}
-                    showCards={showCards} hostPlayer={this.state.allPlayers.hostPlayer}
+                    showCards={showCards} hostPlayer={this.state.allPlayers.hostPlayer} count={count++}
                     player={player} hasQuit={this.state.allPlayers.cardsCount[player].hasQuit} key={this.state.allPlayers.cardsCount[player].userName + "Details"}/>
             )
             if (this.state.allPlayers.hostPlayer === player) {
