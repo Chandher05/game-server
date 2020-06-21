@@ -6,6 +6,7 @@ import axios from 'axios';
 import CurrentPlayer from '../../APIs/getCurrentPlayer';
 import {Redirect } from 'react-router';
 import '../Common/style.css';
+import PushCommonData from '../../APIs/pushCommonData';
 
 class MyCards extends Component {
 
@@ -120,6 +121,7 @@ class MyCards extends Component {
 					// currentCards: response.data.currentCards,
 					selected: []
 				})
+				PushCommonData(this.props.gameId)
 			})
 			.catch(() => {
 				this.setState({
@@ -148,6 +150,7 @@ class MyCards extends Component {
 					// currentCards: response.data.currentCards,
 					selected: []
 				})
+				PushCommonData(this.props.gameId)
 			})
 			.catch(() => {
 				this.setState({
@@ -176,6 +179,7 @@ class MyCards extends Component {
 					// currentCards: response.data.currentCards,
 					selected: []
 				})
+				PushCommonData(this.props.gameId)
 			})
 			.catch(() => {
 				this.setState({
@@ -197,6 +201,7 @@ class MyCards extends Component {
                 this.setState({
                     redirect: <Redirect to="/joinGame" />,
                 })
+				PushCommonData(this.props.gameId)
             })
     }
 
@@ -209,6 +214,9 @@ class MyCards extends Component {
 			userId: localStorage.getItem('GameUserId')
 		}
 		axios.post(`/player/declare`, reqBody)
+		.then(() => {
+			PushCommonData(this.props.gameId)
+		})
 		this.setState({
 			selected: []
 		})
@@ -223,6 +231,7 @@ class MyCards extends Component {
 				this.setState({
 					currentCards: response.data.createdUserCards
 				})
+				PushCommonData(this.props.gameId)
 			})
 	}
 
@@ -235,6 +244,7 @@ class MyCards extends Component {
 			this.setState({
 				currentCards: response.data.createdUserCards
 			})
+			PushCommonData(this.props.gameId)
 		})
 	}
 

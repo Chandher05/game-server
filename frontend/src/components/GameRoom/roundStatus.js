@@ -24,7 +24,6 @@ class RoundStatus extends Component {
         if (this.state.roundStatus === null) {           
             return (null)
         }
-        console.log(this.state.roundStatus)
 
         
         // var didCurrentPlayerDeclare = false

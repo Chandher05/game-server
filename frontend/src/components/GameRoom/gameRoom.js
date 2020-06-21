@@ -8,11 +8,12 @@ import axios from 'axios';
 import { Redirect } from 'react-router';
 import GameStatus from '../../APIs/commonGameStatus';
 import IsValidPlayer from '../Authentication/isValidUser';
+import PushCommonData from '../../APIs/pushCommonData';
 
 class GameRoom extends Component {
 
 	constructor() {
-		super() 
+		super()
 		this.state = {
 			message: '',
 			invalidGame: false,
@@ -20,23 +21,27 @@ class GameRoom extends Component {
 		}
 	}
 
-	componentDidMount () {
+	componentDidMount() {
 		axios.get(`/game/validGame/${this.props.match.params.gameId}`)
-		.catch(() => {
-			this.setState({
-				invalidGame: true
+			.catch(() => {
+				this.setState({
+					invalidGame: true
+				})
 			})
-		})
-		setInterval(() => {
+		// setInterval(() => {
 			GameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), () => {
 				if (this.state.gameState === null) {
-					this.setState({
-						gameState: true
-					})
-				}
-			})
-		}, 750)
-			
+				this.setState({
+					gameState: true
+				})
+			}
+		})
+		// }, 750)
+		
+		setInterval(() => {
+			PushCommonData(this.props.match.params.gameId)
+		}, 10 * 1000)
+
 	}
 
 	render() {

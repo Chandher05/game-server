@@ -34,7 +34,6 @@ class IsValidUser extends Component {
 
     render() {
 
-        console.log("YOLO")
         if (this.state.redirect === null) {
             return (null)
         }

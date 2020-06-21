@@ -4,6 +4,7 @@ import { Redirect } from 'react-router';
 import PlayerStats from '../Stats/playerStats';
 import GameStatus from '../../APIs/commonGameStatus';
 import RoundStatus from './roundStatus';
+import PushCommonData from '../../APIs/pushCommonData';
 import "../Common/style.css";
 
 class PlayerDetails extends Component {
@@ -79,6 +80,7 @@ class OtherPlayers extends Component {
                 this.setState({
                     redirect: <Redirect to="/joinGame" />,
                 })
+				PushCommonData(this.props.gameId)
             })
     }
 
