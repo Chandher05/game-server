@@ -87,7 +87,16 @@ var socketListener = (io) => {
 
         }
 
-        client.on('pushCommonData', async (gameId) => {
+        client.on('pushCommonData', async (gameId, userId) => {
+            
+            if (!allUsers[gameId]) {
+                allUsers[gameId] = new Set([userId])
+            } else {
+                allUsers[gameId].add(userId)
+            }
+            allClients[userId] = client
+            clientIDS[client.id] = userId
+            userIDS[userId] = gameId
             
             if (allUsers[gameId]) {
                 console.log(allUsers[gameId].size)
