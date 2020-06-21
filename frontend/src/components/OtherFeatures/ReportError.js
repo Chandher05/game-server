@@ -137,14 +137,21 @@ class ReportIssue extends Component {
                         <Input type="file" name="image" id="image" multiple="true" onChange={this.onChangeFileUpload} value={this.state.filename} />
                         <FormText color="muted">Attach files</FormText>
                     </div>
-                    <div className="text-center">
+                    {/* <div className="text-center">
                         <FormText>Close the tab after you finish :)</FormText>
-                    </div>
-                    <div className="text-center mt-3 p-3 border-top">
-                        <button className="btn btn-primary w-25" onClick={this.submitReport}>Submit</button>
-                        <FormText color="success">{this.state.successMsg}</FormText>
-                        <FormText color="danger">{this.state.errMsg}</FormText>
-                        <FormText color="warning">{this.state.warningMsg}</FormText>
+                    </div> */}
+                    <div className="border-top mt-3 pt-3 row">
+                        <div className="col-md-4 offset-md-1 text-center">
+                            <button className="btn btn-primary w-100" onClick={this.submitReport}>Submit</button>
+                            <FormText color="success">{this.state.successMsg}</FormText>
+                            <FormText color="danger">{this.state.errMsg}</FormText>
+                            <FormText color="warning">{this.state.warningMsg}</FormText>
+                        </div>
+                        <div className="col-md-4 offset-md-2">
+                            <a href="/">
+                                <button className="btn btn-success w-100">Play more games</button>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

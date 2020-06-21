@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 class Rules extends Component {
 
+    closeWindow = () => {
+        window.close();
+    }
+
     render() {
 
         return (
@@ -9,6 +13,7 @@ class Rules extends Component {
                 <div className="jumbotron bg-info text-white">
                     <h1 className="display-4">Declare!</h1>
                     <p className="lead">Given below are the rules for the ultimate card game.</p>
+                    <button className="btn btn-light w-25" onClick={this.closeWindow}>Awesome! Start playing</button>
                 </div>
                 <div className="container-fluid  mb-md-4">
                     <ul className="list-group">

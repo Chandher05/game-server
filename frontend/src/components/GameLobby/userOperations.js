@@ -87,7 +87,7 @@ class UserOperations extends Component {
                     <button className="btn btn-secondary w-100" data-toggle="modal" data-target="#updateAccoutnModal"><i className="fas fa-cogs"></i> Update Account</button>
                 </div>
                 <div className="pt-3">
-                    <a href="/report" target="_blank">
+                    <a href="/report">
                         <button className="btn btn-warning w-100"><i className="fas fa-comment-alt"></i> Give Feedback</button>
                     </a>
                 </div>

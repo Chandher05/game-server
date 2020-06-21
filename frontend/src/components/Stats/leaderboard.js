@@ -175,7 +175,10 @@ class Leaderboard extends Component {
         return (
             <div className="bg-light p-5">
 
-                    <a href="/"><button className="btn btn-success mb-5 w-25">Return back</button></a>
+                    <p className="display-4 text-center">Leaderboards</p>
+                    <div className="text-center">
+                        <a href="/"><button className="btn btn-success mb-5 w-25"><i class="fas fa-home"></i> Play more games</button></a>
+                    </div>
 
 
                     <div className="row font-weight-bold p-2 border-bottom">
