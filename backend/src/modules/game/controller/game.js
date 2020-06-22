@@ -22,9 +22,18 @@ exports.createGame = async (req, res) => {
 			isEnded: false
 		})
 		if (game.length > 0) {
-			
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 				.send("User is already part of a game. Please refresh page")
+		}
+		
+		game = await Game.find({
+			isStarted: true,
+			isEnded: false
+		})
+
+		if (game.length > 5) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send("Game rooms are full! Please wait for a few minutes")
 		}
 
 		game = await Game.findOne({
@@ -259,7 +268,14 @@ exports.startGame = async (req, res) => {
 		if (!game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 				.send("Game does not exist")
+		} else if (game.players.length < 2) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send("Not enough players to start the game")
+		} else if (game.isStarted === true) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send("Game has already started")
 		}
+
 		var availableCards = []
 		for (var index = 1; index < 53; index++) {
 			availableCards.push(index)
@@ -647,6 +663,9 @@ exports.restartGame = async (req, res) => {
 		} else if (oldGame.isEnded != true) {
 			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
 				.send("Game cannot be restarted until it has ended")
+		} else if (oldGame.players.length < 2) {
+			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send("Not enough players to restart the game")
 		}
 		
 		let tempGameId = await GenerateId(6)

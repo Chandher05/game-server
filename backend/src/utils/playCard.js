@@ -71,14 +71,14 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
             console.log("Not current player")
             resolve()
             return
-        } else if (GamesCache[game.gameId]) {
-            if (GamesCache[game.gameId] != gameMember.userId) {
-                console.log("Not current player")
-                resolve()
-                return
-            }
+        // } else if (GamesCache[game.gameId]) {
+        //     if (GamesCache[game.gameId] != gameMember.userId) {
+        //         console.log("Not current player")
+        //         resolve()
+        //         return
+        //     }
         } 
-        GamesCache[game.gameId] = nextPlayer
+        // GamesCache[game.gameId] = nextPlayer
         
         var difference = getDifference(gameMember, selected)
 
@@ -114,14 +114,14 @@ var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
             console.log("Not current player")
             resolve()
             return
-        } else if (GamesCache[game.gameId]) {
-            if (GamesCache[game.gameId] != gameMember.userId) {
-                console.log("Not current player")
-                resolve()
-                return
-            }
+        // } else if (GamesCache[game.gameId]) {
+        //     if (GamesCache[game.gameId] != gameMember.userId) {
+        //         console.log("Not current player")
+        //         resolve()
+        //         return
+        //     }
         } 
-        GamesCache[game.gameId] = nextPlayer
+        // GamesCache[game.gameId] = nextPlayer
 
         var difference = getDifference(gameMember, selected)
 
@@ -158,14 +158,14 @@ var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
         if (game.currentPlayer.toString() != gameMember.userId.toString()) {
             resolve()
             return
-        } else if (GamesCache[game.gameId]) {
-            if (GamesCache[game.gameId] != gameMember.userId) {
-                console.log("Not current player")
-                resolve()
-                return
-            }
+        // } else if (GamesCache[game.gameId]) {
+        //     if (GamesCache[game.gameId] != gameMember.userId) {
+        //         console.log("Not current player")
+        //         resolve()
+        //         return
+        //     }
         } 
-        GamesCache[game.gameId] = nextPlayer
+        // GamesCache[game.gameId] = nextPlayer
 
         var difference = getDifference(gameMember, selected)
 

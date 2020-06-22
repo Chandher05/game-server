@@ -71,17 +71,23 @@ class OtherPlayers extends Component {
     }
 
     leaveGame = () => {
-        const reqBody = {
-            gameId: this.props.gameId,
-            userId: localStorage.getItem('GameUserId')
-        }
-        axios.post(`/game/quitFromGame`, reqBody)
-            .then(() => {
-                this.setState({
-                    redirect: <Redirect to="/joinGame" />,
-                })
-				PushCommonData(this.props.gameId)
+        if (window.location.pathname.startsWith('/spectate')) {
+            this.setState({
+                redirect: <Redirect to="/joinGame" />,
             })
+        } else {
+            const reqBody = {
+                gameId: this.props.gameId,
+                userId: localStorage.getItem('GameUserId')
+            }
+            axios.post(`/game/quitFromGame`, reqBody)
+                .then(() => {
+                    this.setState({
+                        redirect: <Redirect to="/joinGame" />,
+                    })
+                    PushCommonData(this.props.gameId)
+                })
+        }
     }
 
     render() {

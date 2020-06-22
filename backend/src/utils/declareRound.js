@@ -70,12 +70,12 @@ var declareRound = (gameId, userId, isAutoPlay) => {
             console.log("Not current player")
             resolve()
             return
-        } else if (GamesCache[gameId]) {
-            if (GamesCache[gameId] != userId) {
-                console.log("Not current player")
-                resolve()
-                return
-            }
+        // } else if (GamesCache[gameId]) {
+        //     if (GamesCache[gameId] != userId) {
+        //         console.log("Not current player")
+        //         resolve()
+        //         return
+        //     }
         } 
 
         let gameMembers = await GameMember.find({
@@ -209,7 +209,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
             await updateStats(userId, allScores[userId])
         }
 
-        delete GamesCache[gameId]
+        // delete GamesCache[gameId]
 
         resolve()
     })

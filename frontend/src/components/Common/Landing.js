@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
+import { Offline } from "react-detect-offline";
 
 class Landing extends Component {
 
@@ -7,7 +8,11 @@ class Landing extends Component {
 		if (this.props.location.pathname === '/') {
 			return (<Redirect to="/login" />);
 		}
-		return (null);
+		return (
+			<div className="bg-danger text-center text-white">
+				<Offline>You are offline!</Offline>
+			</div>
+		);
 	}
 
 }
