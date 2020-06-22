@@ -21,7 +21,7 @@ class RoundStatus extends Component {
 
     render() {
 
-        if (this.state.roundStatus === null) {           
+        if (!this.state.roundStatus || !this.state.roundStatus[declarePlayerUserId]) {           
             return (null)
         }
 

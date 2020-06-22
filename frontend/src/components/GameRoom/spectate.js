@@ -55,10 +55,10 @@ class GameRoom extends Component {
 		return (
 			<div className="row">
 				<IsValidPlayer />
-				<div className="col-md-3">
+				<div className="col-md-5">
 					<OtherPlayers gameId={this.props.match.params.gameId} allPlayers={this.state.gameState.allPlayers} />
 				</div>
-				<div className="col-md-6">
+				<div className="col-md-7">
 					<div>
 						<CommonCards gameId={this.props.match.params.gameId} currentCards={this.state.gameState.currentCards} />
 					</div>

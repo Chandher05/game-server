@@ -131,7 +131,7 @@ class JoinGame extends Component {
 			return (
 				<div>
 					<div className="row p-5">
-						<div className="col-md-8 offset-md-2 text-center">
+						<div className="col-md-6 offset-md-2 text-center">
 							<p className="font-weight-bold">Sponsored by</p>
 							<a href="https://hostelit.in/" target="_blank" rel="noopener noreferrer">
 								<img src="hostelit.jfif" className="rounded" style={{ width: 100 + "%" }} alt="gameLogo" />
