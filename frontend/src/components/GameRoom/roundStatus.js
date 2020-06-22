@@ -21,13 +21,13 @@ class RoundStatus extends Component {
 
     render() {
 
-        if (!this.state.roundStatus || !this.state.roundStatus[declarePlayerUserId]) {           
+        if (!this.state.roundStatus) {           
             return (null)
         }
 
         
         // var didCurrentPlayerDeclare = false
-        var declarePlayerUserId
+        var declarePlayerUserId = null
         for (var player in this.state.roundStatus) {
             if (this.props.declarePlayerUsername === this.state.roundStatus[player].userName) {
                 // if (localStorage.getItem('GameUserId') === player) {
@@ -36,6 +36,10 @@ class RoundStatus extends Component {
                 declarePlayerUserId = player
                 break
             } 
+        }
+
+        if (declarePlayerUserId === null) {
+            return (null)
         }
         
         
