@@ -113,3 +113,20 @@ exports.isGameEnded = (gameId) => {
         }
     })
 }
+
+
+exports.playersInGame = (gameId) => {
+
+    return new Promise(async (resolve, reject) => {
+        let game = await Game.findOne({
+            gameId: gameId
+        })
+        var players = new Set([])
+        if (game) {
+            for (var userId of game.players) {
+                players.add(userId.toString())
+            }
+        }
+        resolve(players)
+    })
+}

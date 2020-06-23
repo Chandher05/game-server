@@ -59,6 +59,10 @@ var socketListener = (io) => {
         // console.log('A user connected', client.id);
 
         client.on('sendUserId', async (userId) => {
+            for (var oldGameIds in allUsers) {
+                allUsers[oldGameIds].delete(userId)
+            }
+
             let gameId = await startGame.isUserPartOfGame(userId)
             if (gameId != null) {
                 if (!allUsers[gameId]) {
@@ -104,7 +108,9 @@ var socketListener = (io) => {
         }
 
         client.on('pushCommonData', async (gameId, userId) => {
-            
+            for (var oldGameIds in allUsers) {
+                allUsers[oldGameIds].delete(userId)
+            }
             if (!allUsers[gameId]) {
                 allUsers[gameId] = new Set([userId])
             } else {
@@ -143,13 +149,24 @@ var socketListener = (io) => {
     setInterval( async () => {
         var idsToRemove = []
         for (var gameId in allUsers) {
-            let status = await startGame.isGameEnded(gameId)  
-            if (status === true) {
+
+            if (allUsers[gameId].size == 0) {
                 idsToRemove.push(gameId)
-            }         
+                continue
+            }
+
+            let players = await startGame.playersInGame(gameId)
+            for (var userId of allUsers[gameId]) {
+                if (!players.has(userId)) {
+                    allUsers[gameId].delete(userId)
+                    console.log("Removing " + userId + " from " + gameId)
+                }
+            }
+                  
         }
 
         for (var gameId of idsToRemove) {
+            console.log("Deleting " + gameId)
             delete allUsers[gameId]
         }
 
