@@ -56,8 +56,24 @@ var sendData = async (client, gameId, userId) => {
 var socketListener = (io) => {
     //Whenever someone connects this gets executed
     io.on('connection', function (client) {
-        console.log('A user connected', client.id);
+        // console.log('A user connected', client.id);
 
+        client.on('sendUserId', async (userId) => {
+            let gameId = await startGame.isUserPartOfGame(userId)
+            if (gameId != null) {
+                if (!allUsers[gameId]) {
+                    allUsers[gameId] = new Set([userId])
+                } else {
+                    allUsers[gameId].add(userId)
+                }
+                allClients[userId] = client
+                clientIDS[client.id] = userId
+                userIDS[userId] = gameId
+                console.log("User connected to game " + gameId)
+            } else {
+                console.log("New user connected")
+            }
+        })
         // allUsers[client.id] = client
         
         try {
@@ -99,7 +115,7 @@ var socketListener = (io) => {
             userIDS[userId] = gameId
             
             if (allUsers[gameId]) {
-                console.log(allUsers[gameId].size)
+                console.log("Sending data to " + allUsers[gameId].size + " players of game " + gameId)
                 for (var userId of allUsers[gameId]) {
                     sendData(allClients[userId], gameId, userId)
                 }
@@ -121,6 +137,31 @@ var socketListener = (io) => {
             console.log('A user disconnected', client.id);
         });
     });
+
+
+    // var count = 0
+    setInterval( async () => {
+        var idsToRemove = []
+        for (var gameId in allUsers) {
+            let status = await startGame.isGameEnded(gameId)  
+            if (status === true) {
+                idsToRemove.push(gameId)
+            }         
+        }
+
+        for (var gameId of idsToRemove) {
+            delete allUsers[gameId]
+        }
+
+        for (var gameId in allUsers) {
+            console.log("Pushing data from server to " + gameId + " with " + allUsers[gameId].size + " player(s)")
+            for (var userId of allUsers[gameId]) {
+                sendData(allClients[userId], gameId, userId)
+            }
+
+        }
+    }, 10 * 1000)
+
 }
 
 export default socketListener;

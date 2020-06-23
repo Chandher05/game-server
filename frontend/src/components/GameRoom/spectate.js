@@ -26,7 +26,7 @@ class GameRoom extends Component {
 				invalidGame: true
 			})
 		})
-		setInterval(() => {
+		// setInterval(() => {
 			CommonGameStatus(this.props.match.params.gameId, localStorage.getItem('GameUserId'), (data) => {
 				if (this.state.gameState === null) {
 					this.setState({
@@ -34,7 +34,7 @@ class GameRoom extends Component {
 					})
 				}
 			})
-		}, 1000)
+		// }, 1000)
 			
 	}
 

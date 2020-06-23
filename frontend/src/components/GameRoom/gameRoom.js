@@ -38,9 +38,9 @@ class GameRoom extends Component {
 		})
 		// }, 750)
 		
-		setInterval(() => {
-			PushCommonData(this.props.match.params.gameId)
-		}, 10 * 1000)
+		// setInterval(() => {
+		// 	PushCommonData(this.props.match.params.gameId)
+		// }, 10 * 1000)
 
 	}
 

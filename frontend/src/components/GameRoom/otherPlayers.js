@@ -8,7 +8,7 @@ import PushCommonData from '../../APIs/pushCommonData';
 import "../Common/style.css";
 
 class PlayerDetails extends Component {
-    
+
     render() {
         return (
             <div>
@@ -70,6 +70,12 @@ class OtherPlayers extends Component {
         })
     }
 
+    stopSpectating = () => {
+        this.setState({
+            redirect: <Redirect to="/joinGame" />,
+        })
+    }
+
     leaveGame = () => {
         if (window.location.pathname.startsWith('/spectate')) {
             this.setState({
@@ -124,7 +130,7 @@ class OtherPlayers extends Component {
             cards.push(
                 <PlayerDetails background={background} userName={this.state.allPlayers.cardsCount[player].userName}
                     showCards={showCards} hostPlayer={this.state.allPlayers.hostPlayer} count={count++}
-                    player={player} hasQuit={this.state.allPlayers.cardsCount[player].hasQuit} key={this.state.allPlayers.cardsCount[player].userName + "Details"}/>
+                    player={player} hasQuit={this.state.allPlayers.cardsCount[player].hasQuit} key={this.state.allPlayers.cardsCount[player].userName + "Details"} />
             )
             if (this.state.allPlayers.hostPlayer === player) {
                 hostPlayerName = this.state.allPlayers.cardsCount[player].userName
@@ -148,24 +154,28 @@ class OtherPlayers extends Component {
                                 <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
                                 <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start the next round</span>
                             </div> :
-                    this.state.allPlayers.isEnded === true ?
-                        this.state.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
-                        <div className="mt-5">
-                            <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
-                            <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start new game
+                        this.state.allPlayers.isEnded === true ?
+                            this.state.allPlayers.hostPlayer === localStorage.getItem('GameUserId') ?
+                                <div className="mt-5">
+                                    <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
+                                    <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Please start new game
                         </div> :
-                        <div className="mt-5">
-                                <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
-                            <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start new game</span>
-                        </div> :
-                    null
+                                <div className="mt-5">
+                                    <RoundStatus gameId={this.props.gameId} declarePlayerUsername={currentPlayerUserName} />
+                                    <img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /><span className="text-break"> Waiting for {hostPlayerName} to start new game</span>
+                                </div> :
+                            null
                 }
                 {
-                    this.state.allPlayers.isEnded === false ?
+                    window.location.pathname.startsWith('/spectate') ?
                         <div className="text-center">
-                            <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
+                            <button className="btn btn-danger m-5 p-2" onClick={this.stopSpectating}>Stop spectating</button>
                         </div> :
-                        null
+                        this.state.allPlayers.isEnded === false ?
+                            <div className="text-center">
+                                <button className="btn btn-danger m-5 p-2" onClick={this.leaveGame}>Leave Game</button>
+                            </div> :
+                            null
                 }
             </div>
         );
