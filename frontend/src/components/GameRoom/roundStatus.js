@@ -66,7 +66,7 @@ class RoundStatus extends Component {
         if (this.state.roundStatus[declarePlayerUserId].isLowest === true && this.state.roundStatus[declarePlayerUserId].isSame === true) {
             return (
                 <div className="mt-5 p-3 font-weight-bold text-center equalScore">
-                    Slow down {this.state.roundStatus[declarePlayerUserId].userName}!
+                    GG {this.state.roundStatus[declarePlayerUserId].userName}!
                 </div>
             )
         }

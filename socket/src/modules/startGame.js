@@ -87,7 +87,8 @@ exports.isUserPartOfGame = (userId) => {
 
     return new Promise(async (resolve, reject) => {
         let game = await Game.findOne({
-            players: userId,
+            $or: [{ players: userId }, { spectators: userId }],
+            // players: userId,
             isStarted: true,
             isEnded: false
         })
@@ -124,6 +125,9 @@ exports.playersInGame = (gameId) => {
         var players = new Set([])
         if (game) {
             for (var userId of game.players) {
+                players.add(userId.toString())
+            }
+            for (var userId of game.spectators) {
                 players.add(userId.toString())
             }
         }

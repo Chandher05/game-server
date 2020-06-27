@@ -71,9 +71,16 @@ class OtherPlayers extends Component {
     }
 
     stopSpectating = () => {
-        this.setState({
-            redirect: <Redirect to="/joinGame" />,
-        })
+        let spectateGameData = {
+            gameId: this.props.gameId,
+            userId: localStorage.getItem('GameUserId')
+        }
+        axios.post(`/game/stopSpectate`, spectateGameData)
+            .then(() => {
+                this.setState({
+                    redirect: <Redirect to="/joinGame" />,
+                })
+            })
     }
 
     leaveGame = () => {

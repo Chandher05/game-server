@@ -80,6 +80,17 @@ var socketListener = (io) => {
         })
         // allUsers[client.id] = client
         
+        client.on('spectateGame', async (userId, gameId) => {
+                
+            if (allUsers[gameId]) {
+                allUsers[gameId].add(userId)
+                allClients[userId] = client
+                clientIDS[client.id] = userId
+                userIDS[userId] = gameId
+            }
+
+        })
+
         try {
             client.on('getPlayers', async (gameId) => {
                 let users = await startGame.getPlayersInGame(gameId)

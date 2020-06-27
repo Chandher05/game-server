@@ -8,7 +8,7 @@ import axios from 'axios';
 import { Redirect } from 'react-router';
 import GameStatus from '../../APIs/commonGameStatus';
 import IsValidPlayer from '../Authentication/isValidUser';
-import PushCommonData from '../../APIs/pushCommonData';
+// import PushCommonData from '../../APIs/pushCommonData';
 
 class GameRoom extends Component {
 

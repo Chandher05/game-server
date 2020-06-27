@@ -15,7 +15,9 @@ router.post('/nextRound', gameController.nextRound);
 router.get('/allCards', gameController.allCards);
 router.post('/quitFromLobby', gameController.quitFromLobby);
 router.post('/quitFromGame', gameController.quitFromGame);
-router.delete('/reset/:gameId', gameController.resetGame);
-router.delete('/resetAllGames', gameController.resetAllGames);
+// router.delete('/reset/:gameId', gameController.resetGame);
+// router.delete('/resetAllGames', gameController.resetAllGames);
+router.post('/spectate', gameController.spectateGame);
+router.post('/stopSpectate', gameController.stopSpectateGame);
 
 module.exports = router;

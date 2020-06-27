@@ -259,7 +259,7 @@ class MyCards extends Component {
 					return (
 						<div className="p-5 text-center">
 							<a href="/joinGame">
-								<button className="btn btn-danger m-5 " onClick={this.leaveGame}>Close game</button>
+								<button className="btn btn-danger m-5 " onClick={this.leaveGame}>Leave game</button>
 							</a>
 							<div>
 								<button className="btn btn-success m-5 " onClick={this.startNewGame}>Start new game</button>
@@ -270,7 +270,7 @@ class MyCards extends Component {
 					return (
 						<div className="p-5 text-center">
 							<a href="/joinGame">
-								<button className="btn btn-danger m-5 " onClick={this.leaveGame}>Close game</button>
+								<button className="btn btn-danger m-5 " onClick={this.leaveGame}>Leave game</button>
 							</a>
 							<div>
 								<button className="btn btn-success m-5 " onClick={this.startNextRound}>Start next round</button>
@@ -282,7 +282,7 @@ class MyCards extends Component {
 				return (
 					<div className="p-5 text-center">
 						<a href="/joinGame">
-							<button className="btn btn-danger m-5 " onClick={this.leaveGame}>Close game</button>
+							<button className="btn btn-danger m-5 " onClick={this.leaveGame}>Leave game</button>
 						</a>
 					</div>
 				)
@@ -383,7 +383,7 @@ class MyCards extends Component {
 						<div>
 							<div>
 								<a href="/joinGame">
-									<button className="btn btn-danger" onClick={this.leaveGame}>Close game</button>
+									<button className="btn btn-danger" onClick={this.leaveGame}>Leave game</button>
 								</a>
 							</div>
 							{

@@ -92,9 +92,16 @@ class GameIdHandler extends Component {
         })
         axios.get(`/game/validGame/${this.state.gameId}`)
             .then(() => {
-                this.setState({
-                    redirect: `/spectate/${this.state.gameId}`
-                })
+                let spectateGameData = {
+                    gameId: this.state.gameId,
+                    userId: localStorage.getItem('GameUserId')
+                }
+                axios.post(`/game/spectate`, spectateGameData)
+                    .then(() => {
+                        this.setState({
+                            redirect: `/spectate/${this.state.gameId}`
+                        })
+                    })
             })
             .catch(() => {
                 this.setState({

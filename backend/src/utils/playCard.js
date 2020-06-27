@@ -266,7 +266,7 @@ var playRandom = async (timestamp, gameId, userId) => {
     var nextPlayerIndex = (activePlayersIds.indexOf(userId) + 1 ) % activePlayersIds.length
     var nextPlayer = activePlayersIds[nextPlayerIndex]
 
-    if (game.openedCards.length === 0) {
+    if (gameMember.currentCards.length === 6) {
         console.log(`\n\n\n${gameMember.userName} dropped ${selected} and played first turn`)
         await firstTurn(game, gameMember, selected, timestamp, nextPlayer)
     } else if (random > 0.5) {

@@ -6,6 +6,7 @@ import GenerateId from '../../../utils/generateId';
 import GetCards from '../../../utils/getCards';
 import PlayCard from '../../../utils/playCard';
 import Shuffle from '../../../utils/shufflePlayer';
+import { Mongoose } from 'mongoose';
 
 /**
  * Create game and save data in database.
@@ -764,6 +765,65 @@ exports.restartGame = async (req, res) => {
 
 	} catch (error) {
 		console.log(`Error game/restartGame ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Spectate a game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.spectateGame = async (req, res) => {
+	try {
+		await Game.findOneAndUpdate(
+			{
+				gameId: req.body.gameId
+			},
+			{
+				$push: {
+					spectators: req.body.userId
+				}
+			}
+		)
+
+		return res
+			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+			.send(null)
+	} catch (error) {
+		console.log(`Error in game/resetAllGames ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Stop spectating a game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.stopSpectateGame = async (req, res) => {
+	try {
+		console.log("REMOVING STUFF")
+		await Game.findOneAndUpdate(
+			{
+				gameId: req.body.gameId
+			},
+			{
+				$pull: {
+					spectators: req.body.userId
+				}
+			}
+		)
+
+		return res
+			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+			.send(null)
+	} catch (error) {
+		console.log(`Error in game/resetAllGames ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)

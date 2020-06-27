@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Redirect } from 'react-router';
 import CommonGameStatus from '../../APIs/commonGameStatus';
 import IsValidPlayer from '../Authentication/isValidUser';
+import SpectateGame from '../../APIs/spectateGame';
 
 class GameRoom extends Component {
 
@@ -20,6 +21,7 @@ class GameRoom extends Component {
 	}
 
 	componentDidMount () {
+		SpectateGame(localStorage.getItem('GameUserId'), this.props.match.params.gameId)
 		axios.get(`/game/validGame/${this.props.match.params.gameId}`)
 		.catch(() => {
 			this.setState({
