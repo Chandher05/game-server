@@ -16,6 +16,9 @@ const playerRouter = require('../src/modules/player/router/player');
 // database connections
 require('../src/models/mongoDB/index');
 
+// cron jon
+require('../src/utils/endUnwantedGames')
+
 const app = express();
 const { port } = config;
 const { frontendUrl } = config;
