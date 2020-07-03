@@ -1,4 +1,5 @@
 import startGame from './startGame'
+import game from '../models/mongoDB/game'
 
 let allUsers = {}
 let allClients = {}
@@ -43,7 +44,21 @@ var sendData = async (client, gameId, userId) => {
                 playerCards: data.gameMember.currentCards,
                 isRoundComplete: data.game.isRoundComplete,
                 isGameComplete: data.game.isEnded,
-                hostPlayer: data.game.createdUser
+                hostPlayer: data.game.createdUser,
+                isWaiting: data.waitingPlayers
+            }
+
+            client.emit('currentPlayer', currentPlayerData)
+        } else if (data.game.waiting.includes(userId)) {
+            // console.log("INCLUDES")
+            
+            let currentPlayerData = {
+                currentPlayer: null,
+                playerCards: [],
+                isRoundComplete: data.game.isRoundComplete,
+                isGameComplete: data.game.isEnded,
+                hostPlayer: data.game.createdUser,
+                isWaiting: true
             }
 
             client.emit('currentPlayer', currentPlayerData)

@@ -98,24 +98,71 @@ exports.joinGame = async (req, res) => {
 				.send("Game does not exist")
 		} else if (game.players.includes(req.body.userId)) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User has already joined game. Please refresh the page")
-		} else if (game.players.length === 5) {
+				.send("User has already joined game. Please refresh.")
+		} else if (game.players.length + game.waiting.length === 5) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 			.send("Game is full")
 		} else if (game.isStarted == true) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send("Game has already started")
+
+			game = await Game.findOne({
+				gameId: req.body.gameId,
+				$or: [{players: req.body.userId}, {waiting: req.body.userId}],
+				isEnded: false
+			})
+			if (game) {
+				return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send("User has already joined game")
+			}
+
+			game = await Game.findOneAndUpdate(
+				{
+					gameId: req.body.gameId
+				},
+				{
+					$pull: {
+						waiting: req.body.userId
+					}
+				}
+			)
+	
+			game = await Game.findOneAndUpdate(
+				{
+					gameId: req.body.gameId
+				},
+				{
+					$push: {
+						waiting: req.body.userId
+					}
+				}
+			)
+			return res
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send({
+				gameId: req.body.gameId,
+				createdUser: game.createdUser
+			})
 		}
 			
 		game = await Game.findOne({
 			gameId: req.body.gameId,
-			players: req.body.userId,
+			$or: [{players: req.body.userId}, {waiting: req.body.userId}],
 			isEnded: false
 		})
 		if (game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 			.send("User has already joined game")
 		}
+
+		game = await Game.findOneAndUpdate(
+			{
+				gameId: req.body.gameId
+			},
+			{
+				$pull: {
+					players: req.body.userId
+				}
+			}
+		)
 
 		game = await Game.findOneAndUpdate(
 			{
@@ -159,7 +206,7 @@ exports.isUserPartOfGame = async (req, res) => {
 
 		let game
 		game = await Game.findOne({
-			players: req.params.userId,
+			$or: [{players: req.params.userId}, {waiting: req.params.userId}],
 			isStarted: true,
 			isEnded: false
 		})
@@ -609,6 +656,9 @@ exports.quitFromGame = async (req, res) => {
 				{
 					$pull: {
 						players: req.body.userId
+					},
+					$pull: {
+						waiting: req.body.userId
 					}
 				}
 			)
@@ -664,7 +714,7 @@ exports.restartGame = async (req, res) => {
 		} else if (oldGame.isEnded != true) {
 			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
 				.send("Game cannot be restarted until it has ended")
-		} else if (oldGame.players.length < 2) {
+		} else if (oldGame.players.length + oldGame.waiting.length < 2) {
 			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
 				.send("Not enough players to restart the game")
 		}
@@ -693,7 +743,8 @@ exports.restartGame = async (req, res) => {
 			availableCards.push(index)
 		}
 
-		let randomPlayerOrder = Shuffle(oldGame.players)
+		let playersInNextGame = oldGame.players.concat(oldGame.waiting)
+		let randomPlayerOrder = Shuffle(playersInNextGame)
 		const newGameData = new Game({
 			players: randomPlayerOrder,
 			gameId: req.body.gameId,

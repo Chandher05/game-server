@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 const Game = new mongoose.Schema({
     players: [mongoose.Types.ObjectId],
     spectators: [mongoose.Types.ObjectId],
+    waiting: [mongoose.Types.ObjectId],
     isStarted: {
         type: Boolean,
         required: true,

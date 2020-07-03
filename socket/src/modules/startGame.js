@@ -72,13 +72,22 @@ exports.getGameStatus = (gameId, userId) => {
             }
         }
 
+        let waitingPlayers = []
+        // if (game.isEnded == true) {
+            for (var waitingPlayer of game.waiting) {
+                let playerDetails = await Users.findById(waitingPlayer)
+                waitingPlayers.push(playerDetails.userName)
+            }
+        // } 
+
         resolve({
             game: game,
             gameMember: gameMember,
             allScores: allScores,
             allGameMembers: allGameMembers,
             allCards: allCards,
-            roundStatus: game.isRoundComplete === true ? RoundStatus(allGameMembers) : null
+            roundStatus: game.isRoundComplete === true ? RoundStatus(allGameMembers) : null,
+            waitingPlayers: waitingPlayers
         })
     })
 }
@@ -87,7 +96,7 @@ exports.isUserPartOfGame = (userId) => {
 
     return new Promise(async (resolve, reject) => {
         let game = await Game.findOne({
-            $or: [{ players: userId }, { spectators: userId }],
+            $or: [{ players: userId }, { spectators: userId }, {waiting: userId}],
             // players: userId,
             isStarted: true,
             isEnded: false
@@ -128,6 +137,9 @@ exports.playersInGame = (gameId) => {
                 players.add(userId.toString())
             }
             for (var userId of game.spectators) {
+                players.add(userId.toString())
+            }
+            for (var userId of game.waiting) {
                 players.add(userId.toString())
             }
         }

@@ -113,6 +113,12 @@ class JoinGame extends Component {
 		})
 	}
 
+	showGameRoom = (gameId) => {
+		this.setState({
+			redirect: `/gameRoom/${gameId}`
+		})
+	}
+
 	render() {
 
 		if (!localStorage.getItem('GameUserId')) {
@@ -141,7 +147,7 @@ class JoinGame extends Component {
 							<UserOperations />
 						</div>
 					</div>
-					<GameIdHandler gameId={this.state.gameId} updateGameId={this.updateGameId} />
+					<GameIdHandler gameId={this.state.gameId} updateGameId={this.updateGameId} showGameRoom={this.showGameRoom} />
 				</div>
 			);
 		}

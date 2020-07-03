@@ -4,7 +4,7 @@ import CardValues from '../../constants/cardValues';
 import RemoveDuplicates from '../../constants/removeDuplicates';
 import axios from 'axios';
 import CurrentPlayer from '../../APIs/getCurrentPlayer';
-import {Redirect } from 'react-router';
+import { Redirect } from 'react-router';
 import '../Common/style.css';
 import PushCommonData from '../../APIs/pushCommonData';
 
@@ -21,7 +21,8 @@ class MyCards extends Component {
 			isGameComplete: false,
 			hostPlayer: null,
 			showDeclare: true,
-			redirect: null
+			redirect: null,
+			isWaiting: []
 		}
 	}
 
@@ -31,7 +32,8 @@ class MyCards extends Component {
 
 		// setInterval(() => {
 
-		CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand, isRoundComplete, isGameComplete, hostPlayer) => {
+		CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand, isRoundComplete, isGameComplete, hostPlayer, isWaiting) => {
+			// console.log(isWaiting)
 			cardsInHand = RemoveDuplicates(cardsInHand)
 			if (isRoundComplete === true || isGameComplete === true) {
 				this.setState({
@@ -60,7 +62,8 @@ class MyCards extends Component {
 			this.setState({
 				isRoundComplete: isRoundComplete,
 				isGameComplete: isGameComplete,
-				hostPlayer: hostPlayer
+				hostPlayer: hostPlayer,
+				isWaiting: isWaiting
 			})
 		})
 
@@ -192,18 +195,18 @@ class MyCards extends Component {
 	}
 
 	leaveGame = () => {
-        const reqBody = {
-            gameId: this.props.gameId,
-            userId: localStorage.getItem('GameUserId')
-        }
-        axios.post(`/game/quitFromGame`, reqBody)
-            .then(() => {
-                this.setState({
-                    redirect: <Redirect to="/joinGame" />,
-                })
+		const reqBody = {
+			gameId: this.props.gameId,
+			userId: localStorage.getItem('GameUserId')
+		}
+		axios.post(`/game/quitFromGame`, reqBody)
+			.then(() => {
+				this.setState({
+					redirect: <Redirect to="/joinGame" />,
+				})
 				PushCommonData(this.props.gameId)
-            })
-    }
+			})
+	}
 
 	declare = () => {
 		this.setState({
@@ -214,9 +217,9 @@ class MyCards extends Component {
 			userId: localStorage.getItem('GameUserId')
 		}
 		axios.post(`/player/declare`, reqBody)
-		.then(() => {
-			PushCommonData(this.props.gameId)
-		})
+			.then(() => {
+				PushCommonData(this.props.gameId)
+			})
 		this.setState({
 			selected: []
 		})
@@ -240,19 +243,30 @@ class MyCards extends Component {
 			gameId: this.props.gameId
 		}
 		axios.post(`/game/restart`, reqBody)
-		.then((response) => {
-			this.setState({
-				currentCards: response.data.createdUserCards
+			.then((response) => {
+				this.setState({
+					currentCards: response.data.createdUserCards
+				})
+				PushCommonData(this.props.gameId)
 			})
-			PushCommonData(this.props.gameId)
-		})
 	}
 
 	render() {
 		if (this.state.redirect) {
 			return (this.state.redirect)
 		}
-		
+
+		if (this.state.isWaiting === true) {
+			return (
+				<div className="p-5 text-center">
+					<img src="/loading.gif" style={{ width: 25 + "px" }} alt="loading" /> Wait for next game to start
+					<a href="/joinGame">
+						<button className="btn btn-danger m-5 " onClick={this.leaveGame}>Leave game</button>
+					</a>
+				</div>
+			)
+		}
+
 		if (this.state.currentCards === undefined || this.state.currentCards.length === 0) {
 			if (this.state.isRoundComplete === true && this.state.hostPlayer === localStorage.getItem('GameUserId')) {
 				if (this.state.isGameComplete === true) {
@@ -311,7 +325,7 @@ class MyCards extends Component {
 			} else {
 				temp.push(
 					<div className="col-md-4 p-1" key={card}>
-						<img src={CardImages[card]} alt="card" style={{ width: 100 + "%" }} className="showPointer"/>
+						<img src={CardImages[card]} alt="card" style={{ width: 100 + "%" }} className="showPointer" />
 					</div>
 				)
 			}
@@ -332,6 +346,11 @@ class MyCards extends Component {
 				</div>
 			)
 			temp = []
+		}
+
+		var waitingPlayers = []
+		for (var playerName of this.state.isWaiting) {
+			waitingPlayers.push(<p>{playerName}</p>)
 		}
 
 		return (
@@ -389,8 +408,16 @@ class MyCards extends Component {
 							{
 								this.state.hostPlayer === localStorage.getItem('GameUserId') ?
 									<div>
-										<button className="btn btn-success mt-5" onClick={this.startNewGame}>Start new game</button> :
-									</div>:
+										<button className="btn btn-success mt-5" onClick={this.startNewGame}>Start new game</button>
+										{
+											waitingPlayers.length > 0 ?
+												<div>
+													<p>Players waiting to join the game</p>
+													{waitingPlayers}
+												</div> :
+												null
+										}
+									</div> :
 									null
 							}
 						</div> :

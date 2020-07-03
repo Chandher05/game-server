@@ -33,6 +33,8 @@ class GameIdHandler extends Component {
                     this.setState({
                         errMsg: "Invalid game ID"
                     })
+                } else if (response.status === 200) {
+                    this.props.showGameRoom(this.state.gameId)
                 } else {
                     this.props.updateGameId(this.state.gameId)
                 }
