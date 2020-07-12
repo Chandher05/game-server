@@ -34,7 +34,7 @@ class CommonGameCards extends Component {
             for (var card of this.state.currentCards.previousDroppedCard) {
                 cardNames.push(
                     <div className="col-md-3 p-1 text-center" key={card}>
-                        <img src={CardImages[card]} alt="card" style={{height: 100 + "px"}} />
+                        <img src={CardImages[card]} alt="card" style={{ height: 100 + "px" }} />
                     </div>
                 )
             }
@@ -42,23 +42,26 @@ class CommonGameCards extends Component {
 
         return (
             <div className="mt-5">
-                <div className="row" style={{minHeight: 25 + "vh"}}>
+                <div className="row">
                     <div className="col-md-10">
-                        <p className="display-4 text-break">{this.state.currentCards.previousDroppedPlayer} {this.state.currentCards.action}</p>
+                        <h1 className="font-weight-light text-break">{this.state.currentCards.previousDroppedPlayer} {this.state.currentCards.action}</h1>
+                        <p className="font-weight-bold">Card(s) on the table</p>
+                        <div className="row" style={{ height: 20 + "vh" }}>
+                            {cardNames}
+                        </div>
                     </div>
                     <div className="col-md-2 text-center">
-                        <img src="/deck.png" alt="cardDeck" style={{width: 100 + "%"}} />
+                        <img src="/deck.png" alt="cardDeck" style={{ width: 100 + "%" }} />
                         <span className="font-weight-bold">Deck</span>
                     </div>
                 </div>
-                <div className="row">
+                {/* <div className="row">
                     <div className="col-md-12">
-                        <p className="font-weight-bold">Card(s) on the table</p>
                     </div>
-                </div>
-                <div className="row" style={{height: 25 + "vh"}}>
+                </div> */}
+                {/* <div className="row" style={{height: 25 + "vh"}}>
                     {cardNames}
-                </div>
+                </div> */}
 
             </div>
         );

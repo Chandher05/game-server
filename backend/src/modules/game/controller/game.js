@@ -655,9 +655,7 @@ exports.quitFromGame = async (req, res) => {
 				},
 				{
 					$pull: {
-						players: req.body.userId
-					},
-					$pull: {
+						players: req.body.userId,
 						waiting: req.body.userId
 					}
 				}

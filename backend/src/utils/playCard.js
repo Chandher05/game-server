@@ -242,7 +242,7 @@ var playRandom = async (timestamp, gameId, userId) => {
     let playerTotal = calculateScore(gameMember.currentCards)
     var shouldDeclare = Math.random()
     
-    if (playerTotal <= 15 && shouldDeclare <= 0.2) {
+    if (playerTotal < 15 && shouldDeclare <= 0.2) {
         console.log(`\n\n\n${gameMember.userName} has declared`)
         await DeclareRound(gameId, userId, true)
         return
