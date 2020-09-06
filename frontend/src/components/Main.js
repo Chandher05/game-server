@@ -11,9 +11,10 @@ import SpectateRoom from './GameRoom/spectate';
 import ErrorPage from './Authentication/errorPage';
 import Rules from './OtherFeatures/Rules';
 // import WaitingScreen from './Common/WaitingScreen';
-import ReportError from './OtherFeatures/ReportError';
+// import ReportError from './OtherFeatures/ReportError';
 import PlayerStats from './Stats/completeStats';
 import Leaderboard from './Stats/leaderboard';
+import HallOfFame from './Stats/hallOfFame';
 
 //Create a Main Component
 class Main extends Component {
@@ -32,7 +33,8 @@ class Main extends Component {
 
                     <Route path="/rules" component={Rules}/>
                     {/* <Route path="/waitingScreen" component={WaitingScreen}/> */}
-                    <Route path="/report" component={ReportError}/>
+                    {/* <Route path="/report" component={ReportError}/> */}
+                    <Route path="/hall-of-fame" component={HallOfFame}/>
                     <Route path="/stats" component={PlayerStats}/>
                     <Route path="/leaderboard" component={Leaderboard}/>
 

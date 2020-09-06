@@ -35,7 +35,8 @@ class WaitingScreen extends Component {
                     <p className="text-primary">Please click <span className="showPointer" onClick={this.reloadPage}>here</span> if you are not redirected in 5 seconds...</p>
                 </div>
                 <div className="text-center m-5 p-5">
-                    <a href="/report"><p className="text-danger">Report bug</p></a>
+                    {/* <a href="/report"><p className="text-danger">Report bug</p></a> */}
+                    <p>Write a mail to <a href="mailto:jayasurya.pinaki@sjsu.edu">jayasurya.pinaki@sjsu.edu</a> in case of any issues</p>
                 </div>
                 <div className="text-center m-5 p-5">
                     <p className="showPointer" onClick={this.logout}>Logout</p>

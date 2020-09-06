@@ -86,16 +86,16 @@ class UserOperations extends Component {
                 <div className="pt-3">
                     <button className="btn btn-secondary w-100" data-toggle="modal" data-target="#updateAccoutnModal"><i className="fas fa-cogs"></i> Update Account</button>
                 </div>
-                <div className="pt-3">
+                {/* <div className="pt-3">
                     <a href="/report">
                         <button className="btn btn-warning w-100"><i className="fas fa-comment-alt"></i> Give Feedback</button>
                     </a>
-                </div>
-                {/* <div className="pt-3">
-                    <a href="/stats">
-                        <button className="btn btn-info w-100"><i className="fas fa-crown"></i> View stats</button>
-                    </a>
                 </div> */}
+                <div className="pt-3">
+                    <a href="/hall-of-fame">
+                        <button className="btn btn-warning w-100"><i className="fas fa-crown"></i> Hall of fame</button>
+                    </a>
+                </div>
                 <div className="pt-3">
                     <a href="/leaderboard">
                         <button className="btn btn-info w-100"><i className="fas fa-trophy"></i> Leaderboard</button>

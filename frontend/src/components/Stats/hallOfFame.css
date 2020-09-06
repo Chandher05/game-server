@@ -1,0 +1,30 @@
+.divider{
+    background-color: #FFEE58;
+    height: 10px;
+}
+.blueText {
+    color: #3F51B5;
+}
+.blueBackground {
+    background-color: #3F51B5;
+}
+.playerInfo {
+    position: relative;
+}
+.zIndexBackground {
+    z-index: -1;
+    position: absolute;
+    top: 0 !important;
+    height: 400px;
+}
+.zIndexForeground {
+    z-index: 1;
+    width: 50%;
+}
+.playerName {
+    padding-left: 50% !important;
+}
+.playerImage {
+    max-width: 100%;
+    max-height: 350px;
+}
