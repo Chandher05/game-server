@@ -34,7 +34,7 @@ class HallOfFame extends Component {
 
                 <div className="mt-3 mb-3 divider"></div>
                 <div className="row">
-                    <div className="col-md-3 offset-md-1 blueText">
+                    <div className="col-md-4 offset-md-1 blueText">
                         <div className="bg-light p-2">
                             <h3 className="bg-warning font-weight-bolder p-2 text-center">Tournament 1</h3>
                             <p className="text-justify">
@@ -55,23 +55,22 @@ class HallOfFame extends Component {
                         </div>
                     </div>
 
-                    <div className="col-md-6 offset-md-1 playerInfo">
+                    <div className="col-md-5 offset-md-1 playerInfo">
 
-                        <div className="zIndexForeground p-3">
-                            <img src="/HallOfFame/placeholder.png" alt="winner-1" className="playerImage" />
-                        </div>
+                        {/* <div className="zIndexForeground p-3">
+                            <img src="/HallOfFame/tournament-1.png" alt="winner-1" className="playerImage" />
+                        </div> */}
 
                         <div className="bg-light p-2 zIndexBackground">
-                            <h3 className="bg-warning font-weight-bolder p-2 blueText playerName text-center">Jayasurya Pinaki</h3>
-                            <h6 className="font-weight-bolder p-2 blueBackground text-white playerName text-center">Winner</h6>
-                            <div className="playerName">
+                            <h3 className="bg-warning font-weight-bolder p-2 blueText  text-center">Jayasurya Pinaki</h3>
+                            <h6 className="font-weight-bolder p-2 blueBackground text-white  text-center">Winner</h6>
+                            <div className="blueText">
                                 <h4 className="font-weight-bolder">Runner up: <span className="font-weight-light">Anjali Ramesh</span></h4>
                                 <h4 className="font-weight-bolder">Second runner up: <span className="font-weight-light">Sujith R</span></h4>
                                 <p><span className="font-weight-bold">Semi finalists: </span>Aditya Vaidyanathan, Jampana Sriteja, Jishnu Mohan</p>
-                                <h6>Participants: <span className="font-weight-light">Ameya Vaidyanathan, Arshmeen Baveja, Chandher Shekar R, Charumitra Sardana, Karthekeyan Sampath, Lipi Bag, Nitish Kumar, 'Shaivya Sahare, Sravanth Km</span></h6>
+                                <h6>Participants: <span className="font-weight-light">Ameya Vaidyanathan, Arshmeen Baveja, Chandher Shekar R, Charumitra Sardana, Karthekeyan Sampath, Lipi Bag, Nitish Kumar, Shaivya Sahare, Sravanth Km</span></h6>
                                 <br/>
-                                <span className="text-light">This is something about the player. Lorem ipsum dolor sit amet,
-                                consectetur adipiscing elit, </span>
+                                <p><span className="font-weight-bold">MVP:</span> ANJALI <span className="font-italic">Clutch Queen</span> RAMESH for her never dying attitude</p>
                             </div>
                         </div>
                     </div>
