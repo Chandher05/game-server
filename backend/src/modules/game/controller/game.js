@@ -842,7 +842,7 @@ exports.spectateGame = async (req, res) => {
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
 			.send(null)
 	} catch (error) {
-		console.log(`Error in game/resetAllGames ${error}`)
+		console.log(`Error in game/spectateGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
 			.send(error.message)

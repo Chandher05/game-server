@@ -30,16 +30,8 @@ exports.getPlayersInGame = (gameId) => {
 }
 
 
-exports.getGameStatus = (gameId, userId) => {
+exports.getGameStatus = (gameId, userId, game, allGameMembers) => {
     return new Promise(async (resolve) => {
-        let game = await Game.findOne({
-            gameId: gameId
-        })
-
-        let allGameMembers = await GameMember.find({
-            gameId: gameId
-        })
-
 
         if (!game || !allGameMembers) {
             resolve(null)
@@ -125,24 +117,63 @@ exports.isGameEnded = (gameId) => {
 }
 
 
-exports.playersInGame = (gameId) => {
+exports.playersInGame = (gameData) => {
 
     return new Promise(async (resolve, reject) => {
-        let game = await Game.findOne({
-            gameId: gameId
-        })
         var players = new Set([])
-        if (game) {
-            for (var userId of game.players) {
+        if (gameData) {
+            for (var userId of gameData.players) {
                 players.add(userId.toString())
             }
-            for (var userId of game.spectators) {
+            for (var userId of gameData.spectators) {
                 players.add(userId.toString())
             }
-            for (var userId of game.waiting) {
+            for (var userId of gameData.waiting) {
                 players.add(userId.toString())
             }
         }
         resolve(players)
+    })
+}
+
+exports.activeGames = () => {
+    return new Promise(async (resolve, reject) => {
+        var allGames = await Game.find({
+            isStarted: true,
+            isEnded: false
+        })
+        resolve (allGames)
+    })
+}
+
+exports.removeSpectator = (userId, gameId) => {
+    return new Promise(async(resolve, reject) => {
+        await Game.updateOne(
+            {
+                gameId: gameId
+            },
+            {
+                $pull: {
+                    spectators: userId
+                }
+            }
+        )
+        resolve()
+    })
+}
+
+exports.addSpectator = (userId, gameId) => {
+    return new Promise(async(resolve, reject) => {
+        await Game.updateOne(
+            {
+                gameId: gameId
+            },
+            {
+                $push: {
+                    spectators: userId
+                }
+            }
+        )
+        resolve()
     })
 }

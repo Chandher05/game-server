@@ -1,16 +1,18 @@
 import startGame from './startGame'
 import game from '../models/mongoDB/game'
+import Game from '../models/mongoDB/game'
+import GameMember from '../models/mongoDB/gameMember'
 
-let allUsers = {}
+let allSpecators = {}
 let allClients = {}
 let clientIDS = {}
 let userIDS = {}
 
-var sendData = async (client, gameId, userId) => {
+var sendData = async (client, gameId, userId, gameData, membersData) => {
 
-    console.log("SENDING", Date.now())
+    // console.log("SENDING", Date.now())
     
-    let data = await startGame.getGameStatus(gameId, userId)
+    let data = await startGame.getGameStatus(gameId, userId, gameData, membersData)
     if (data) { 
         let currentCards = {
             cardOnTop: data.game.openedCards.pop(),
@@ -50,7 +52,6 @@ var sendData = async (client, gameId, userId) => {
 
             client.emit('currentPlayer', currentPlayerData)
         } else if (data.game.waiting.includes(userId)) {
-            // console.log("INCLUDES")
             
             let currentPlayerData = {
                 currentPlayer: null,
@@ -71,38 +72,20 @@ var sendData = async (client, gameId, userId) => {
 var socketListener = (io) => {
     //Whenever someone connects this gets executed
     io.on('connection', function (client) {
-        // console.log('A user connected', client.id);
 
         client.on('sendUserId', async (userId) => {
-            for (var oldGameIds in allUsers) {
-                allUsers[oldGameIds].delete(userId)
-            }
-
-            let gameId = await startGame.isUserPartOfGame(userId)
-            if (gameId != null) {
-                if (!allUsers[gameId]) {
-                    allUsers[gameId] = new Set([userId])
-                } else {
-                    allUsers[gameId].add(userId)
-                }
+            if (userId) {
                 allClients[userId] = client
                 clientIDS[client.id] = userId
-                userIDS[userId] = gameId
-                console.log("User connected to game " + gameId)
-            } else {
-                console.log("New user connected")
+                console.log("User connected to server " + userId)
             }
         })
-        // allUsers[client.id] = client
         
         client.on('spectateGame', async (userId, gameId) => {
-                
-            if (allUsers[gameId]) {
-                allUsers[gameId].add(userId)
-                allClients[userId] = client
-                clientIDS[client.id] = userId
-                userIDS[userId] = gameId
-            }
+
+            allSpecators[userId] = gameId
+            await startGame.addSpectator(userId, gameId)
+            console.log("Spectator connected to " + gameId)
 
         })
 
@@ -118,91 +101,112 @@ var socketListener = (io) => {
         try {
             client.on('getGameStatus', async (gameId, userId) => {
 
-                if (!allUsers[gameId]) {
-                    allUsers[gameId] = new Set([userId])
-                } else {
-                    allUsers[gameId].add(userId)
-                }
                 allClients[userId] = client
                 clientIDS[client.id] = userId
-                userIDS[userId] = gameId
 
-                sendData(client, gameId, userId) 
+                let game = await Game.findOne({
+                    gameId: gameId
+                })
+        
+                let allGameMembers = await GameMember.find({
+                    gameId: gameId
+                })
+
+                let waitingPlayers = []
+                for (var waitingPlayer of game.waiting) {
+                    let playerDetails = await Users.findById(waitingPlayer)
+                    waitingPlayers.push(playerDetails.userName)
+                }
+
+                sendData(client, gameId, userId, game, allGameMembers, waitingPlayers) 
             })
         } catch (error) {
 
         }
 
         client.on('pushCommonData', async (gameId, userId) => {
-            for (var oldGameIds in allUsers) {
-                allUsers[oldGameIds].delete(userId)
+
+            let gameData = await Game.findOne({
+                gameId: gameId
+            })
+
+            var allPlayers = await startGame.playersInGame(gameData)
+    
+            let allGameMembers = await GameMember.find({
+                gameId: gameId
+            })
+
+            let waitingPlayers = []
+            for (var waitingPlayer of gameData.waiting) {
+                let playerDetails = await Users.findById(waitingPlayer)
+                waitingPlayers.push(playerDetails.userName)
             }
-            if (!allUsers[gameId]) {
-                allUsers[gameId] = new Set([userId])
-            } else {
-                allUsers[gameId].add(userId)
-            }
-            allClients[userId] = client
-            clientIDS[client.id] = userId
-            userIDS[userId] = gameId
             
-            if (allUsers[gameId]) {
-                console.log("Sending data to " + allUsers[gameId].size + " players of game " + gameId)
-                for (var userId of allUsers[gameId]) {
-                    sendData(allClients[userId], gameId, userId)
+            console.log("Sending data to players of game " + gameId)
+            for (var userId of allPlayers) {
+                if (allClients[userId]) {
+                    sendData(allClients[userId], gameId, userId, gameData, allGameMembers, waitingPlayers)
                 }
             }
 
         });
 
         //Whenever someone disconnects this piece of code executed
-        client.on('disconnect', function () {
+        client.on('disconnect', async () => {
             let userId = clientIDS[client.id]
-            let gameId = userIDS[userId]
             delete allClients[userId]
-            if (allUsers[gameId]) {
-                allUsers[gameId].delete(userId)
-                if (allUsers[gameId].size === 0) {
-                    delete allUsers[gameId]
-                }
+            if (allSpecators[userId]) {
+                await startGame.removeSpectator(userId, allSpecators[userId])
+                delete allSpecators[userId]
+                console.log("Spectator disconnected")
+            } else {
+                console.log('A user disconnected', client.id);
             }
-            console.log('A user disconnected', client.id);
         });
     });
 
 
     // var count = 0
     setInterval( async () => {
-        var idsToRemove = []
-        for (var gameId in allUsers) {
 
-            if (allUsers[gameId].size == 0) {
-                idsToRemove.push(gameId)
-                continue
+        var allGames = await startGame.activeGames()
+
+        if (allGames.length === 0) {
+            console.log("No active games")
+        }        
+
+        for (var gameData of allGames) {
+
+            var gameId = gameData.gameId
+
+            var allPlayers = await startGame.playersInGame(gameData)
+            
+            let allGameMembers = await GameMember.find({
+                gameId: gameId
+            })
+
+            let waitingPlayers = []
+            for (var waitingPlayer of gameData.waiting) {
+                let playerDetails = await Users.findById(waitingPlayer)
+                waitingPlayers.push(playerDetails.userName)
             }
-
-            let players = await startGame.playersInGame(gameId)
-            for (var userId of allUsers[gameId]) {
-                if (!players.has(userId)) {
-                    allUsers[gameId].delete(userId)
-                    console.log("Removing " + userId + " from " + gameId)
+            
+            var count = 0;
+            for (var userId of allPlayers) {
+                if (allClients[userId]) {
+                    count++;
+                    sendData(allClients[userId], gameId, userId, gameData, allGameMembers, waitingPlayers)
                 }
             }
-                  
-        }
-
-        for (var gameId of idsToRemove) {
-            console.log("Deleting " + gameId)
-            delete allUsers[gameId]
-        }
-
-        for (var gameId in allUsers) {
-            console.log("Pushing data from server to " + gameId + " with " + allUsers[gameId].size + " player(s)")
-            for (var userId of allUsers[gameId]) {
-                sendData(allClients[userId], gameId, userId)
+            
+            if (count == 0) {
+                console.log("No users connected to game " + gameId)
+            } else {
+                console.log("Pushed data from server to " + count + " player(s) of game " + gameId)
             }
 
         }
+
     }, 10 * 1000)
 
 }
