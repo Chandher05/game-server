@@ -80,6 +80,7 @@ class Home extends Component {
                                 <input type="submit" id="userLogin" onClick={this.submitLogin} className="form-control bg-primary text-white" value="Login" />
                             </div>
                             <div className="panel text-center">
+                                <p className="font-italic"><Link to={`/forgot-password`}>Forgot password?</Link></p>
                                 <p>or</p>
                                 <p><Link to={`/create-account${this.props.location.search}`}>Create account</Link></p>
                             </div>

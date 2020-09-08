@@ -111,6 +111,9 @@ class UserOperations extends Component {
                                     <label htmlFor="userName">Username <span className="text-danger">*</span></label>
                                     <input className="form-control" id="userName" value={this.state.userName} onChange={this.userNameChangeHandler} placeholder="User name"></input>
                                 </div>
+								<div>
+									<p>Please write an email to <span className="font-italic text-primary">jayasurya.pinaki@sjsu.edu</span> with your <span className="font-weight-bold">username</span> if you wish to change your password</p>
+								</div>
 								<div className="row p-2">
 									<div className="col-md-4">
 										<button type="button" className="btn btn-secondary w-100" data-dismiss="modal" onClick={this.resetUpdateAccountDetails}>Close</button>

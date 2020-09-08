@@ -15,6 +15,9 @@ import Rules from './OtherFeatures/Rules';
 import PlayerStats from './Stats/completeStats';
 import Leaderboard from './Stats/leaderboard';
 import HallOfFame from './Stats/hallOfFame';
+import UpdatePassword from './Admin/updatePassword';
+import ForgotPassword from './Admin/forgotPassword';
+import AdminUpdatePassword from './Admin/adminUpdatePassword';
 
 //Create a Main Component
 class Main extends Component {
@@ -37,6 +40,10 @@ class Main extends Component {
                     <Route path="/hall-of-fame" component={HallOfFame}/>
                     <Route path="/stats" component={PlayerStats}/>
                     <Route path="/leaderboard" component={Leaderboard}/>
+
+                    <Route path="/admin-password-update" component={AdminUpdatePassword}/>
+                    <Route path="/update-password/:userId" component={UpdatePassword}/>
+                    <Route path="/forgot-password" component={ForgotPassword}/>
 
                     <Route component={ErrorPage}/>
                 </Switch>

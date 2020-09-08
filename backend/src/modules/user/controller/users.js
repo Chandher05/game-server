@@ -2,9 +2,11 @@ import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
 import Users from '../../../models/mongoDB/users';
 import GameMember from '../../../models/mongoDB/gameMember';
+import UpdatePassword from '../../../models/mongoDB/updatePassword';
 import constants from '../../../utils/constants';
 import S3 from '../../../utils/S3Operations';
 import config from '../../../../config';
+import UpdateHashPassword from '../../../utils/updateHashPassword';
 
 
 /**
@@ -344,6 +346,188 @@ exports.leaderboard = async (req, res) => {
 		return res
 		.status(constants.STATUS_CODE.SUCCESS_STATUS)
 		.send(allUsersData)
+
+	} catch (error) {
+		console.log(`Error while getting getAllUsers ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Enable update user password.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.enableUpdatePassword = async (req, res) => {
+	try {
+
+		let data = new UpdatePassword({ userId : req.body.userId })
+		await data.save()
+
+		return res
+		.status(constants.STATUS_CODE.SUCCESS_STATUS)
+		.send("Success")
+
+	} catch (error) {
+		console.log(`Error while getting getAllUsers ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Diable update user password.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.disableUpdatePassword = async (req, res) => {
+	try {
+
+		await UpdatePassword.updateMany(
+			{
+				userId: req.body.userId
+			},
+			{
+				isActive: false
+			}
+		)
+
+		return res
+		.status(constants.STATUS_CODE.SUCCESS_STATUS)
+		.send("Success")
+
+	} catch (error) {
+		console.log(`Error while getting getAllUsers ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Update user password.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.updatePassword = async (req, res) => {
+	try {
+
+		if (!req.body.password) {
+			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
+			.send("Invalid details")
+		}
+
+		let cutoff = Date.now() - 2
+		let data = await UpdatePassword.find({
+			userId: req.body.userId,
+			isActive: {
+				$gt: {
+					cutoff	
+				}
+			},
+			isActive: true
+		})
+
+
+		if (data.length === 0 ) {
+			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
+			.send("Invalid details")
+		}
+
+		await Users.findByIdAndUpdate(
+			req.body.userId,
+			{
+				password: UpdateHashPassword(req.body.password)
+			}
+		)
+		console.log(req.body.password)
+
+		await UpdatePassword.updateMany(
+			{
+				userId: req.body.userId
+			},
+			{
+				isActive: false
+			}
+		)
+
+		return res
+		.status(constants.STATUS_CODE.SUCCESS_STATUS)
+		.send("Success")
+
+	} catch (error) {
+		console.log(`Error while getting getAllUsers ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Check if user is authorized to update password.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.isUpdatePasswordActive = async (req, res) => {
+	try {
+
+		let cutoff = Date.now() - 2
+		let data = await UpdatePassword.find({
+			userId: req.body.userId,
+			isActive: {
+				$gt: {
+					cutoff	
+				}
+			},
+			isActive: true
+		})
+
+
+		if (data.length === 0 ) {
+			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
+			.send("Invalid details")
+		}
+
+		data = await Users.findById(req.body.userId)
+		delete data.password
+
+		return res
+		.status(constants.STATUS_CODE.SUCCESS_STATUS)
+		.send(data)
+
+	} catch (error) {
+		console.log(`Error while getting getAllUsers ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+
+/**
+ * Get all users.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.allUsers = async (req, res) => {
+	try {
+		
+		let data = await Users.find()
+		let returnValue = []
+
+		for (var user of data) {
+			returnValue.push({
+				userId: user._id,
+				userName: user.userName
+			})
+		}
+
+		return res
+		.status(constants.STATUS_CODE.SUCCESS_STATUS)
+		.send(returnValue)
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
