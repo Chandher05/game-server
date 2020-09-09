@@ -14,7 +14,7 @@ cron.schedule("0 0 */1 * * *", async () => {
         let idleTime = new Date(Date.now() - game.lastPlayedTime).getHours()
         
         if (idleTime > 1) {
-            await Game.findOneAndUpdate(
+            await Game.updateOne(
                 {
                     gameId: game.gameId
                 },

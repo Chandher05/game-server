@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import CreateGame from '../../APIs/gameLobby';
 
 class UserInfo extends Component {
 
@@ -40,6 +41,11 @@ class GameLobby extends Component {
             gameId: this.props.gameId
         }
         axios.post(`/game/start`, reqBody)
+        .then(() => {
+            CreateGame((this.props.gameId), () => {
+    
+            })
+        })
     }
 
     quitGame = () => {

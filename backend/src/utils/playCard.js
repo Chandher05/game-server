@@ -51,7 +51,7 @@ var getDifference = (gameMember, selected) => {
 
 var updateDifferenceInPlayer = (gameId, userId, difference) => { 
     return new Promise( async (resolve) => {
-        await GameMember.findOneAndUpdate(
+        await GameMember.updateOne(
             {
                 gameId: gameId,
                 userId: userId
@@ -85,7 +85,7 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
         var result = GetCards.getCards(game.cardsInDeck, 1);
         difference = difference.concat(result.cardsForPlayer)
         var openedCards = game.openedCards.concat(selected)
-        await Game.findOneAndUpdate(
+        await Game.updateOne(
             {
                 gameId: game.gameId
             },
@@ -131,7 +131,7 @@ var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
 
         openedCards = openedCards.concat(selected)
         
-        await Game.findOneAndUpdate(
+        await Game.updateOne(
             {
                 gameId: game.gameId
             },
@@ -169,7 +169,7 @@ var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
 
         var difference = getDifference(gameMember, selected)
 
-        await Game.findOneAndUpdate(
+        await Game.updateOne(
             {
                 gameId: game.gameId
             },

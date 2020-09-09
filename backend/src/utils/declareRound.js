@@ -6,7 +6,7 @@ import GamesCache from './gamesCache';
 
 var endGame = (gameId, userName, isAutoPlay) => {
     return new Promise( async(resolve) => {
-        await Game.findOneAndUpdate(
+        await Game.updateOne(
             {
                 gameId: gameId
             },
@@ -18,7 +18,7 @@ var endGame = (gameId, userName, isAutoPlay) => {
         )
         
         if (isAutoPlay == false) {
-            await Users.findOneAndUpdate(
+            await Users.updateOne(
                 {
                     userName: userName
                 },
@@ -131,7 +131,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
 		}
 
 		// Update game status to ended
-		await Game.findOneAndUpdate(
+		await Game.updateOne(
 			{
 				gameId: gameId
 			},
@@ -153,7 +153,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
         for (var player in beforeScores) {
             var previousScore = beforeScores[player]
             if (previousScore > 100) {
-                await GameMember.findOneAndUpdate(
+                await GameMember.updateOne(
                     {
                         gameId: gameId,
                         userId: player
@@ -165,7 +165,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
                     }
                 )
             } else if (previousScore + allScores[player] > 100) {
-                await GameMember.findOneAndUpdate(
+                await GameMember.updateOne(
                     {
                         gameId: gameId,
                         userId: player
@@ -182,7 +182,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
                 )
             } else if (previousScore < 101) {
                 numberOfActivePlayers += 1
-                var temp = await GameMember.findOneAndUpdate(
+                var temp = await GameMember.updateOne(
                     {
                         gameId: gameId,
                         userId: player

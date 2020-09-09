@@ -71,7 +71,7 @@ class JoinGame extends Component {
 					isFetched: true
 				})
 			})
-		setInterval(() => {
+		// setInterval(() => {
 			if (this.state.gameId !== null) {
 				CreateGame((this.state.gameId), (players, isStarted, createdUser) => {
 					this.setState({
@@ -104,12 +104,38 @@ class JoinGame extends Component {
 					showJoinGame: true
 				})
 			}
-		}, 250);
+		// }, 250);
 	}
 
 	updateGameId = (gameId) => {
 		this.setState({
 			gameId: gameId
+		})
+		CreateGame((gameId), (players, isStarted, createdUser) => {
+			this.setState({
+				activePlayersInGame: players,
+			})
+			var isPartOfGame = false
+			for (var player of players) {
+				if (player._id === localStorage.getItem('GameUserId')) {
+					isPartOfGame = true
+					break
+				}
+			}
+			if (isStarted === true && isPartOfGame === true) {
+				this.setState({
+					redirect: `/gameRoom/${this.state.gameId}`
+				})
+			} else if (this.state.showJoinGame === false && isPartOfGame === false) {
+				this.setState({
+					showJoinGame: true
+				})
+			} else if (this.state.showJoinGame === true && isPartOfGame === true) {
+				this.setState({
+					createdUser: createdUser,
+					showJoinGame: false
+				})
+			}
 		})
 	}
 

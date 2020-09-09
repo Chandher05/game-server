@@ -74,6 +74,7 @@ var socketListener = (io) => {
     io.on('connection', function (client) {
 
         client.on('sendUserId', async (userId) => {
+            console.log('sendUserId')
             if (userId) {
                 allClients[userId] = client
                 clientIDS[client.id] = userId
@@ -83,6 +84,7 @@ var socketListener = (io) => {
         
         client.on('spectateGame', async (userId, gameId) => {
 
+            console.log('spectateGame')
             allSpecators[userId] = gameId
             await startGame.addSpectator(userId, gameId)
             console.log("Spectator connected to " + gameId)
@@ -91,8 +93,14 @@ var socketListener = (io) => {
 
         try {
             client.on('getPlayers', async (gameId) => {
+                console.log('getPlayers')
                 let users = await startGame.getPlayersInGame(gameId)
-                client.emit('playersInGame', users)
+
+                for (var player of users.players) {
+                    if (allClients[player._id]) {
+                        allClients[player._id].emit('playersInGame', users)
+                    }
+                }
             })
         } catch (error) {
             
@@ -101,6 +109,7 @@ var socketListener = (io) => {
         try {
             client.on('getGameStatus', async (gameId, userId) => {
 
+                console.log('getGameStatus')
                 allClients[userId] = client
                 clientIDS[client.id] = userId
 
@@ -126,6 +135,7 @@ var socketListener = (io) => {
 
         client.on('pushCommonData', async (gameId, userId) => {
 
+            console.log('pushCommonData')
             let gameData = await Game.findOne({
                 gameId: gameId
             })
@@ -153,6 +163,7 @@ var socketListener = (io) => {
 
         //Whenever someone disconnects this piece of code executed
         client.on('disconnect', async () => {
+            console.log('disconnect')
             let userId = clientIDS[client.id]
             delete allClients[userId]
             if (allSpecators[userId]) {

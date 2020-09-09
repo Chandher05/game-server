@@ -114,7 +114,7 @@ exports.joinGame = async (req, res) => {
 				.send("User has already joined game")
 			}
 
-			game = await Game.findOneAndUpdate(
+			game = await Game.updateOne(
 				{
 					gameId: req.body.gameId
 				},
@@ -125,7 +125,7 @@ exports.joinGame = async (req, res) => {
 				}
 			)
 	
-			game = await Game.findOneAndUpdate(
+			game = await Game.updateOne(
 				{
 					gameId: req.body.gameId
 				},
@@ -153,7 +153,7 @@ exports.joinGame = async (req, res) => {
 			.send("User has already joined game")
 		}
 
-		game = await Game.findOneAndUpdate(
+		game = await Game.updateOne(
 			{
 				gameId: req.body.gameId
 			},
@@ -164,7 +164,7 @@ exports.joinGame = async (req, res) => {
 			}
 		)
 
-		game = await Game.findOneAndUpdate(
+		game = await Game.updateOne(
 			{
 				gameId: req.body.gameId
 			},
@@ -267,7 +267,7 @@ exports.resetGame = async (req, res) => {
 		await GameMember.deleteMany({
 			gameId: req.params.gameId
 		})
-		game = await Game.findOneAndUpdate(
+		game = await Game.updateOne(
 			{
 				gameId: req.params.gameId
 			},
@@ -350,7 +350,7 @@ exports.startGame = async (req, res) => {
 			await gameMemberObj.save()
 		}
 		let timestamp = Date.now()
-		game = await Game.findOneAndUpdate(
+		game = await Game.updateOne(
 			{
 				gameId: req.body.gameId
 			},
@@ -488,7 +488,7 @@ exports.nextRound = async (req, res) => {
 		}
 
 		let timestamp = Date.now()
-		game = await Game.findOneAndUpdate(
+		game = await Game.updateOne(
 			{
 				gameId: req.body.gameId
 			},
@@ -585,7 +585,7 @@ exports.quitFromLobby = async (req, res) => {
 				gameId: req.body.gameId
 			})
 		} else {
-			await Game.findOneAndUpdate(
+			await Game.updateOne(
 				{
 					gameId: req.body.gameId
 				},
@@ -637,7 +637,7 @@ exports.quitFromGame = async (req, res) => {
 					break
 				}
 			}
-			await Game.findOneAndUpdate(
+			await Game.updateOne(
 				{
 					gameId: req.body.gameId
 				},
@@ -649,7 +649,7 @@ exports.quitFromGame = async (req, res) => {
 				}
 			)
 		} else {
-			await Game.findOneAndUpdate(
+			await Game.updateOne(
 				{
 					gameId: req.body.gameId
 				},
@@ -718,7 +718,7 @@ exports.restartGame = async (req, res) => {
 		}
 		
 		let tempGameId = await GenerateId(6)
-		await Game.findOneAndUpdate(
+		await Game.updateOne(
 			{
 				gameId: req.body.gameId
 			},
@@ -784,7 +784,7 @@ exports.restartGame = async (req, res) => {
 			await gameMemberObj.save()
 		}
 		let timestamp = Date.now()
-		let game = await Game.findOneAndUpdate(
+		let game = await Game.updateOne(
 			{
 				gameId: req.body.gameId
 			},
@@ -827,7 +827,7 @@ exports.restartGame = async (req, res) => {
  */
 exports.spectateGame = async (req, res) => {
 	try {
-		await Game.findOneAndUpdate(
+		await Game.updateOne(
 			{
 				gameId: req.body.gameId
 			},
@@ -857,7 +857,7 @@ exports.spectateGame = async (req, res) => {
 exports.stopSpectateGame = async (req, res) => {
 	try {
 		console.log("REMOVING STUFF")
-		await Game.findOneAndUpdate(
+		await Game.updateOne(
 			{
 				gameId: req.body.gameId
 			},
