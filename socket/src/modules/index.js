@@ -68,6 +68,15 @@ var sendData = async (client, gameId, userId, gameData, membersData) => {
     } 
 }
 
+var sendWaitingScreenData = async (gameId) => {
+    let users = await startGame.getPlayersInGame(gameId)
+    
+    for (var player of users.players) {
+        if (player && allClients[player._id]) {
+            allClients[player._id].emit('playersInGame', users)
+        }
+    }
+}
 
 var socketListener = (io) => {
     //Whenever someone connects this gets executed
@@ -94,13 +103,20 @@ var socketListener = (io) => {
         try {
             client.on('getPlayers', async (gameId) => {
                 console.log('getPlayers')
-                let users = await startGame.getPlayersInGame(gameId)
+                await sendWaitingScreenData(gameId)
+            })
+        } catch (error) {
+            
+        }
 
-                for (var player of users.players) {
-                    if (allClients[player._id]) {
-                        allClients[player._id].emit('playersInGame', users)
-                    }
+        try {
+            client.on('removePlayer', async (userId, gameId) => {
+                console.log('removePlayer')
+                let users = await startGame.getPlayersInGame(gameId)
+                if (userId && allClients[userId]) {
+                    allClients[userId].emit('playersInGame', users)
                 }
+                await sendWaitingScreenData(gameId)
             })
         } catch (error) {
             
@@ -134,29 +150,36 @@ var socketListener = (io) => {
         }
 
         client.on('pushCommonData', async (gameId, userId) => {
-
-            console.log('pushCommonData')
-            let gameData = await Game.findOne({
-                gameId: gameId
-            })
-
-            var allPlayers = await startGame.playersInGame(gameData)
-    
-            let allGameMembers = await GameMember.find({
-                gameId: gameId
-            })
-
-            let waitingPlayers = []
-            for (var waitingPlayer of gameData.waiting) {
-                let playerDetails = await Users.findById(waitingPlayer)
-                waitingPlayers.push(playerDetails.userName)
-            }
             
-            console.log("Sending data to players of game " + gameId)
-            for (var userId of allPlayers) {
-                if (allClients[userId]) {
-                    sendData(allClients[userId], gameId, userId, gameData, allGameMembers, waitingPlayers)
+            try {
+                console.log('pushCommonData')
+                let gameData = await Game.findOne({
+                    gameId: gameId
+                })
+                if (!gameData) {
+                    return
                 }
+                
+                var allPlayers = await startGame.playersInGame(gameData)
+        
+                let allGameMembers = await GameMember.find({
+                    gameId: gameId
+                })
+    
+                let waitingPlayers = []
+                for (var waitingPlayer of gameData.waiting) {
+                    let playerDetails = await Users.findById(waitingPlayer)
+                    waitingPlayers.push(playerDetails.userName)
+                }
+                
+                console.log("Sending data to players of game " + gameId)
+                for (var userId of allPlayers) {
+                    if (allClients[userId]) {
+                        sendData(allClients[userId], gameId, userId, gameData, allGameMembers, waitingPlayers)
+                    }
+                }
+            } catch (error) {
+
             }
 
         });
@@ -216,6 +239,18 @@ var socketListener = (io) => {
                 console.log("Pushed data from server to " + count + " player(s) of game " + gameId)
             }
 
+        }
+
+        var notStartedGames = await startGame.notStartedGames()
+        for (var game of notStartedGames) {
+            var timeDiff = Date.now() - game.createdAt
+            if (timeDiff > 2000000) {
+                console.log("Ending game " + game.gameId)
+                await startGame.endGame(game.gameId)
+            } else {
+                console.log("Game not started " + game.gameId)
+                await sendWaitingScreenData(game.gameId)
+            }
         }
 
     }, 10 * 1000)

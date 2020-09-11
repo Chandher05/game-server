@@ -146,6 +146,30 @@ exports.activeGames = () => {
     })
 }
 
+exports.notStartedGames = () => {
+    return new Promise(async (resolve, reject) => {
+        var allGames = await Game.find({
+            isStarted: false,
+            isEnded: false
+        })
+        resolve (allGames)
+    })
+}
+
+exports.endGame = (gameId) => {
+    return new Promise(async (resolve, reject) => {
+        await Game.updateOne(
+            {
+                gameId: gameId
+            },
+            {
+            isStarted: false,
+            isEnded: true
+        })
+        resolve ()
+    })
+}
+
 exports.removeSpectator = (userId, gameId) => {
     return new Promise(async(resolve, reject) => {
         await Game.updateOne(

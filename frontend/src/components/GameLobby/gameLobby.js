@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import CreateGame from '../../APIs/gameLobby';
+import RemovePlayer from '../../APIs/removePlayer';
 
 class UserInfo extends Component {
 
@@ -11,6 +12,14 @@ class UserInfo extends Component {
             userId: this.props.player._id
         }
         axios.post(`/game/quitFromLobby`, reqBody)
+        .then(() => {
+            // CreateGame(reqBody.gameId, () => {
+
+            // })
+            RemovePlayer(reqBody.userId, reqBody.gameId, () => {
+
+            })
+        })
     }
 
     render() {
@@ -58,8 +67,11 @@ class GameLobby extends Component {
                 this.setState({
                     redirect: <Redirect to="/joinGame" />
                 })
+                this.props.updateGameId(null)
+                RemovePlayer(reqBody.userId, reqBody.gameId, () => {
+    
+                })
             })
-            this.props.updateGameId(null)
 
     }
 
@@ -90,7 +102,7 @@ class GameLobby extends Component {
                     </div>
                 )
             } else if (this.props.createdUser === localStorage.getItem('GameUserId')) {
-                playersInGame.push(<UserInfo gameId={this.props.gameId} player={player} />)
+                playersInGame.push(<UserInfo gameId={this.props.gameId} player={player} updateGameId={this.props.updateGameId} />)
             } else {
                 playersInGame.push(
                     <div className="row">

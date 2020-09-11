@@ -50,6 +50,7 @@ class JoinGame extends Component {
 						gameId: response.data.gameId,
 						createdUser: response.data.createdUser
 					})
+					this.updateGameId(response.data.gameId)
 				} else if (this.props.location.search) {
 					this.setState({
 						gameId: this.props.location.search.substr(1)
@@ -111,6 +112,11 @@ class JoinGame extends Component {
 		this.setState({
 			gameId: gameId
 		})
+		if (gameId == null) {
+			this.setState({
+				showJoinGame: true
+			})
+		}
 		CreateGame((gameId), (players, isStarted, createdUser) => {
 			this.setState({
 				activePlayersInGame: players,
