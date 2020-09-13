@@ -2,6 +2,7 @@ import startGame from './startGame'
 import game from '../models/mongoDB/game'
 import Game from '../models/mongoDB/game'
 import GameMember from '../models/mongoDB/gameMember'
+import Users from '../models/mongoDB/users'
 
 let allSpecators = {}
 let allClients = {}
