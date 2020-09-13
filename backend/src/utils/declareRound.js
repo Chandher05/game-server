@@ -17,7 +17,7 @@ var endGame = (gameId, userName, isAutoPlay) => {
             }
         )
         
-        if (isAutoPlay == false) {
+        // if (isAutoPlay == false) {
             await Users.updateOne(
                 {
                     userName: userName
@@ -28,7 +28,7 @@ var endGame = (gameId, userName, isAutoPlay) => {
                     }
                 }
             )
-        }
+        // }
 
         resolve()
     })

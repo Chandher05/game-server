@@ -241,17 +241,17 @@ var socketListener = (io) => {
 
         }
 
-        var notStartedGames = await startGame.notStartedGames()
-        for (var game of notStartedGames) {
-            var timeDiff = Date.now() - game.createdAt
-            if (timeDiff > 2000000) {
-                console.log("Ending game " + game.gameId)
-                await startGame.endGame(game.gameId)
-            } else {
-                console.log("Game not started " + game.gameId)
-                await sendWaitingScreenData(game.gameId)
-            }
-        }
+        // var notStartedGames = await startGame.notStartedGames()
+        // for (var game of notStartedGames) {
+        //     var timeDiff = Date.now() - game.createdAt
+        //     if (timeDiff > 2000000) {
+        //         console.log("Ending game " + game.gameId)
+        //         await startGame.endGame(game.gameId)
+        //     } else {
+        //         console.log("Game not started " + game.gameId)
+        //         await sendWaitingScreenData(game.gameId)
+        //     }
+        // }
 
     }, 10 * 1000)
 
