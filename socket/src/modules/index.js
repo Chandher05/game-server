@@ -244,7 +244,7 @@ var socketListener = (io) => {
         var notStartedGames = await startGame.notStartedGames()
         for (var game of notStartedGames) {
             var timeDiff = Date.now() - game.createdAt
-            if (timeDiff > 2000000) {
+            if (timeDiff > 2000000 || !game.createdAt) {
                 console.log("Ending game " + game.gameId)
                 await startGame.endGame(game.gameId)
             } else {
