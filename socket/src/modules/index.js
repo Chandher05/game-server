@@ -125,7 +125,7 @@ var socketListener = (io) => {
         try {
             client.on('getGameStatus', async (gameId, userId) => {
 
-                console.log('getGameStatus')
+                // console.log('getGameStatus')
                 allClients[userId] = client
                 clientIDS[client.id] = userId
 
@@ -152,7 +152,7 @@ var socketListener = (io) => {
         client.on('pushCommonData', async (gameId, userId) => {
             
             try {
-                console.log('pushCommonData')
+                // console.log('pushCommonData')
                 let gameData = await Game.findOne({
                     gameId: gameId
                 })
