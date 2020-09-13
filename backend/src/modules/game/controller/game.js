@@ -114,7 +114,7 @@ exports.joinGame = async (req, res) => {
 				.send("User has already joined game")
 			}
 
-			game = await Game.updateOne(
+			game = await Game.findOneAndUpdate(
 				{
 					gameId: req.body.gameId
 				},
@@ -125,7 +125,7 @@ exports.joinGame = async (req, res) => {
 				}
 			)
 	
-			game = await Game.updateOne(
+			game = await Game.findOneAndUpdate(
 				{
 					gameId: req.body.gameId
 				},
@@ -153,7 +153,7 @@ exports.joinGame = async (req, res) => {
 			.send("User has already joined game")
 		}
 
-		game = await Game.updateOne(
+		game = await Game.findOneAndUpdate(
 			{
 				gameId: req.body.gameId
 			},
@@ -164,7 +164,7 @@ exports.joinGame = async (req, res) => {
 			}
 		)
 
-		game = await Game.updateOne(
+		game = await Game.findOneAndUpdate(
 			{
 				gameId: req.body.gameId
 			},
@@ -267,7 +267,7 @@ exports.resetGame = async (req, res) => {
 		await GameMember.deleteMany({
 			gameId: req.params.gameId
 		})
-		game = await Game.updateOne(
+		game = await Game.findOneAndUpdate(
 			{
 				gameId: req.params.gameId
 			},
@@ -350,7 +350,7 @@ exports.startGame = async (req, res) => {
 			await gameMemberObj.save()
 		}
 		let timestamp = Date.now()
-		game = await Game.updateOne(
+		game = await Game.findOneAndUpdate(
 			{
 				gameId: req.body.gameId
 			},
@@ -488,7 +488,7 @@ exports.nextRound = async (req, res) => {
 		}
 
 		let timestamp = Date.now()
-		game = await Game.updateOne(
+		game = await Game.findOneAndUpdate(
 			{
 				gameId: req.body.gameId
 			},
@@ -581,7 +581,7 @@ exports.quitFromLobby = async (req, res) => {
 		}
 		
 		if (req.body.userId === game.createdUser.toString()) {
-			await Game.findOneAndDelete({
+			await Game.deleteOne({
 				gameId: req.body.gameId
 			})
 		} else {
@@ -626,7 +626,7 @@ exports.quitFromGame = async (req, res) => {
 		}
 		
 		if (req.body.userId === game.createdUser.toString() && game.players.length === 1) {
-			await Game.findOneAndDelete({
+			await Game.deleteOne({
 				gameId: req.body.gameId
 			})
 		} else if (req.body.userId === game.createdUser.toString()) {
@@ -784,7 +784,7 @@ exports.restartGame = async (req, res) => {
 			await gameMemberObj.save()
 		}
 		let timestamp = Date.now()
-		let game = await Game.updateOne(
+		let game = await Game.findOneAndUpdate(
 			{
 				gameId: req.body.gameId
 			},

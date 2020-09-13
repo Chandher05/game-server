@@ -17,7 +17,7 @@ var endGame = (gameId, userName, isAutoPlay) => {
             }
         )
         
-        // if (isAutoPlay == false) {
+        if (isAutoPlay == false) {
             await Users.updateOne(
                 {
                     userName: userName
@@ -28,7 +28,7 @@ var endGame = (gameId, userName, isAutoPlay) => {
                     }
                 }
             )
-        // }
+        }
 
         resolve()
     })
@@ -182,7 +182,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
                 )
             } else if (previousScore < 101) {
                 numberOfActivePlayers += 1
-                var temp = await GameMember.updateOne(
+                var temp = await GameMember.findOneAndUpdate(
                     {
                         gameId: gameId,
                         userId: player
@@ -195,7 +195,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
                             roundScores: allScores[player]
                         }
                     }
-                )  
+                )
                 activePlayerName = temp.userName 
             }
 
