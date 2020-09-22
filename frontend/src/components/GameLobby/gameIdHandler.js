@@ -120,12 +120,12 @@ class GameIdHandler extends Component {
 
         return (
             <div>
-                <div className="text-center pt-3 row">
+                <div className="text-center pt-1 row">
                     <div className="col-md-8 offset-md-2 text-center">
                         <button className="btn btn-success p-3 w-100" onClick={this.createGame}>Create new Game</button>
                     </div>
                 </div>
-                <div className="row p-5">
+                <div className="row pt-3">
                     <div className="col-md-2 offset-md-2">
                         <button className="btn btn-info w-100 p-3" onClick={this.spectateGame}>Spectate</button>
                     </div>

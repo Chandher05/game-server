@@ -101,6 +101,9 @@ class UserOperations extends Component {
                         <button className="btn btn-info w-100"><i className="fas fa-trophy"></i> Leaderboard</button>
                     </a>
                 </div>
+                <div className="pt-3 text-center">
+					<img src="rcb.svg" alt="rcb" />
+                </div>
 
 
                 <div className="modal fade" id="updateAccoutnModal" tabIndex="-1" role="dialog" aria-labelledby="updateAccoutnModalLabel" aria-hidden="true">
