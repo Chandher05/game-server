@@ -121,19 +121,19 @@ class GameIdHandler extends Component {
         return (
             <div>
                 <div className="text-center pt-1 row">
-                    <div className="col-md-8 offset-md-2 text-center">
+                    <div className="col-md-12 text-center">
                         <button className="btn btn-success p-3 w-100" onClick={this.createGame}>Create new Game</button>
                     </div>
                 </div>
                 <div className="row pt-3">
-                    <div className="col-md-2 offset-md-2">
+                    <div className="col-md-3">
                         <button className="btn btn-info w-100 p-3" onClick={this.spectateGame}>Spectate</button>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <input className="form-control" type="text" value={this.state.gameId} onChange={this.gameIdChangeHandler} placeholder="Enter game ID" />
                         <p className="text-danger text-center">{this.state.errMsg}</p>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-3">
                         <button className="btn btn-primary w-100 p-3" onClick={this.joinGame}>Join Game</button>
                     </div>
                 </div>

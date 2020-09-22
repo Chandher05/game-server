@@ -177,12 +177,13 @@ class JoinGame extends Component {
 							{/* <p className="font-italic pt-4">What are your thoughts on introducing season in leaderboard?</p>
 							<p className="font-italic">Click on the give feedback button to let us know. We would love to hear from you.</p> */}
                     		<p className="pt-4">Write a mail to <span className="text-primary text-underline">jayasurya.pinaki@sjsu.edu</span> in case of any issues</p>
+							<GameIdHandler gameId={this.state.gameId} updateGameId={this.updateGameId} showGameRoom={this.showGameRoom} />
 						</div>
 						<div className="col-md-2">
 							<UserOperations />
 						</div>
 					</div>
-					<GameIdHandler gameId={this.state.gameId} updateGameId={this.updateGameId} showGameRoom={this.showGameRoom} />
+					
 				</div>
 			);
 		}

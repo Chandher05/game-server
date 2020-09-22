@@ -104,6 +104,11 @@ class UserOperations extends Component {
                 <div className="pt-3 text-center">
 					<img src="rcb.svg" alt="rcb" />
                 </div>
+                <div className="pt-3 text-center">
+					<a href="declare.apk" download>
+						<p>Download APK for Andriod</p>
+					</a>
+                </div>
 
 
                 <div className="modal fade" id="updateAccoutnModal" tabIndex="-1" role="dialog" aria-labelledby="updateAccoutnModalLabel" aria-hidden="true">
