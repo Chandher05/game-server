@@ -171,8 +171,11 @@ class JoinGame extends Component {
 					<div className="row pt-5 pb-2">
 						<div className="col-md-8 offset-md-2 text-center">
 							{/* <p className="font-weight-bold">Sponsored by</p> */}
-							<a href="http://collectarupee.com/" target="_blank" rel="noopener noreferrer">
+							{/* <a href="http://collectarupee.com/" target="_blank" rel="noopener noreferrer">
 								<img src="banner.png" className="rounded" style={{ width: 100 + "%" }} alt="gameLogo" />
+							</a> */}
+							<a href="https://hostelit.in/" target="_blank" rel="noopener noreferrer">
+								<img src="hostelit.jfif" className="rounded" style={{ width: 100 + "%" }} alt="gameLogo" />
 							</a>
 							{/* <p className="font-italic pt-4">What are your thoughts on introducing season in leaderboard?</p>
 							<p className="font-italic">Click on the give feedback button to let us know. We would love to hear from you.</p> */}
