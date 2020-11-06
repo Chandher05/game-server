@@ -18,12 +18,14 @@ exports.getPlayersInGame = (gameId) => {
             }
             resolve({
                 createdUser: game.createdUser,
+                spectators: game.spectators,
                 players: users,
                 isStarted: game.isStarted
             })
         }
         resolve({
-            players: users,
+            players: [],
+            spectators: [],
             isStarted: false
         })
     })

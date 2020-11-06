@@ -112,7 +112,7 @@ class OtherPlayers extends Component {
         let cards = [],
             background,
             currentPlayerUserName,
-            hostPlayerName,
+            hostPlayerName = "admin",
             count = 1
 
         for (var player in this.state.allPlayers.cardsCount) {

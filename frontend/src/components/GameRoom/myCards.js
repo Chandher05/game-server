@@ -27,13 +27,13 @@ class MyCards extends Component {
 	}
 
 	async componentDidMount() {
-
+		console.log(this.props.gameId)
 		this.getMyCards();
 
 		// setInterval(() => {
 
 		CurrentPlayer(this.props.gameId, localStorage.getItem('GameUserId'), (currentPlayer, cardsInHand, isRoundComplete, isGameComplete, hostPlayer, isWaiting) => {
-			// console.log(isWaiting)
+			console.log(isWaiting)
 			cardsInHand = RemoveDuplicates(cardsInHand)
 			if (isRoundComplete === true || isGameComplete === true) {
 				this.setState({

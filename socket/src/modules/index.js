@@ -64,6 +64,18 @@ var sendData = async (client, gameId, userId, gameData, membersData) => {
             }
 
             client.emit('currentPlayer', currentPlayerData)
+        } else if (data.game.spectators.includes(userId)) {
+            
+            let currentPlayerData = {
+                currentPlayer: null,
+                playerCards: [],
+                isRoundComplete: data.game.isRoundComplete,
+                isGameComplete: data.game.isEnded,
+                hostPlayer: data.game.createdUser,
+                isWaiting: false
+            }
+
+            client.emit('currentPlayer', currentPlayerData)
         }
 
     } 
@@ -71,8 +83,8 @@ var sendData = async (client, gameId, userId, gameData, membersData) => {
 
 var sendWaitingScreenData = async (gameId) => {
     let users = await startGame.getPlayersInGame(gameId)
-    
-    for (var player of users.players) {
+    let allUsers = users.players.concat(users.spectators)
+    for (var player of allUsers) {
         if (player && allClients[player._id]) {
             allClients[player._id].emit('playersInGame', users)
         }

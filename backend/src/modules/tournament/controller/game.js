@@ -16,17 +16,21 @@ import { Mongoose } from 'mongoose';
 exports.createGame = async (req, res) => {
 	try {
 
+		// If user is part of a game that has not ended
 		let game
-		game = await Game.find({
+		game = await Game.findOne({
 			players: req.body.userId,
-			isStarted: true,
 			isEnded: false
 		})
-		if (game.length > 0) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User is already part of a game. Please refresh page")
+		if (game) {
+			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
+				.send({
+					gameId: gameId,
+					createdUser: game.createdUser
+				})
 		}
 		
+		// If there are more than 5 active games
 		game = await Game.find({
 			isStarted: true,
 			isEnded: false
@@ -37,22 +41,10 @@ exports.createGame = async (req, res) => {
 			.send("Game rooms are full! Please wait for a few minutes")
 		}
 
-		game = await Game.findOne({
-			players: req.body.userId,
-			isStarted: false,
-			isEnded: false
-		})
-		if (game) {
-			return res.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
-				.send({
-					gameId: game.gameId,
-					createdUser: req.body.userId
-				})
-		}
-
 		let gameId = await GenerateId(6)
 		const gameData = new Game({
-			players: [req.body.userId],
+			players: [],
+			spectators: [req.body.userId],
 			gameId: gameId,
 			createdUser: req.body.userId,
 			currentPlayer: req.body.userId,
@@ -97,50 +89,46 @@ exports.joinGame = async (req, res) => {
 			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
 				.send("Game does not exist")
 		} else if (game.players.includes(req.body.userId)) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
 				.send("User has already joined game. Please refresh.")
 		} else if (game.players.length + game.waiting.length === 5) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 			.send("Game is full")
 		} else if (game.isStarted == true) {
+			// game = await Game.findOne({
+			// 	gameId: req.body.gameId,
+			// 	$or: [{players: req.body.userId}, {waiting: req.body.userId}],
+			// 	isEnded: false
+			// })
+			// if (game) {
+			// 	return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
+			// 	.send("User has already joined game")
+			// }
 
-			game = await Game.findOne({
-				gameId: req.body.gameId,
-				$or: [{players: req.body.userId}, {waiting: req.body.userId}],
-				isEnded: false
-			})
-			if (game) {
-				return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User has already joined game")
-			}
-
-			game = await Game.findOneAndUpdate(
-				{
-					gameId: req.body.gameId
-				},
-				{
-					$pull: {
-						waiting: req.body.userId
-					}
-				}
-			)
+			// game = await Game.findOneAndUpdate(
+			// 	{
+			// 		gameId: req.body.gameId
+			// 	},
+			// 	{
+			// 		$pull: {
+			// 			waiting: req.body.userId
+			// 		}
+			// 	}
+			// )
 	
-			game = await Game.findOneAndUpdate(
-				{
-					gameId: req.body.gameId
-				},
-				{
-					$push: {
-						waiting: req.body.userId
-					}
-				}
-			)
+			// game = await Game.findOneAndUpdate(
+			// 	{
+			// 		gameId: req.body.gameId
+			// 	},
+			// 	{
+			// 		$push: {
+			// 			waiting: req.body.userId
+			// 		}
+			// 	}
+			// )
 			return res
-			.status(constants.STATUS_CODE.SUCCESS_STATUS)
-			.send({
-				gameId: req.body.gameId,
-				createdUser: game.createdUser
-			})
+			.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send("Oops! You are too late. Sorry")
 		}
 			
 		game = await Game.findOne({
@@ -149,7 +137,7 @@ exports.joinGame = async (req, res) => {
 			isEnded: false
 		})
 		if (game) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
 			.send("User has already joined game")
 		}
 
@@ -333,7 +321,7 @@ exports.startGame = async (req, res) => {
 		for (var userId of game.players) {
 			let result, cardsForPlayer
 			let userObj = await Users.findById(userId)
-			if (game.createdUser.toString() == userId.toString()) {
+			if (game.players[0].toString() == userId.toString()) {
 				startedUser = userObj.userName
 				result = GetCards.getCards(availableCards, 6)
 			} else {
@@ -355,7 +343,7 @@ exports.startGame = async (req, res) => {
 				gameId: req.body.gameId
 			},
 			{
-				currentPlayer: game.createdUser,
+				currentPlayer: game.players[0],
 				isStarted: true,
 				cardsInDeck: availableCards,
 				lastPlayedTime: timestamp,
@@ -398,7 +386,7 @@ exports.validGame = async (req, res) => {
 		let game
 		game = await Game.findOne({
 			gameId: req.params.gameId,
-			isStarted: true,
+			isStarted: false,
 			isEnded: false
 		})
 		if (!game) {
@@ -745,7 +733,6 @@ exports.restartGame = async (req, res) => {
 		let randomPlayerOrder = Shuffle(playersInNextGame)
 		const newGameData = new Game({
 			players: randomPlayerOrder,
-			spectators: oldGame.spectators,
 			gameId: req.body.gameId,
 			createdUser: oldGame.createdUser,
 			currentPlayer: randomPlayerOrder[0],
