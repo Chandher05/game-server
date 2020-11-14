@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/create', gameController.createGame);
 router.post('/join', gameController.joinGame);
 router.get('/currentGame/:userId', gameController.isUserPartOfGame);
-router.post('/start', gameController.startGame);
+// router.post('/start', gameController.startGame);
 router.post('/restart', gameController.restartGame);
 router.get('/validGame/:gameId', gameController.validGame);
 router.post('/nextRound', gameController.nextRound);

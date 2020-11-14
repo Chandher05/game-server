@@ -102,10 +102,10 @@ class UserOperations extends Component {
                     </a>
                 </div>
                 <div className="pt-3 text-center">
-					<img src="rcb.svg" alt="rcb" />
+					<img src="/rcb.svg" alt="rcb" />
                 </div>
                 <div className="pt-3 text-center">
-					<a href="declare.apk" download>
+					<a href="/declare.apk" download>
 						<p>Download APK for Andriod</p>
 					</a>
                 </div>

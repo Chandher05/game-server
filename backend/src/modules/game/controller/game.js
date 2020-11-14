@@ -332,7 +332,14 @@ exports.startGame = async (req, res) => {
 		var startedUser = null
 		for (var userId of game.players) {
 			let result, cardsForPlayer
-			let userObj = await Users.findById(userId)
+			let userObj = await Users.findByIdAndUpdate(
+				userId,
+				{
+                    $inc: {
+                        totalGames: 1
+                    }
+				}
+			)
 			if (game.createdUser.toString() == userId.toString()) {
 				startedUser = userObj.userName
 				result = GetCards.getCards(availableCards, 6)
@@ -717,22 +724,15 @@ exports.restartGame = async (req, res) => {
 				.send("Not enough players to restart the game")
 		}
 		
-		let tempGameId = await GenerateId(6)
-		await Game.updateOne(
+		await Game.deleteOne(
 			{
 				gameId: req.body.gameId
-			},
-			{
-				gameId: tempGameId
 			}
 		)
 
-		await GameMember.updateMany(
+		await GameMember.deleteMany(
 			{
 				gameId: req.body.gameId
-			},
-			{
-				gameId: tempGameId
 			}
 		)
 
@@ -762,7 +762,14 @@ exports.restartGame = async (req, res) => {
 		var createdUserCards = []
 		for (var userId of newGame.players) {
 			let result, cardsForPlayer
-			let userObj = await Users.findById(userId)
+			let userObj = await Users.findByIdAndUpdate(
+				userId,
+				{
+                    $inc: {
+                        totalGames: 1
+                    }
+				}
+			)
 			if (newGame.currentPlayer.toString() == userId.toString()) {
 				startedUser = userObj.userName
 				result = GetCards.getCards(availableCards, 6)

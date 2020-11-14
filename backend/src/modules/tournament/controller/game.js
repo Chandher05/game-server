@@ -320,7 +320,14 @@ exports.startGame = async (req, res) => {
 		var startedUser = null
 		for (var userId of game.players) {
 			let result, cardsForPlayer
-			let userObj = await Users.findById(userId)
+			let userObj = await Users.findByIdAndUpdate(
+				userId,
+				{
+                    $inc: {
+                        totalGames: 1
+                    }
+				}
+			)
 			if (game.players[0].toString() == userId.toString()) {
 				startedUser = userObj.userName
 				result = GetCards.getCards(availableCards, 6)

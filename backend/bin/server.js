@@ -17,7 +17,7 @@ const tournamentRouter = require('../src/modules/tournament/router/game');
 // database connections
 require('../src/models/mongoDB/index');
 
-// cron jon
+// cron job
 require('../src/utils/endUnwantedGames')
 
 const app = express();

@@ -102,7 +102,7 @@ class GameLobby extends Component {
             gameId: this.props.match.params.gameId,
             userId: localStorage.getItem('GameUserId')
         }
-        axios.post(`/tournament/quitFromLobby`, reqBody)
+        axios.post(`/game/quitFromLobby`, reqBody)
             .then(() => {
                 this.setState({
                     redirect: "/tournament/joinGame"
@@ -128,7 +128,7 @@ class GameLobby extends Component {
     render() {
 
 		if (!localStorage.getItem('GameUserId')) {
-			return (<Redirect to={`/login${this.props.location.search}`} />)
+			return (<Redirect to={`/login?redirect=${encodeURIComponent(window.location.pathname)}`} />)
 		}
 
 		if (this.state.isFetched === false) {
@@ -196,7 +196,7 @@ class GameLobby extends Component {
                     <div className="col-md-5 offset-md-3">
                         <textarea
                             ref={(textarea) => this.textArea = textarea}
-                            value={window.location.origin.concat("/tournament/joinGame?gameId=").concat(this.props.match.params.gameId)}
+                            value={window.location.origin.concat("/tournament/joinGame/").concat(this.props.match.params.gameId)}
                             style={{ resize: "none" }}
                             className="w-100 rounded text-center"
                         />

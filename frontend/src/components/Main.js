@@ -4,7 +4,9 @@ import Landing from './Common/Landing';
 import Login from './Authentication/login'; 
 import CreateAccount from './Authentication/createAccount'; 
 
-import JoinGame from './GameLobby/joinGame';
+import JoinGame from './GameLobby/newJoinGame';
+import GameLobby from './GameLobby/gameLobby';
+
 import GameRoom from './GameRoom/gameRoom';
 import SpectateRoom from './GameRoom/spectate';
 
@@ -34,11 +36,15 @@ class Main extends Component {
                     <Route path="/login" component={Login}/>
                     <Route path="/create-account" component={CreateAccount}/>
 
-                    <Route path="/joinGame" component={JoinGame}/>
-                    <Route path="/tournament/joinGame" component={JoinTournament}/>
+                    <Route path="/joinGame/:gameId?" component={JoinGame} />
+                    <Route path="/lobby/:gameId" component={GameLobby}/>
+
+                    {/* Tournament pages */}
+                    <Route path="/tournament/joinGame/:gameId?" component={JoinTournament}/>
                     <Route path="/tournament/create" component={CreateTournamentGame}/>
                     <Route path="/tournament/lobby/:gameId" component={TournamentLobby}/>
-                    <Route path="/tournament/game/:gameId" component={JoinGame}/>
+
+                    {/* Game pages */}
                     <Route path="/gameRoom/:gameId" component={GameRoom}/>
                     <Route path="/spectate/:gameId" component={SpectateRoom}/>
 

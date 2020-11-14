@@ -33,29 +33,33 @@ class GameIdHandler extends Component {
                     this.setState({
                         errMsg: "Invalid game ID"
                     })
-                } else if (response.status === 200) {
-                    this.props.showGameRoom(this.state.gameId)
-                } else {
-                    this.props.updateGameId(this.state.gameId)
-                }
-            })
-            .catch((error) => {
-                if (error.response) {
-                    if (error.response.status === 404) {
-                        this.setState({
-                            errMsg: 'Error in joining game'
-                        })
-                    } else {
-                        this.setState({
-                            errMsg: error.response.data
-                        })
-                    }
                 } else {
                     this.setState({
-                        errMsg: 'Error in creating game'
+                        redirect: `/lobby/${this.state.gameId}`
                     })
                 }
             })
+            .catch((error) => {
+				if (error.response) {
+					if (error.response.status === 404) {
+						this.setState({
+							errMsg: 'Error in joining game'
+						})
+					} else if (error.response.status === 409) {
+						this.setState({
+							errMsg: error.response.data
+						})
+					} else {
+						this.setState({
+							redirect: `/lobby/${this.state.gameId}`
+						})
+					}
+				} else {
+					this.setState({
+						errMsg: 'Error in creating game'
+					})
+				}
+			})
     }
 
     createGame = () => {
@@ -67,7 +71,10 @@ class GameIdHandler extends Component {
         }
         axios.post('/game/create', userData)
             .then((response) => {
-                this.props.updateGameId(response.data.gameId)
+                // this.props.updateGameId(response.data.gameId)
+                this.setState({
+                    redirect: `/lobby/${response.data.gameId}`
+                })
             })
             .catch((error) => {
                 if (error.response) {

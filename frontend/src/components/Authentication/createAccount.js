@@ -63,8 +63,12 @@ class Home extends Component {
     }
 
     render() {
-        if (localStorage.getItem('GameUserId')) {
-            return (<Redirect to={`/joinGame${this.props.location.search}`} />)
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('redirect');
+        if (localStorage.getItem('GameUserId') && myParam) {
+            return (<Redirect to={`${myParam}`} />)
+        } else if (localStorage.getItem('GameUserId')) {
+            return (<Redirect to={`/joinGame`} />)
         }
 
         return (
@@ -94,7 +98,7 @@ class Home extends Component {
                             </div>
                                 <div className="panel text-center">
                                     <p>or</p>
-                                    <p>Already have an account? <Link to={`/login${this.props.location.search}`}>Sign in</Link></p>
+                                    <p>Already have an account? <Link to={`/login?redirect=${encodeURIComponent(myParam)}`}>Sign in</Link></p>
                                 </div>
                         </div>
                     </div>

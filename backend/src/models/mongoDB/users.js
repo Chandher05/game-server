@@ -17,6 +17,10 @@ const Users = new mongoose.Schema({
 		type: Boolean,
 		default: true
 	},
+	totalGames: {
+		type: Number,
+		default: 0
+	},
 	totalWins: {
 		type: Number,
 		default: 0

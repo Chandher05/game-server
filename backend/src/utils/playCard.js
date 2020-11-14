@@ -212,6 +212,8 @@ var playRandom = async (timestamp, gameId, userId) => {
     if (!game) {
         console.log(`\n\n\nGame has ended`)
         return
+    } else if (!gameMember) {
+        console.log(`\n\n\nCould not find game member`)
     } else if (game.players.includes(userId)) {
         var count = 0
         while (count < 60) {

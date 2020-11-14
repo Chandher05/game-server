@@ -255,9 +255,6 @@ exports.getStats = async (req, res) => {
 		let user = await Users.findById(
 			mongoose.Types.ObjectId(req.params.userId)
 		)
-		let numberOfGames = await GameMember.find({
-			userId: req.params.userId
-		})
 
 		if (!user) {
 			return res
@@ -266,7 +263,7 @@ exports.getStats = async (req, res) => {
 		}
 
 		const returnValue = {
-			gamesCount: numberOfGames.length,
+			gamesCount: user.totalGames,
 			totalWins: user.totalWins,
 			totalDeclares: user.totalDeclares,
 			totalFifties: user.totalFifties,
@@ -293,48 +290,25 @@ exports.getStats = async (req, res) => {
 exports.leaderboard = async (req, res) => {
 	try {
 
-		let data = await GameMember.aggregate(
-			[
-				{
-					$group: {
-						_id: "$userId",
-						count: { $sum: 1 }
-					}
-				}
-			]
-		)
-
-		let userGameCount = {}
-
-		for (var game of data) {
-			userGameCount[game._id] = game.count
-		}
-
 		let allUsers = await Users.find(),
 			user,
 			userId,
-			numberOfGames,
 			allUsersData = []
 
 
 		for (user of allUsers) {
 			userId = user._id
 
-			numberOfGames = 0 
-			if (userGameCount[userId]) {
-				numberOfGames = userGameCount[userId]
-			}
-
 			let ratio = 0
-            if (numberOfGames > 0) {
-                ratio = user.totalDeclares / numberOfGames
+            if (user.totalGames > 0) {
+                ratio = user.totalDeclares / user.totalGames
 			}
 			ratio = ratio.toFixed(2)
 			
 			allUsersData.push({
 				userId: userId,
 				userName: user.userName,
-				gamesCount: numberOfGames,
+				gamesCount: user.totalGames,
 				totalWins: user.totalWins,
 				totalDeclares: user.totalDeclares,
 				ratio: ratio,

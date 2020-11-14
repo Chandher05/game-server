@@ -63,10 +63,10 @@ class JoinGame extends Component {
 					isFetched: true
 				})
 			})
-		var urlParams = new URLSearchParams(window.location.search);
-		if (urlParams.has('gameId')) {
+		// var urlParams = new URLSearchParams(window.location.search);
+		if (this.props.match.params.gameId) {
 			this.setState({
-				gameId: urlParams.get('gameId')
+				gameId: this.props.match.params.gameId
 			})
 		}
 	}
@@ -123,7 +123,7 @@ class JoinGame extends Component {
 	render() {
 
 		if (!localStorage.getItem('GameUserId')) {
-			return (<Redirect to={`/login${this.props.location.search}`} />)
+			return (<Redirect to={`/login?redirect=${encodeURIComponent(window.location.pathname)}`} />)
 		}
 
 		if (this.state.isFetched === false) {
