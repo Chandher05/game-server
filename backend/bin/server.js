@@ -20,6 +20,9 @@ require('../src/models/mongoDB/index');
 // cron job
 require('../src/utils/endUnwantedGames')
 
+// Update User module
+require('../src/utils/updateUserModule')
+
 const app = express();
 const { port } = config;
 const { frontendUrl } = config;
