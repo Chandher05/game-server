@@ -38,7 +38,7 @@ class HallOfFame extends Component {
                         <div className="bg-light p-2">
                             <h3 className="bg-warning font-weight-bolder p-2 text-center">Tournament 2</h3>
                             <h4 className="font-weight-bolder p-2 blueBackground text-white text-center">Winner: Shaivya Sahare</h4>
-                            <img className="playerImage" src="/HallOfFame/placeholder.png" alt="winner-1" />
+                            <img className="playerImage" src="/HallOfFame/winner-2.jpeg" alt="winner-1" />
                             <h6 className="text-justify">Shaivya used to the winnings from this tournament to help a organization who is trying to help street vendors rebuild their businesses post  
                                 COVID. <a href="https://fundraisers.giveindia.org/fundraisers/empowering-our-street-vendors-to-rebuild-their-livelihoods" target="_blank" rel="noopener noreferrer">Link to the fundraiser</a>
                             </h6>
