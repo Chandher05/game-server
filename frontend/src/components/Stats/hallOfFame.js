@@ -78,7 +78,7 @@ class HallOfFame extends Component {
                             A huge thank you to the participants for sticking to your declare plan on Sunday night ;) and for bringing to this championship all 
                             that energy and enthusiasm. There’s no championship without banter, and all of you delivered and HOW. On 25th January, the second 
                             edition of the Declare Championship came to an end. This isn’t a <span className="font-weight-bold">goodbye</span>, but  
-                            a <span className="font-weight-bold">see you on <a href="www.declaregame.in" className="blueText">www.declaregame.in</a> again.</span> Au revoir, keep playing! 
+                            a <span className="font-weight-bold">see you in the next edition.</span> Au revoir, keep playing! 
                             </p>
                             </div>
                         </div>

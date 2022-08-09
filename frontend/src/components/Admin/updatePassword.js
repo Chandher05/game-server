@@ -114,7 +114,7 @@ class UpdatePassword extends Component {
         if (!this.state.isActive) {
             return (
                 <div className="text-center p-5">
-                    <h2>Invalid session. Please contact <span className="font-weight-light font-italic">jayasurya.pinaki@sjsu.edu</span> if this is a mistake.</h2>
+                    <h2>Invalid session. Please contact <span className="font-weight-light font-italic">jayasurya1796@gmail.com</span> if this is a mistake.</h2>
                 </div>
             )
         }
