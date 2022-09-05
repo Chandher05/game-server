@@ -7,3 +7,5 @@
 /socket/node_modules/
 /socket/.env
 /socket/package-lock.json
+/backend-server.env
+/socket-server.env

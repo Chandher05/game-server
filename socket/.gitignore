@@ -6,3 +6,5 @@
 
 # log file
 file.log
+
+/serviceAccountKey.json

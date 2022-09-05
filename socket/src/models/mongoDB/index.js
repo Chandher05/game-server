@@ -3,7 +3,7 @@
 import config from '../../../config'
 import mongoose from 'mongoose'
 
-mongoose.connect(config.database.mongoDbUrl, { useNewUrlParser: true, useUnifiedTopology: true, poolSize: 5 })
+mongoose.connect(config.database.mongoDbUrl, { useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => console.log('MongoDB Connected'))
 mongoose.Promise = global.Promise
 let db = mongoose.connection

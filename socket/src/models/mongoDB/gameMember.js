@@ -11,7 +11,7 @@ const GameMember = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true
     },
-    userName: {
+    gamerId: {
         type: String,
         required: true
     },
@@ -21,9 +21,13 @@ const GameMember = new mongoose.Schema({
         default: 0
     },
     roundScores: [Number],
-    isAlive: {
+    isEliminated: {
         type: Boolean,
-        default: true
+        default: false
+    },
+    didPlayerLeave: {
+        type: Boolean,
+        default: false
     }
 }, { versionKey: false })
 
