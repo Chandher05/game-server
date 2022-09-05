@@ -13,7 +13,7 @@ class ReportIssue extends Component {
             <div className="row m-5 p-5">
                 <p className="display-4">
                     Please write an email 
-                    to <a href="mailto:jayasurya1796@gmail.com"><span className="font-italic text-primary">jayasurya1796@gmail.com</span></a> with
+                    to <span className="font-italic text-primary">jayasurya.pinaki@sjsu.edu</span> with
                     your <span className="font-weight-bold">username</span> requesting for change of password.
                 </p>
                 <a href="/"><button className="btn btn-primary p-3 m-3">Go back</button></a>

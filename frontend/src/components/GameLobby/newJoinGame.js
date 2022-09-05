@@ -144,12 +144,12 @@ class JoinGame extends Component {
                         {/* <a href="http://collectarupee.com/" target="_blank" rel="noopener noreferrer">
                             <img src="banner.png" className="rounded" style={{ width: 100 + "%" }} alt="gameLogo" />
                         </a> */}
-                        <a href="http://hostelit.in/" target="_blank" rel="noopener noreferrer">
+                        <a href="https://hostelit.in/" target="_blank" rel="noopener noreferrer">
                             <img src="/hostelit.jfif" className="rounded" style={{ width: 100 + "%" }} alt="gameLogo" />
                         </a>
                         {/* <p className="font-italic pt-4">What are your thoughts on introducing season in leaderboard?</p>
                         <p className="font-italic">Click on the give feedback button to let us know. We would love to hear from you.</p> */}
-                        <p className="pt-4">Write a mail to <span className="text-primary text-underline">jayasurya1796@gmail.com</span> in case of any issues</p>
+                        <p className="pt-4">Write a mail to <span className="text-primary text-underline">jayasurya.pinaki@sjsu.edu</span> in case of any issues</p>
                         <GameIdHandler gameId={this.state.gameId} />
                     </div>
                     <div className="col-md-2">

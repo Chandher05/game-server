@@ -36,7 +36,7 @@ class WaitingScreen extends Component {
                 </div>
                 <div className="text-center m-5 p-5">
                     {/* <a href="/report"><p className="text-danger">Report bug</p></a> */}
-                    <p>Write a mail to <a href="mailto:jayasurya1796@gmail.com">jayasurya1796@gmail.com</a> in case of any issues</p>
+                    <p>Write a mail to <a href="mailto:jayasurya.pinaki@sjsu.edu">jayasurya.pinaki@sjsu.edu</a> in case of any issues</p>
                 </div>
                 <div className="text-center m-5 p-5">
                     <p className="showPointer" onClick={this.logout}>Logout</p>
