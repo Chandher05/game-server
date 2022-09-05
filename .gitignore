@@ -7,3 +7,7 @@
 /socket/node_modules/
 /socket/.env
 /socket/package-lock.json
+/socket/serviceAccountKey.json
+/backend/serviceAccountKey.json
+/backend-server.env
+/socket-server.env
