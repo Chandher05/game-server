@@ -20,11 +20,7 @@ exports.loginUser = async (req, res) => {
 			userUID: req.body.userUID
 		})
 
-		if (user.isActive) {
-			return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send(user)
-		} else if (!user.isActive) {
-			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS).send("USER_INACTIVE")
-		} else {
+		if (!user) {
 			let userObj = {
 				userUID: req.body.userUID,
 				userName: req.body.userName,
@@ -32,7 +28,11 @@ exports.loginUser = async (req, res) => {
 			}
 			let newUser = new Users(userObj)
 			let createdUser = await newUser.save()
-			return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send(createdUser)
+			return res.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS).send(createdUser)
+		} else if (user.isActive) {
+			return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send(user)
+		} else if (!user.isActive) {
+			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS).send("USER_INACTIVE")
 		}
 	} catch (error) {
 		console.log(`Error while logging in user ${error}`)
@@ -118,7 +118,7 @@ exports.updateUserProfile = async (req, res) => {
 				}
 			)
 		}
-		return res.status(200).send(details.toJSON())
+		return res.status(200).send("USER_UPDATED")
 
 	} catch (error) {
 		console.log(`Error while updating user profile details ${error}`)

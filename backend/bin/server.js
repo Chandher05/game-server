@@ -67,7 +67,7 @@ var checkAuth = async (req, res, next) => {
 		let userRecord = await admin.auth().getUser(uid)
 		req.body.userUID = uid
 		req.body.email = userRecord.email
-		req.body.username = userRecord.displayName
+		req.body.userName = userRecord.displayName
 		next()
 	} catch (err) {
 		res.status(403).send('Unauthorized')
@@ -75,7 +75,7 @@ var checkAuth = async (req, res, next) => {
 }
 
 // base routes for modules
-// app.use('/', checkAuth);
+app.use('/', checkAuth);
 app.use('/users', usersRouter);
 app.use('/game', gameRouter);
 app.use('/player', playerRouter);
