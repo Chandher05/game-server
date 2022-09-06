@@ -48,7 +48,34 @@ app.use((req, res, next) => {
 	next();
 });
 
+
+const admin = require('firebase-admin')
+var serviceAccount = require("../serviceAccountKey.json");
+
+admin.initializeApp({
+	credential: admin.credential.cert(serviceAccount)
+});
+
+
+
+var checkAuth = async (req, res, next) => {
+	try {
+		let authHeader = req.headers.authorization
+		let authToken = authHeader.substring(7, authHeader.length)
+		let decodedToken = await admin.auth().verifyIdToken(authToken)
+		const uid = decodedToken.uid;
+		let userRecord = await admin.auth().getUser(uid)
+		req.body.userUID = uid
+		req.body.email = userRecord.email
+		req.body.username = userRecord.displayName
+		next()
+	} catch (err) {
+		res.status(403).send('Unauthorized')
+	}
+}
+
 // base routes for modules
+// app.use('/', checkAuth);
 app.use('/users', usersRouter);
 app.use('/game', gameRouter);
 app.use('/player', playerRouter);

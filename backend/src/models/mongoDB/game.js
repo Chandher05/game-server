@@ -21,6 +21,11 @@ const Game = new mongoose.Schema({
         required: true,
         default: false
     },
+    canPlayersDeclare: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     gameId: {
         type: String,
         required: true
