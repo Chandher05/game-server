@@ -6,7 +6,8 @@ import GenerateId from '../../../utils/generateId';
 import GetCards from '../../../utils/getCards';
 import PlayCard from '../../../utils/playCard';
 import Shuffle from '../../../utils/shufflePlayer';
-import { Mongoose } from 'mongoose';
+
+let allUserUIDs = {}
 
 /**
  * Create game and save data in database.
@@ -15,6 +16,16 @@ import { Mongoose } from 'mongoose';
  */
 exports.createGame = async (req, res) => {
 	try {
+
+		if (req.body.userUID in allUserUIDs) {
+			req.body.userId = allUserUIDs[req.body.userUID]
+		} else {
+			let reqUserObj = await Users.findOne({
+				userUID: req.body.userUID
+			})
+			req.body.userId = reqUserObj._id
+			allUserUIDs[req.body.userUID] = reqUserObj._id
+		}
 
 		let game
 		game = await Game.find({
@@ -89,7 +100,27 @@ exports.createGame = async (req, res) => {
 exports.joinGame = async (req, res) => {
 	try {
 
+		if (req.body.userUID in allUserUIDs) {
+			req.body.userId = allUserUIDs[req.body.userUID]
+		} else {
+			let reqUserObj = await Users.findOne({
+				userUID: req.body.userUID
+			})
+			req.body.userId = reqUserObj._id
+			allUserUIDs[req.body.userUID] = reqUserObj._id
+		}
+
 		let game
+		game = await Game.findOne({
+			$or: [{players: req.body.userId}, {waiting: req.body.userId}],
+			isEnded: false
+		})
+		if (game) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send(`User is already part of a game ${game.gameId}.`)
+		}
+
+		
 		game = await Game.findOne({
 			gameId: req.body.gameId
 		})
@@ -190,115 +221,115 @@ exports.joinGame = async (req, res) => {
 	}
 }
 
-/**
- * Check if user is already part of a game.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.isUserPartOfGame = async (req, res) => {
-	try {
+// /**
+//  * Check if user is already part of a game.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.isUserPartOfGame = async (req, res) => {
+// 	try {
 
-		if (req.params.userId == "null") {
-			return res
-			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-			.send(null)
-		}
+// 		if (req.params.userId == "null") {
+// 			return res
+// 			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+// 			.send(null)
+// 		}
 
-		let game
-		game = await Game.findOne({
-			$or: [{players: req.params.userId}, {waiting: req.params.userId}],
-			isStarted: true,
-			isEnded: false
-		})
-		if (game) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send({
-					gameId: game.gameId,
-					createdUser: req.body.userId
-				})
-		}
+// 		let game
+// 		game = await Game.findOne({
+// 			$or: [{players: req.params.userId}, {waiting: req.params.userId}],
+// 			isStarted: true,
+// 			isEnded: false
+// 		})
+// 		if (game) {
+// 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+// 				.send({
+// 					gameId: game.gameId,
+// 					createdUser: req.body.userId
+// 				})
+// 		}
 
-		game = await Game.findOne({
-			players: req.params.userId,
-			isStarted: false,
-			isEnded: false
-		})
+// 		game = await Game.findOne({
+// 			players: req.params.userId,
+// 			isStarted: false,
+// 			isEnded: false
+// 		})
 
-		if (game) {
-			return res
-				.status(constants.STATUS_CODE.SUCCESS_STATUS)
-				.send({
-					gameId: game.gameId,
-					createdUser: game.createdUser
-				})
-		}
-		return res
-			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-			.send(null)
+// 		if (game) {
+// 			return res
+// 				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+// 				.send({
+// 					gameId: game.gameId,
+// 					createdUser: game.createdUser
+// 				})
+// 		}
+// 		return res
+// 			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+// 			.send(null)
 
-	} catch (error) {
-		console.log(`Error in game/isUserPartOfGame ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 	} catch (error) {
+// 		console.log(`Error in game/isUserPartOfGame ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }
 
-/**
- * Reset a game.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.resetGame = async (req, res) => {
-	try {
+// /**
+//  * Reset a game.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.resetGame = async (req, res) => {
+// 	try {
 
-		let game
-		game = await Game.findOne({
-			gameId: req.params.gameId
-		})
-		if (!game) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send({
-					gameId: game.gameId,
-					createdUser: req.params.userId
-				})
-		}
+// 		let game
+// 		game = await Game.findOne({
+// 			gameId: req.params.gameId
+// 		})
+// 		if (!game) {
+// 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+// 				.send({
+// 					gameId: game.gameId,
+// 					createdUser: req.params.userId
+// 				})
+// 		}
 
-		await GameMember.deleteMany({
-			gameId: req.params.gameId
-		})
-		game = await Game.findOneAndUpdate(
-			{
-				gameId: req.params.gameId
-			},
-			{
-				isStarted: false,
-				isRoundComplete: false,
-				isEnded: false,
-				cardsInDeck: [],
-				openedCards: []
-			}
-		)
+// 		await GameMember.deleteMany({
+// 			gameId: req.params.gameId
+// 		})
+// 		game = await Game.findOneAndUpdate(
+// 			{
+// 				gameId: req.params.gameId
+// 			},
+// 			{
+// 				isStarted: false,
+// 				isRoundComplete: false,
+// 				isEnded: false,
+// 				cardsInDeck: [],
+// 				openedCards: []
+// 			}
+// 		)
 
-		if (game) {
-			return res
-				.status(constants.STATUS_CODE.SUCCESS_STATUS)
-				.send({
-					gameId: game.gameId,
-					createdUser: game.createdUser
-				})
-		}
-		return res
-			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-			.send(null)
+// 		if (game) {
+// 			return res
+// 				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+// 				.send({
+// 					gameId: game.gameId,
+// 					createdUser: game.createdUser
+// 				})
+// 		}
+// 		return res
+// 			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+// 			.send(null)
 
-	} catch (error) {
-		console.log(`Error game/resetGame ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 	} catch (error) {
+// 		console.log(`Error game/resetGame ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }
 
 
 /**
@@ -308,6 +339,16 @@ exports.resetGame = async (req, res) => {
  */
 exports.startGame = async (req, res) => {
 	try {
+
+		if (req.body.userUID in allUserUIDs) {
+			req.body.userId = allUserUIDs[req.body.userUID]
+		} else {
+			let reqUserObj = await Users.findOne({
+				userUID: req.body.userUID
+			})
+			req.body.userId = reqUserObj._id
+			allUserUIDs[req.body.userUID] = reqUserObj._id
+		}
 
 		let game
 		game = await Game.findOne({
@@ -394,181 +435,181 @@ exports.startGame = async (req, res) => {
 }
 
 
-/**
- * Check if the game ID is of a valid game.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.validGame = async (req, res) => {
-	try {
+// /**
+//  * Check if the game ID is of a valid game.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.validGame = async (req, res) => {
+// 	try {
 
-		let game
-		game = await Game.findOne({
-			gameId: req.params.gameId,
-			isStarted: true,
-			isEnded: false
-		})
-		if (!game) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send(null)
-		}
+// 		let game
+// 		game = await Game.findOne({
+// 			gameId: req.params.gameId,
+// 			isStarted: true,
+// 			isEnded: false
+// 		})
+// 		if (!game) {
+// 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+// 				.send(null)
+// 		}
 
-		return res
-			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-			.send(null)
+// 		return res
+// 			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+// 			.send(null)
 
-	} catch (error) {
-		console.log(`Error game/validGame ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 	} catch (error) {
+// 		console.log(`Error game/validGame ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }
 
 
-/**
- * Start next round of game.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.nextRound = async (req, res) => {
-	try {
+// /**
+//  * Start next round of game.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.nextRound = async (req, res) => {
+// 	try {
 
-		let game
-		game = await Game.findOne({
-			gameId: req.body.gameId
-		})
-		if (!game) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send({
-					gameId: req.body.gameId,
-					createdUser: req.body.userId
-				})
-		}
-		var availableCards = []
-		for (var index = 1; index < 53; index++) {
-			availableCards.push(index)
-		}
+// 		let game
+// 		game = await Game.findOne({
+// 			gameId: req.body.gameId
+// 		})
+// 		if (!game) {
+// 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+// 				.send({
+// 					gameId: req.body.gameId,
+// 					createdUser: req.body.userId
+// 				})
+// 		}
+// 		var availableCards = []
+// 		for (var index = 1; index < 53; index++) {
+// 			availableCards.push(index)
+// 		}
 
-		var allPlayers = await GameMember.find({
-			gameId: req.body.gameId
-		})
-		var activePlayers = []
-		for (var player of allPlayers) {
-			if (player.isAlive == true) {
-				activePlayers.push(player)
-			} else {
-				await GameMember.findByIdAndUpdate(
-					player._id,
-					{
-						currentCards: []
-					}
-				)
-			}
-		}
-		var nextPlayerToStart = activePlayers[game.roundsComplete % activePlayers.length]
-		var nextUserNameToStart = nextPlayerToStart.userName
-		var nextUserIdToStart = nextPlayerToStart.userId
+// 		var allPlayers = await GameMember.find({
+// 			gameId: req.body.gameId
+// 		})
+// 		var activePlayers = []
+// 		for (var player of allPlayers) {
+// 			if (player.isAlive == true) {
+// 				activePlayers.push(player)
+// 			} else {
+// 				await GameMember.findByIdAndUpdate(
+// 					player._id,
+// 					{
+// 						currentCards: []
+// 					}
+// 				)
+// 			}
+// 		}
+// 		var nextPlayerToStart = activePlayers[game.roundsComplete % activePlayers.length]
+// 		var nextUserNameToStart = nextPlayerToStart.userName
+// 		var nextUserIdToStart = nextPlayerToStart.userId
 		
-		var result,
-			cardsForPlayer,
-			createdUserCards
-		for (var player of activePlayers) {
+// 		var result,
+// 			cardsForPlayer,
+// 			createdUserCards
+// 		for (var player of activePlayers) {
 			
-			if (nextUserIdToStart == player.userId) {
-				result = GetCards.getCards(availableCards, 6)
-			} else {
-				result = GetCards.getCards(availableCards, 5)
-			}
-			cardsForPlayer = result.cardsForPlayer;
-			availableCards = result.availableCards;
+// 			if (nextUserIdToStart == player.userId) {
+// 				result = GetCards.getCards(availableCards, 6)
+// 			} else {
+// 				result = GetCards.getCards(availableCards, 5)
+// 			}
+// 			cardsForPlayer = result.cardsForPlayer;
+// 			availableCards = result.availableCards;
 			
-			if (game.createdUser.toString() == player.userId.toString()) {
-				createdUserCards = cardsForPlayer
-			}
-			await GameMember.findByIdAndUpdate(
-				player._id,
-				{
-					currentCards: cardsForPlayer
-				}
-			)
-		}
+// 			if (game.createdUser.toString() == player.userId.toString()) {
+// 				createdUserCards = cardsForPlayer
+// 			}
+// 			await GameMember.findByIdAndUpdate(
+// 				player._id,
+// 				{
+// 					currentCards: cardsForPlayer
+// 				}
+// 			)
+// 		}
 
-		let timestamp = Date.now()
-		game = await Game.findOneAndUpdate(
-			{
-				gameId: req.body.gameId
-			},
-			{
-				currentPlayer: nextUserIdToStart,
-				isRoundComplete: false,
-				cardsInDeck: availableCards,
-				lastPlayedTime: timestamp,
-				previousDroppedPlayer: nextUserNameToStart,
-				lastPlayedAction: "will start the next round"
-			}
-		)
+// 		let timestamp = Date.now()
+// 		game = await Game.findOneAndUpdate(
+// 			{
+// 				gameId: req.body.gameId
+// 			},
+// 			{
+// 				currentPlayer: nextUserIdToStart,
+// 				isRoundComplete: false,
+// 				cardsInDeck: availableCards,
+// 				lastPlayedTime: timestamp,
+// 				previousDroppedPlayer: nextUserNameToStart,
+// 				lastPlayedAction: "will start the next round"
+// 			}
+// 		)
 
-		if (game) {
-			PlayCard.playRandom(timestamp, req.body.gameId, nextUserIdToStart)
-			return res
-				.status(constants.STATUS_CODE.SUCCESS_STATUS)
-				.send({
-					createdUserCards: createdUserCards
-				})
-		}
+// 		if (game) {
+// 			PlayCard.playRandom(timestamp, req.body.gameId, nextUserIdToStart)
+// 			return res
+// 				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+// 				.send({
+// 					createdUserCards: createdUserCards
+// 				})
+// 		}
 
-		return res
-			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-			.send({
-				createdUserCards: []
-			})
+// 		return res
+// 			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+// 			.send({
+// 				createdUserCards: []
+// 			})
 
-	} catch (error) {
-		console.log(`Error game/nextRound ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 	} catch (error) {
+// 		console.log(`Error game/nextRound ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }
 
-/**
- * Show all cards in a game.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.allCards = async (req, res) => {
-	try {
+// /**
+//  * Show all cards in a game.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.allCards = async (req, res) => {
+// 	try {
 
-		let game
-		game = await Game.findOne({
-			gameId: req.body.gameId
-		})
-		if (!game) {
-			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-				.send("Game does not exist")
-		} else if (game.players.includes(req.body.userId)) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User is already part of a game")
-		}
+// 		let game
+// 		game = await Game.findOne({
+// 			gameId: req.body.gameId
+// 		})
+// 		if (!game) {
+// 			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+// 				.send("Game does not exist")
+// 		} else if (game.players.includes(req.body.userId)) {
+// 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+// 				.send("User is already part of a game")
+// 		}
 
-		let gameMembers = await Game.find({
-			gameId: req.body.gameId
-		})
+// 		let gameMembers = await Game.find({
+// 			gameId: req.body.gameId
+// 		})
 
-		return res
-			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
-			.send({
-				game: game,
-				gameMembers: gameMembers
-			})
-	} catch (error) {
-		console.log(`Error in game/allCards ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 		return res
+// 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+// 			.send({
+// 				game: game,
+// 				gameMembers: gameMembers
+// 			})
+// 	} catch (error) {
+// 		console.log(`Error in game/allCards ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }
 
 /**
  * Quit a game from the lobby.
@@ -577,20 +618,60 @@ exports.allCards = async (req, res) => {
  */
 exports.quitFromLobby = async (req, res) => {
 	try {
+		
+		if (req.body.userUID in allUserUIDs) {
+			req.body.userId = allUserUIDs[req.body.userUID]
+		} else {
+			let reqUserObj = await Users.findOne({
+				userUID: req.body.userUID
+			})
+			req.body.userId = reqUserObj._id
+			allUserUIDs[req.body.userUID] = reqUserObj._id
+		}
 
 		let game
 		game = await Game.findOne({
+			players: req.body.userId,
 			gameId: req.body.gameId
 		})
 		if (!game) {
-			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 				.send("Game does not exist")
-		}
-		
-		if (req.body.userId === game.createdUser.toString()) {
-			await Game.deleteOne({
-				gameId: req.body.gameId
-			})
+		} else if (game.isStarted) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send("Game has already started")
+		} else if (game.isEnded) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send("Game has already ended")
+		} else if (req.body.userId.toString() === game.createdUser.toString()) {
+			let newCreatedUser
+			if (game.players.length > 1) {
+				for (let playerUserId of game.players) {
+					if (playerUserId != game.createdUser) {
+						newCreatedUser = playerUserId
+						break
+					}
+				}
+			}
+			if (newCreatedUser) {
+				await Game.updateOne(
+					{
+						gameId: req.body.gameId
+					},
+					{
+						$pull: {
+							players: req.body.userId
+						},
+						createdUser: newCreatedUser,
+						currentPlayer: newCreatedUser
+					}
+				)
+			} else {
+				await Game.deleteOne({
+					gameId: req.body.gameId
+				})
+			}
+
 		} else {
 			await Game.updateOne(
 				{
@@ -615,218 +696,218 @@ exports.quitFromLobby = async (req, res) => {
 	}
 }
 
-/**
- * Quit a game from the game.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.quitFromGame = async (req, res) => {
-	try {
+// /**
+//  * Quit a game from the game.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.quitFromGame = async (req, res) => {
+// 	try {
 
-		let game
-		game = await Game.findOne({
-			gameId: req.body.gameId
-		})
-		if (!game) {
-			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-				.send("Game does not exist")
-		}
+// 		let game
+// 		game = await Game.findOne({
+// 			gameId: req.body.gameId
+// 		})
+// 		if (!game) {
+// 			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+// 				.send("Game does not exist")
+// 		}
 		
-		if (req.body.userId === game.createdUser.toString() && game.players.length === 1) {
-			await Game.deleteOne({
-				gameId: req.body.gameId
-			})
-		} else if (req.body.userId === game.createdUser.toString()) {
-			let newCreatedUser
-			for (var player of game.players) {
-				if (player.toString() != game.createdUser.toString()) {
-					newCreatedUser = player
-					break
-				}
-			}
-			await Game.updateOne(
-				{
-					gameId: req.body.gameId
-				},
-				{
-					$pull: {
-						players: req.body.userId
-					},
-					createdUser: newCreatedUser
-				}
-			)
-		} else {
-			await Game.updateOne(
-				{
-					gameId: req.body.gameId
-				},
-				{
-					$pull: {
-						players: req.body.userId,
-						waiting: req.body.userId
-					}
-				}
-			)
-		}
+// 		if (req.body.userId === game.createdUser.toString() && game.players.length === 1) {
+// 			await Game.deleteOne({
+// 				gameId: req.body.gameId
+// 			})
+// 		} else if (req.body.userId === game.createdUser.toString()) {
+// 			let newCreatedUser
+// 			for (var player of game.players) {
+// 				if (player.toString() != game.createdUser.toString()) {
+// 					newCreatedUser = player
+// 					break
+// 				}
+// 			}
+// 			await Game.updateOne(
+// 				{
+// 					gameId: req.body.gameId
+// 				},
+// 				{
+// 					$pull: {
+// 						players: req.body.userId
+// 					},
+// 					createdUser: newCreatedUser
+// 				}
+// 			)
+// 		} else {
+// 			await Game.updateOne(
+// 				{
+// 					gameId: req.body.gameId
+// 				},
+// 				{
+// 					$pull: {
+// 						players: req.body.userId,
+// 						waiting: req.body.userId
+// 					}
+// 				}
+// 			)
+// 		}
 
-		return res
-			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
-			.send(req.body.gameId)
-	} catch (error) {
-		console.log(`Error in game/quitFromGame ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 		return res
+// 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+// 			.send(req.body.gameId)
+// 	} catch (error) {
+// 		console.log(`Error in game/quitFromGame ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }
 
-/**
- * Reset all games.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.resetAllGames = async (req, res) => {
-	try {
-		await Game.deleteMany()
-		await GameMember.deleteMany()
+// /**
+//  * Reset all games.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.resetAllGames = async (req, res) => {
+// 	try {
+// 		await Game.deleteMany()
+// 		await GameMember.deleteMany()
 
-		return res
-			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
-			.send(null)
-	} catch (error) {
-		console.log(`Error in game/resetAllGames ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 		return res
+// 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+// 			.send(null)
+// 	} catch (error) {
+// 		console.log(`Error in game/resetAllGames ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }
 
 
-/**
- * Restart a game.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.restartGame = async (req, res) => {
-	try {
+// /**
+//  * Restart a game.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.restartGame = async (req, res) => {
+// 	try {
 
-		let oldGame = await Game.findOne({
-			gameId: req.body.gameId
-		})
-		if (!oldGame) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("Game does not exist")
-		} else if (oldGame.isEnded != true) {
-			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-				.send("Game cannot be restarted until it has ended")
-		} else if (oldGame.players.length + oldGame.waiting.length < 2) {
-			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-				.send("Not enough players to restart the game")
-		}
+// 		let oldGame = await Game.findOne({
+// 			gameId: req.body.gameId
+// 		})
+// 		if (!oldGame) {
+// 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+// 				.send("Game does not exist")
+// 		} else if (oldGame.isEnded != true) {
+// 			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+// 				.send("Game cannot be restarted until it has ended")
+// 		} else if (oldGame.players.length + oldGame.waiting.length < 2) {
+// 			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+// 				.send("Not enough players to restart the game")
+// 		}
 		
-		await Game.deleteOne(
-			{
-				gameId: req.body.gameId
-			}
-		)
+// 		await Game.deleteOne(
+// 			{
+// 				gameId: req.body.gameId
+// 			}
+// 		)
 
-		await GameMember.deleteMany(
-			{
-				gameId: req.body.gameId
-			}
-		)
+// 		await GameMember.deleteMany(
+// 			{
+// 				gameId: req.body.gameId
+// 			}
+// 		)
 
-		var availableCards = []
-		for (var index = 1; index < 53; index++) {
-			availableCards.push(index)
-		}
+// 		var availableCards = []
+// 		for (var index = 1; index < 53; index++) {
+// 			availableCards.push(index)
+// 		}
 
-		let playersInNextGame = oldGame.players.concat(oldGame.waiting)
-		let randomPlayerOrder = Shuffle(playersInNextGame)
-		const newGameData = new Game({
-			players: randomPlayerOrder,
-			spectators: oldGame.spectators,
-			gameId: req.body.gameId,
-			createdUser: oldGame.createdUser,
-			currentPlayer: randomPlayerOrder[0],
-			cardsInDeck: [],
-			openedCards: [],
-			previousDroppedCards: [],
-			previousDroppedPlayer: " ",
-			lastPlayedTime: " ",
-			lastPlayedAction: " "
-		})
-		let newGame = await newGameData.save()
+// 		let playersInNextGame = oldGame.players.concat(oldGame.waiting)
+// 		let randomPlayerOrder = Shuffle(playersInNextGame)
+// 		const newGameData = new Game({
+// 			players: randomPlayerOrder,
+// 			spectators: oldGame.spectators,
+// 			gameId: req.body.gameId,
+// 			createdUser: oldGame.createdUser,
+// 			currentPlayer: randomPlayerOrder[0],
+// 			cardsInDeck: [],
+// 			openedCards: [],
+// 			previousDroppedCards: [],
+// 			previousDroppedPlayer: " ",
+// 			lastPlayedTime: " ",
+// 			lastPlayedAction: " "
+// 		})
+// 		let newGame = await newGameData.save()
 
-		var startedUser = null
-		var createdUserCards = []
-		for (var userId of newGame.players) {
-			let result, cardsForPlayer
-			let userObj = await Users.findByIdAndUpdate(
-				userId,
-				{
-                    $inc: {
-                        totalGames: 1
-                    }
-				}
-			)
-			if (newGame.currentPlayer.toString() == userId.toString()) {
-				startedUser = userObj.userName
-				result = GetCards.getCards(availableCards, 6)
-			} else {
-				result = GetCards.getCards(availableCards, 5)
-			}
-			cardsForPlayer = result.cardsForPlayer;
-			availableCards = result.availableCards;
+// 		var startedUser = null
+// 		var createdUserCards = []
+// 		for (var userId of newGame.players) {
+// 			let result, cardsForPlayer
+// 			let userObj = await Users.findByIdAndUpdate(
+// 				userId,
+// 				{
+//                     $inc: {
+//                         totalGames: 1
+//                     }
+// 				}
+// 			)
+// 			if (newGame.currentPlayer.toString() == userId.toString()) {
+// 				startedUser = userObj.userName
+// 				result = GetCards.getCards(availableCards, 6)
+// 			} else {
+// 				result = GetCards.getCards(availableCards, 5)
+// 			}
+// 			cardsForPlayer = result.cardsForPlayer;
+// 			availableCards = result.availableCards;
 
-			if (newGame.createdUser.toString() == userId.toString()) {
-				createdUserCards = cardsForPlayer
-			}
+// 			if (newGame.createdUser.toString() == userId.toString()) {
+// 				createdUserCards = cardsForPlayer
+// 			}
 			
-			let gameMemberObj = new GameMember({
-				gameId: req.body.gameId,
-				userId: userId,
-				userName: userObj.userName,
-				currentCards: cardsForPlayer
-			})
-			await gameMemberObj.save()
-		}
-		let timestamp = Date.now()
-		let game = await Game.findOneAndUpdate(
-			{
-				gameId: req.body.gameId
-			},
-			{
-				isStarted: true,
-				cardsInDeck: availableCards,
-				lastPlayedTime: timestamp,
-				previousDroppedPlayer: startedUser,
-				lastPlayedAction: "will start the game"
-			}
-		)
+// 			let gameMemberObj = new GameMember({
+// 				gameId: req.body.gameId,
+// 				userId: userId,
+// 				userName: userObj.userName,
+// 				currentCards: cardsForPlayer
+// 			})
+// 			await gameMemberObj.save()
+// 		}
+// 		let timestamp = Date.now()
+// 		let game = await Game.findOneAndUpdate(
+// 			{
+// 				gameId: req.body.gameId
+// 			},
+// 			{
+// 				isStarted: true,
+// 				cardsInDeck: availableCards,
+// 				lastPlayedTime: timestamp,
+// 				previousDroppedPlayer: startedUser,
+// 				lastPlayedAction: "will start the game"
+// 			}
+// 		)
 
-		if (game) {
-			PlayCard.playRandom(timestamp, req.body.gameId, game.createdUser)
-			return res
-				.status(constants.STATUS_CODE.SUCCESS_STATUS)
-				.send({
-					gameId: game.gameId,
-					createdUser: game.createdUser,
-					createdUserCards: createdUserCards
-				})
-		}
+// 		if (game) {
+// 			PlayCard.playRandom(timestamp, req.body.gameId, game.createdUser)
+// 			return res
+// 				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+// 				.send({
+// 					gameId: game.gameId,
+// 					createdUser: game.createdUser,
+// 					createdUserCards: createdUserCards
+// 				})
+// 		}
 
-		return res
-			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-			.send(null)
+// 		return res
+// 			.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
+// 			.send(null)
 
-	} catch (error) {
-		console.log(`Error game/restartGame ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 	} catch (error) {
+// 		console.log(`Error game/restartGame ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }
 
 /**
  * Spectate a game.
@@ -835,6 +916,42 @@ exports.restartGame = async (req, res) => {
  */
 exports.spectateGame = async (req, res) => {
 	try {
+		if (req.body.userUID in allUserUIDs) {
+			req.body.userId = allUserUIDs[req.body.userUID]
+		} else {
+			let reqUserObj = await Users.findOne({
+				userUID: req.body.userUID
+			})
+			req.body.userId = reqUserObj._id
+			allUserUIDs[req.body.userUID] = reqUserObj._id
+		}
+
+		let game
+		game = await Game.findOne({
+			$or: [{players: req.body.userId}, {spectators: req.body.userId}, {waiting: req.body.userId}],
+			isEnded: false
+		})
+		if (game) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send(`User is already part of a game ${game.gameId}.`)
+		}
+
+		game = await Game.findOne({
+			gameId: req.body.gameId
+		})
+
+		if (!game) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send(`Invalid game id`)
+		} else if (game.isEnded) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send(`Game has ended`)
+		} else if (!game.isStarted) {
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send(`Wait for game to start`)		
+		}
+
+		
 		await Game.updateOne(
 			{
 				gameId: req.body.gameId
@@ -848,7 +965,7 @@ exports.spectateGame = async (req, res) => {
 
 		return res
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
-			.send(null)
+			.send("Spectating game")
 	} catch (error) {
 		console.log(`Error in game/spectateGame ${error}`)
 		return res
@@ -857,32 +974,32 @@ exports.spectateGame = async (req, res) => {
 	}
 }
 
-/**
- * Stop spectating a game.
- * @param  {Object} req request object
- * @param  {Object} res response object
- */
-exports.stopSpectateGame = async (req, res) => {
-	try {
-		console.log("REMOVING STUFF")
-		await Game.updateOne(
-			{
-				gameId: req.body.gameId
-			},
-			{
-				$pull: {
-					spectators: req.body.userId
-				}
-			}
-		)
+// /**
+//  * Stop spectating a game.
+//  * @param  {Object} req request object
+//  * @param  {Object} res response object
+//  */
+// exports.stopSpectateGame = async (req, res) => {
+// 	try {
+// 		console.log("REMOVING STUFF")
+// 		await Game.updateOne(
+// 			{
+// 				gameId: req.body.gameId
+// 			},
+// 			{
+// 				$pull: {
+// 					spectators: req.body.userId
+// 				}
+// 			}
+// 		)
 
-		return res
-			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
-			.send(null)
-	} catch (error) {
-		console.log(`Error in game/resetAllGames ${error}`)
-		return res
-			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
-	}
-}
+// 		return res
+// 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+// 			.send(null)
+// 	} catch (error) {
+// 		console.log(`Error in game/resetAllGames ${error}`)
+// 		return res
+// 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+// 			.send(error.message)
+// 	}
+// }

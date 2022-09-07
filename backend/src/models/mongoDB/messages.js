@@ -3,8 +3,12 @@
 import mongoose from 'mongoose'
 
 const Messages = new mongoose.Schema({
-    userId: {
-        type: mongoose.Types.ObjectId,
+    userUID: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
         required: true
     },
     createdAt : {

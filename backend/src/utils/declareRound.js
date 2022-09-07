@@ -2,7 +2,6 @@ import Game from '../models/mongoDB/game';
 import Users from '../models/mongoDB/users';
 import GameMember from '../models/mongoDB/gameMember';
 import CardValues from './cardValues';
-import GamesCache from './gamesCache';
 
 var endGame = (gameId, userName, isAutoPlay) => {
     return new Promise( async(resolve) => {

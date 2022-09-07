@@ -4,7 +4,7 @@ import Game from '../models/mongoDB/game';
 
 var updateUserModule = () => {
     return new Promise(async (resolve) => {
-        console.log("Updating user module")
+        // console.log("Updating user module")
         let allUsers = await Users.find()
         for (var user of allUsers) {
             let numberOfGames = await GameMember.find({
@@ -17,9 +17,7 @@ var updateUserModule = () => {
                 }
             )
         }
-        console.log("Updated user module")
-        // await Game.deleteMany()
-        // await GameMember.deleteMany()
+        // console.log("Updated user module")
     })
 }
 

@@ -58,6 +58,24 @@ const Game = new mongoose.Schema({
         required: true,
         default: 0
     },
+    maxScore: {
+        type: Number,
+        required: true,
+        default: 100,
+        min: 100
+    },
+    endWithPair: {
+        type: Number,
+        required: true,
+        default: -25,
+        max: 0
+    },
+    wrongCall: {
+        type: Number,
+        required: true,
+        default: 50,
+        min: 0
+    },
     createdAt : {
         type : Date,
         default : Date.now,

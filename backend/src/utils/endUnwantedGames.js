@@ -3,8 +3,6 @@ import Game from '../models/mongoDB/game';
 
 cron.schedule("0 0 */1 * * *", async () => {
 
-    console.log("cleaning data")
-
     var allGames = await Game.find({
         isStarted: true,
         isEnded: false
@@ -14,6 +12,7 @@ cron.schedule("0 0 */1 * * *", async () => {
         let idleTime = new Date(Date.now() - game.lastPlayedTime).getHours()
         
         if (idleTime > 1) {
+            console.log(`${game.gameId} idle for too long. Ending game`)
             await Game.updateOne(
                 {
                     gameId: game.gameId
