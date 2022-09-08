@@ -1,4 +1,11 @@
-import { Container, Title, Stack, Text, Button } from "@mantine/core";
+import {
+  Text,
+  Paper,
+  Group,
+  Container,
+  Center
+} from '@mantine/core';
+import { GoogleButton } from './GoogleButton';
 import { useNavigate } from "react-router";
 
 import { signInWithGoogle } from "../../Providers/Firebase/config";
@@ -14,19 +21,20 @@ export default function GoogleLogin() {
   };
 
   return (
-    <Container size={"md"}>
-      <Stack
-        align={"center"}
-        spacing={{ base: 8, md: 8 }}
-        py={{ base: 20, md: 20 }}
-      >
-        <Title
-          order={3}
-        >
-          Declaregame.in
-        </Title>
-        <Button variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }} onClick={signIn}>Google Login</Button>
-      </Stack>
-    </Container>
+
+    <Center style={{ width: '100%', height: '100vh' }}>
+      <Paper radius="md" p="xl" withBorder >
+        <Text size="lg" weight={500}>
+          Welcome to DeclareGames.in
+        </Text>
+        <Group grow mb="md" mt="md">
+          <GoogleButton onClick={signIn} radius="xl">Google</GoogleButton>
+        </Group>
+      </Paper>
+    </Center>
+
   );
 }
+
+
+
