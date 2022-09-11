@@ -1,6 +1,6 @@
-import Game from '../models/mongoDB/game';
-import Users from '../models/mongoDB/users';
-import GameMember from '../models/mongoDB/gameMember';
+import Game from '../src/models/mongoDB/game';
+import Users from '../src/models/mongoDB/users';
+import GameMember from '../src/models/mongoDB/gameMember';
 import CardValues from './cardValues';
 
 var endGame = (gameId, userName, isAutoPlay) => {
@@ -54,34 +54,36 @@ var updateStats = (userId, score) => {
 }
 
 var declareRound = (gameId, userId, isAutoPlay) => {
-    return new Promise( async (resolve) => {
+    return new Promise( async (resolve, reject) => {
         let game = await Game.findOne({
             gameId: gameId
         })
 
+        if (!game) {
+            reject("Invalid game id")
+            return
+        }
+
         if (game.isRoundComplete === true) {
-            console.log("Round is complete")
-            resolve()
+            reject("Round is complete")
+            return
+        }
+
+        if (game.isEnded === true) {
+            reject("Game has ended")
             return
         }
         
         if (game.currentPlayer.toString() != userId) {
-            console.log("Not current player")
-            resolve()
+            reject("Not current player")
             return
-        // } else if (GamesCache[gameId]) {
-        //     if (GamesCache[gameId] != userId) {
-        //         console.log("Not current player")
-        //         resolve()
-        //         return
-        //     }
         } 
 
         let gameMembers = await GameMember.find({
             gameId: gameId
 		})
 		
-		let min = 1000,
+		let min = Number.MAX_VALUE,
 			playerScore,
 			total,
 			isPair = false,
@@ -94,7 +96,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
 		// Calculate score of each player in the game
 		for (var player of gameMembers) {
             beforeScores[player.userId.toString()] = player.score
-            if (player.isAlive == false) {
+            if (player.isEliminated == true) {
                 continue
             }
 			total = 0
@@ -104,14 +106,20 @@ var declareRound = (gameId, userId, isAutoPlay) => {
 			}
 			if (player.userId.toString() == userId) {
 				playerUserName = player.userName
-				if (player.currentCards.length == 2 && (player.currentCards[0] - player.currentCards[1]) % 13 == 0 ) {
+                if (!game.canDeclareFirstRound && !player.hasPlayerDroppedCards) {
+                    reject("Cannot declare first round")
+                    return
+                } else if (player.currentCards.length == 2 && (player.currentCards[0] - player.currentCards[1]) % 13 == 0 ) {
 					isPair = true
-					playerScore = -25
+					playerScore = game.endWithPair
 					lastPlayedAction = "declared with a pair"
-				} else {
+				} else if (total < 15) {
 					playerScore = total
 					lastPlayedAction = `declared with ${total} points` 
-				}
+				} else {
+                    reject("Cannot declare with 15 or more points")
+                    return
+                }
 			} else {
                 min = Math.min(total, min)
             }
@@ -122,11 +130,11 @@ var declareRound = (gameId, userId, isAutoPlay) => {
 		if (isPair == false && playerScore < min) {
 			allScores[userId] = 0
 		} else if (isPair == false && playerScore > min) {
-			allScores[userId] = 50
+			allScores[userId] = game.wrongCall
 		} else if (isPair == false && playerScore == min) {
 			allScores[userId] *= 2
 		} else {
-			allScores[userId] = -25
+			allScores[userId] = playerScore
 		}
 
 		// Update game status to ended
@@ -151,19 +159,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
         // Update scores of all members
         for (var player in beforeScores) {
             var previousScore = beforeScores[player]
-            if (previousScore > 100) {
-                await GameMember.updateOne(
-                    {
-                        gameId: gameId,
-                        userId: player
-                    },
-                    {
-                        $push: {
-                            roundScores: -1
-                        }
-                    }
-                )
-            } else if (previousScore + allScores[player] > 100) {
+            if (previousScore + allScores[player] > game.maxScore) {
                 await GameMember.updateOne(
                     {
                         gameId: gameId,
@@ -176,10 +172,10 @@ var declareRound = (gameId, userId, isAutoPlay) => {
                         $push: {
                             roundScores: allScores[player]
                         },
-                        isAlive: false
+                        isEliminated: true
                     }
                 )
-            } else if (previousScore < 101) {
+            } else if (previousScore <= game.maxScore) {
                 numberOfActivePlayers += 1
                 var temp = await GameMember.findOneAndUpdate(
                     {
@@ -207,8 +203,6 @@ var declareRound = (gameId, userId, isAutoPlay) => {
         if (isAutoPlay == false) {
             await updateStats(userId, allScores[userId])
         }
-
-        // delete GamesCache[gameId]
 
         resolve()
     })

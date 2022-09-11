@@ -1,5 +1,5 @@
-import Game from '../models/mongoDB/game';
-import GameMember from '../models/mongoDB/gameMember';
+import Game from '../src/models/mongoDB/game';
+import GameMember from '../src/models/mongoDB/gameMember';
 import GetCards from './getCards';
 import CardValues from './cardValues';
 import DeclareRound from './declareRound';
@@ -37,7 +37,7 @@ var selectCards = (userId, gameId) => {
     })
 }
 
-var getDifference = (gameMember, selected) => {
+var getLeftOverCards = (gameMember, selected) => {
     
     var difference = []
     for (var card of gameMember.currentCards) {
@@ -56,6 +56,7 @@ var updateDifferenceInPlayer = (gameId, userId, difference) => {
                 userId: userId
             },
             {
+                hasPlayerDroppedCards: true,
                 currentCards: difference	
             }
         )
@@ -64,32 +65,25 @@ var updateDifferenceInPlayer = (gameId, userId, difference) => {
 }
 
 var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
-    return new Promise( async (resolve) => {
+    return new Promise( async (resolve, reject) => {
 
         if (game.currentPlayer.toString() != gameMember.userId.toString()) {
-            console.log("Not current player")
-            resolve()
+            reject("Not current player")
             return
-        // } else if (GamesCache[game.gameId]) {
-        //     if (GamesCache[game.gameId] != gameMember.userId) {
-        //         console.log("Not current player")
-        //         resolve()
-        //         return
-        //     }
         } 
-        // GamesCache[game.gameId] = nextPlayer
         
-        var difference = getDifference(gameMember, selected)
-
-        var result = GetCards.getCards(game.cardsInDeck, 1);
-        difference = difference.concat(result.cardsForPlayer)
+        var difference = getLeftOverCards(gameMember, selected)
+        console.log(game.cardsInDeck)
+        difference = difference.concat([game.cardsInDeck.pop()])
+        console.log(game.cardsInDeck)
+        
         var openedCards = game.openedCards.concat(selected)
         await Game.updateOne(
             {
                 gameId: game.gameId
             },
             {
-                cardsInDeck: result.availableCards,
+                cardsInDeck: game.cardsInDeck,
                 openedCards: openedCards,
                 previousDroppedCards: selected,
                 previousDroppedPlayer: gameMember.userName,
@@ -107,22 +101,14 @@ var fromDeck = (game, gameMember, selected, timestamp, nextPlayer) => {
 }
 
 var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
-    return new Promise( async (resolve) => {
+    return new Promise( async (resolve, reject) => {
 
         if (game.currentPlayer.toString() != gameMember.userId.toString()) {
-            console.log("Not current player")
-            resolve()
+            reject("Not current player")
             return
-        // } else if (GamesCache[game.gameId]) {
-        //     if (GamesCache[game.gameId] != gameMember.userId) {
-        //         console.log("Not current player")
-        //         resolve()
-        //         return
-        //     }
-        } 
-        // GamesCache[game.gameId] = nextPlayer
+        }
 
-        var difference = getDifference(gameMember, selected)
+        var difference = getLeftOverCards(gameMember, selected)
 
         var openedCards = game.openedCards
         var cardOnTop = openedCards.pop()
@@ -152,39 +138,38 @@ var fromTop = (game, gameMember, selected, timestamp, nextPlayer) => {
 }
 
 var firstTurn = (game, gameMember, selected, timestamp, nextPlayer) => {
-    return new Promise( async (resolve) => {
+    return new Promise( async (resolve, reject) => {
 
-        if (game.currentPlayer.toString() != gameMember.userId.toString()) {
-            resolve()
-            return
-        // } else if (GamesCache[game.gameId]) {
-        //     if (GamesCache[game.gameId] != gameMember.userId) {
-        //         console.log("Not current player")
-        //         resolve()
-        //         return
-        //     }
-        } 
-        // GamesCache[game.gameId] = nextPlayer
-
-        var difference = getDifference(gameMember, selected)
-
-        await Game.updateOne(
-            {
-                gameId: game.gameId
-            },
-            {
-                openedCards: selected,
-                previousDroppedCards: selected,
-                previousDroppedPlayer: gameMember.userName,
-                currentPlayer: nextPlayer,
-                lastPlayedTime: timestamp,
-				lastPlayedAction: "dropped card(s) and started the game"
+        try{
+            console.log(game.currentPlayer, gameMember.userId)
+            if (game.currentPlayer.toString() != gameMember.userId.toString()) {
+                reject("Not current player")
+                return
             }
-        )		
-        
-        await updateDifferenceInPlayer(game.gameId, gameMember.userId, difference)
-
-        resolve(difference)
+    
+            var difference = getLeftOverCards(gameMember, selected)
+    
+            await Game.updateOne(
+                {
+                    gameId: game.gameId
+                },
+                {
+                    openedCards: selected,
+                    previousDroppedCards: selected,
+                    previousDroppedPlayer: gameMember.userName,
+                    currentPlayer: nextPlayer,
+                    lastPlayedTime: timestamp,
+                    lastPlayedAction: "dropped card(s) and started the game"
+                }
+            )		
+            
+            await updateDifferenceInPlayer(game.gameId, gameMember.userId, difference)
+    
+            resolve(difference)
+        } catch (err) {
+            reject(err)
+            return   
+        }
 
     })
 }
@@ -258,7 +243,7 @@ var playRandom = async (timestamp, gameId, userId) => {
 
     var activePlayers = await GameMember.find({
         gameId: gameId,
-        isAlive: true
+        isEliminated: false
     })
     var activePlayersIds = []
     for (var player of activePlayers) {

@@ -9,6 +9,9 @@ const { port } = config;
 // database connections
 require('../src/models/mongoDB/index');
 
+// Cron job
+require('../utils/cronJob')
+
 // Socket Listener
 import socketListener from '../src/modules/index'
 socketListener(io)
