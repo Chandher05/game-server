@@ -23,7 +23,7 @@ var roundStatus = (allPlayers) => {
         }
     }
 
-    
+
     for (var player of lowestPlayer) {
         data[player].isLowest = true
         if (lowestPlayer.length > 1) {

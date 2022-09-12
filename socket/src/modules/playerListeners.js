@@ -80,7 +80,10 @@ var PlayerListeners = (socket) => {
 			return await emitDataToAllInGame(body.gameId)
 
 		} catch (err) {
-			return socket.emit('common-game-data', "ERROR", err.message)
+			if (err.message) {
+				return socket.emit('common-game-data', "ERROR", err.message)
+			}
+			return socket.emit('common-game-data', "ERROR", err)
 		}
 
 	})
@@ -154,8 +157,11 @@ var PlayerListeners = (socket) => {
 			}
 
 			return await emitDataToAllInGame(body.gameId)
-		} catch (error) {
-			return socket.emit('common-game-data', "ERROR", error.message)
+		} catch (err) {
+			if (err.message) {
+				return socket.emit('common-game-data', "ERROR", err.message)
+			}
+			return socket.emit('common-game-data', "ERROR", err)
 		}
 	})
 

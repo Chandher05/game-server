@@ -6,7 +6,6 @@ exports.emitToUserUID = (userUID, message, ...args) => {
     if (userUID in useruid_sysid && useruid_sysid[userUID].size > 0) {
         sysIds = [...useruid_sysid[userUID]]
     }
-    console.log(userUID, sysIds)
     let socket
     for (var sysId of sysIds) {
         socket = sysidConnected[sysId].socket
@@ -17,7 +16,7 @@ exports.emitToUserUID = (userUID, message, ...args) => {
 
 exports.emitToUserId = (userId, message, ...args) => {
 
-    let userUID = userid_useruid[userId]    
+    let userUID = userid_useruid[userId]
     var sysIds = []
     if (userUID in useruid_sysid && useruid_sysid[userUID].size > 0) {
         sysIds = [...useruid_sysid[userUID]]

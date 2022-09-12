@@ -7,7 +7,7 @@ import { sysidConnected, userid_useruid, useruid_sysid, useruid_userid } from '.
 var serviceAccount = require("../../serviceAccountKey.json");
 
 admin.initializeApp({
-	credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount)
 });
 
 
@@ -20,7 +20,6 @@ var socketListener = (io) => {
                 socket: socket,
                 socketid: socket.id
             }
-            console.log("User connected");
             console.table(sysidConnected);
             next()
         } else {
@@ -46,7 +45,7 @@ var socketListener = (io) => {
             } catch (err) {
                 console.log("Invalid AUTH_TOKEN")
             }
-            
+
         })
 
         ConnectionListeners(socket)

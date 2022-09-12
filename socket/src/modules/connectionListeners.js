@@ -23,7 +23,7 @@ var ConnectionListeners = (socket) => {
             useruid_sysid[userUID].add(socket.handshake.headers.sysid)
             sysidConnected[socket.handshake.headers.sysid]["userUID"] = userUID
             console.table(sysidConnected)
-            console.log("User emited to server " + userId)
+            console.log("Recieved request from " + userId)
             next()
         } catch (err) {
             socket.disconnect(true)
@@ -41,7 +41,7 @@ var ConnectionListeners = (socket) => {
 
     //Whenever someone disconnects this piece of code executed
     socket.on('disconnect', async () => {
-    
+
         let userUID = sysidConnected[socket.handshake.headers.sysid]["userUID"]
         delete sysidConnected[socket.handshake.headers.sysid]
         if (userUID in useruid_sysid) {
