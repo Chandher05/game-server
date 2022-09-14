@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
 import Users from '../../../models/mongoDB/users';
+import Game from '../../../models/mongoDB/game';
 import GameMember from '../../../models/mongoDB/gameMember';
+import Messages from '../../../models/mongoDB/messages';
 import constants from '../../../utils/constants';
 import config from '../../../../config';
 
@@ -20,11 +22,7 @@ exports.loginUser = async (req, res) => {
 			userUID: req.body.userUID
 		})
 
-		if (user.isActive) {
-			return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send(user)
-		} else if (!user.isActive) {
-			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS).send("USER_INACTIVE")
-		} else {
+		if (!user) {
 			let userObj = {
 				userUID: req.body.userUID,
 				userName: req.body.userName,
@@ -32,7 +30,11 @@ exports.loginUser = async (req, res) => {
 			}
 			let newUser = new Users(userObj)
 			let createdUser = await newUser.save()
-			return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send(createdUser)
+			return res.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS).send(createdUser)
+		} else if (user.isActive) {
+			return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send(user)
+		} else if (!user.isActive) {
+			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS).send("USER_INACTIVE")
 		}
 	} catch (error) {
 		console.log(`Error while logging in user ${error}`)
@@ -118,7 +120,7 @@ exports.updateUserProfile = async (req, res) => {
 				}
 			)
 		}
-		return res.status(200).send(details.toJSON())
+		return res.status(200).send("USER_UPDATED")
 
 	} catch (error) {
 		console.log(`Error while updating user profile details ${error}`)
@@ -161,7 +163,7 @@ exports.sendMessage = async (req, res) => {
 			to: "jayasurya1796@gmail.com",
 			subject: "A new message from declare game",
 			// text: "Hello world?", 
-			html: `<p><b>Email address: </b>${req.body.email}</p><p><b>Username: </b>${req.body.userName}</p><p>${req.body.description}</p>`
+			html: `<p><b>Email address: </b>${req.body.email}</p><p>${req.body.description}</p>`
 		});
 
 		// transporter.sendMail({
@@ -175,6 +177,15 @@ exports.sendMessage = async (req, res) => {
 		// 	account to play more games</p><p><b>Your description of the bug</b></p><p>${req.body.description}</p>`,
 		// 	attachments: attachments
 		// });
+
+		let messageObj = {
+			userUID: req.body.userUID,
+			email: req.body.email,
+			subject: "Default message",
+			body: req.body.description
+		}
+		let newMessage = new Users(messageObj)
+		await newMessage.save()
 
 		return res.status(200).send(null)
 
@@ -287,6 +298,78 @@ exports.allUsers = async (req, res) => {
 		return res
 			.status(constants.STATUS_CODE.SUCCESS_STATUS)
 			.send(returnValue)
+
+	} catch (error) {
+		console.log(`Error while getting getAllUsers ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+
+/**
+ * Get all users.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.userStatus = async (req, res) => {
+	try {
+
+		let reqUserObj = await Users.findOne({
+			userUID: req.body.userUID
+		})
+		if (!reqUserObj) {
+			return res
+			.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+			.send("User not found in database")
+		}
+		req.body.userId = reqUserObj._id
+		let timestamp = Date.now() - 1000 * 90
+		
+		let endedGame = await Game.findOne({
+			$or: [{players: req.body.userId}, {waiting: req.body.userId}, {spectators: req.body.userId}],
+			isEnded: true,
+			lastPlayedTime: {
+				$gte: timestamp
+			}
+		})
+
+		if (endedGame) {
+			return res
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send({
+				status: "GAME_ROOM",
+				gameId: endedGame.gameId
+			})
+		}
+		let inProgressGame = await Game.findOne({
+			$or: [{players: req.body.userId}, {waiting: req.body.userId}, {spectators: req.body.userId}],
+			isEnded: false
+		})
+
+		if (!inProgressGame) {
+			return res
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send({
+				status: "NOT_PLAYING",
+				gameId: null
+			})
+		} else if (inProgressGame.isStarted) {
+			return res
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send({
+				status: "GAME_ROOM",
+				gameId: inProgressGame.gameId
+			})
+		}
+		
+		return res
+		.status(constants.STATUS_CODE.SUCCESS_STATUS)
+		.send({
+			status: "LOBBY",
+			gameId: inProgressGame.gameId
+		})
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)

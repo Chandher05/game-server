@@ -15,7 +15,7 @@ var roundStatus = (allPlayers) => {
             lowestScore = score
         }
 
-        data[player.userId] = {
+        data[player.userId.toString()] = {
             userName: player.userName,
             isPair: (player.currentCards.length == 2 && (player.currentCards[0] - player.currentCards[1]) % 13 == 0),
             isLowest: false,

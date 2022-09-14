@@ -11,17 +11,9 @@ const bodyParser = require('body-parser');
 // router for modules
 const usersRouter = require('../src/modules/user/router/users');
 const gameRouter = require('../src/modules/game/router/game');
-const playerRouter = require('../src/modules/player/router/player');
-const tournamentRouter = require('../src/modules/tournament/router/game');
 
 // database connections
 require('../src/models/mongoDB/index');
-
-// cron job
-require('../src/utils/endUnwantedGames')
-
-// Update User module
-require('../src/utils/updateUserModule')
 
 const app = express();
 const { port } = config;
@@ -68,7 +60,7 @@ var checkAuth = async (req, res, next) => {
 		let userRecord = await admin.auth().getUser(uid)
 		req.body.userUID = uid
 		req.body.email = userRecord.email
-		req.body.username = userRecord.displayName
+		req.body.userName = userRecord.displayName
 		next()
 	} catch (err) {
 		res.status(403).send('Unauthorized')
@@ -76,11 +68,9 @@ var checkAuth = async (req, res, next) => {
 }
 
 // base routes for modules
-// app.use('/', checkAuth);
+app.use('/', checkAuth);
 app.use('/users', usersRouter);
 app.use('/game', gameRouter);
-app.use('/player', playerRouter);
-app.use('/tournament', tournamentRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -28,6 +28,10 @@ const GameMember = new mongoose.Schema({
     didPlayerLeave: {
         type: Boolean,
         default: false
+    },
+    hasPlayerDroppedCards: {
+        type: Boolean,
+        default: false
     }
 }, { versionKey: false })
 

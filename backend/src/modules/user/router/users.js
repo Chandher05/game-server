@@ -2,7 +2,6 @@
 
 import express from 'express';
 import userController from '../controller/users';
-import upload from '../../../utils/multer';
 
 const router = express.Router();
 
@@ -13,5 +12,6 @@ router.get('/stats/:userId', userController.getStats);
 router.get('/leaderboard', userController.leaderboard);
 router.get('/allUsers', userController.allUsers);
 router.post('/sendMessage', userController.sendMessage);
+router.get('/userStatus', userController.userStatus);
 
 module.exports = router;
