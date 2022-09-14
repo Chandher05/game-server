@@ -62,6 +62,7 @@ var checkAuth = async (req, res, next) => {
 	try {
 		let authHeader = req.headers.authorization
 		let authToken = authHeader.substring(7, authHeader.length)
+		console.log(authToken);
 		let decodedToken = await admin.auth().verifyIdToken(authToken)
 		const uid = decodedToken.uid;
 		let userRecord = await admin.auth().getUser(uid)
@@ -84,7 +85,7 @@ app.use('/tournament', tournamentRouter);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
 	next(createError(404));
-	
+
 });
 
 // error handler

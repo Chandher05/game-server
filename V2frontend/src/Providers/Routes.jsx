@@ -11,6 +11,11 @@ import { useStoreActions } from 'easy-peasy';
 
 import Home from "../Pages/Home/Home";
 import GoogleLogin from "../Pages/Login/Login";
+import Leaderboard from "../Pages/Home/HomePages/Leaderboard/Leaderboard";
+import HallOfFame from "../Pages/Home/HomePages/HallOfFame/HallOfFame";
+import Account from "../Pages/Home/HomePages/Account/Account";
+import Gameroom from "../Pages/Home/HomePages/Gameroom/Gameroom"
+import Rules from "../Pages/Home/HomePages/Rules/Rules";
 
 function PageRoutes() {
 	const [authenticated, setAuth] = useState(false);
@@ -22,7 +27,13 @@ function PageRoutes() {
 		<BrowserRouter >
 			<Routes>
 				<Route path="/login" element={<GoogleLogin />} />
-				<Route path="/" element={<PrivateGoogleRoute><Home /></PrivateGoogleRoute>} />
+				<Route path="/" element={<PrivateGoogleRoute><Home /></PrivateGoogleRoute>} >
+					<Route path="leaderboard" element={<Leaderboard></Leaderboard>} />
+					<Route path="halloffame" element={<HallOfFame></HallOfFame>} />
+					<Route path="account" element={<Account></Account>} />
+					<Route path="gameroom" element={<Gameroom></Gameroom>} />
+					<Route path="rules" element={<Rules></Rules>} />
+				</Route>
 			</Routes>
 		</BrowserRouter>
 	)

@@ -1,11 +1,14 @@
 
-import { AppShell, Navbar, Header, Title } from '@mantine/core';
+import { AppShell, Header, Title } from '@mantine/core';
+import { Outlet } from 'react-router-dom'
+import Navbar from "./Navbar"
 
 function Home() {
   return (
     <AppShell
       padding="md"
-      navbar={<Navbar width={{ base: 300 }} height={"100%"} p="xs">{/* Navbar content */}</Navbar>}
+      navbar={<Navbar ></Navbar>
+      }
       header={<Header height={60} p="md" >
         <Title order={4}>DeclareGame.in</Title>
       </Header>}
@@ -13,7 +16,7 @@ function Home() {
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
       })}
     >
-      {/* Your application here */}
+      <Outlet />
     </AppShell>
   )
 }
