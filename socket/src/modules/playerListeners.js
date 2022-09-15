@@ -3,7 +3,7 @@ import Game from '../models/mongoDB/game'
 import GameMember from '../models/mongoDB/gameMember'
 import PlayCard from '../../utils/playCard'
 import DeclareRound from '../../utils/declareRound'
-import { emitToUserUID } from './emitter'
+import { emitToUserUID, emitToUserId } from './emitter'
 import { sysidConnected, userid_useruid, useruid_sysid, useruid_userid } from '../../utils/trackConnections'
 import { emitLobbyDataToAllInGame, emitDataToAllInGame } from './sendUpdates'
 
@@ -156,12 +156,96 @@ var PlayerListeners = (socket) => {
 				)
 			}
 
+			socket.emit('common-game-data', "LEAVE_GAME")
 			return await emitDataToAllInGame(body.gameId)
 		} catch (err) {
 			if (err.message) {
 				return socket.emit('common-game-data', "ERROR", err.message)
 			}
 			return socket.emit('common-game-data', "ERROR", err)
+		}
+	})
+
+	socket.on('remove-player', async (authToken, body) => {
+
+		const userUID = socket.handshake.userUID
+		const email = socket.handshake.email
+		let reqUserId = useruid_userid[userUID].toString()
+
+		try {
+
+			let game
+			game = await Game.findOne({
+				gameId: body.gameId
+			})
+			if (!game) {
+				return socket.emit('common-game-data', "ERROR", "Invalid game id")
+			}
+
+			if (reqUserId !== game.createdUser.toString()) {
+				return socket.emit('common-game-data', "ERROR", "Only game admin can remove players")
+			} else if (body.userId.toString() === game.createdUser.toString()) {
+				return socket.emit('common-game-data', "ERROR", "Cannot remove yourself from game. Please leave game")
+			} else {
+				await Game.updateOne(
+					{
+						gameId: body.gameId
+					},
+					{
+						$pull: {
+							players: body.userId
+						}
+					}
+				)
+			}
+
+			let removePlayerUID, removePlayerSysId, removePlayerSocket
+			if (body.userId in userid_useruid) {
+				removePlayerUID = userid_useruid[body.userId]
+			}
+			if (removePlayerUID in useruid_sysid) {
+				removePlayerSysId = useruid_sysid[removePlayerUID]
+				removePlayerSocket = sysidConnected[removePlayerSysId]["socket"]
+				removePlayerSocket.emit('common-game-data', "LEAVE_GAME")
+			}
+			
+			return await emitDataToAllInGame(body.gameId)
+		} catch (err) {
+			if (err.message) {
+				return socket.emit('common-game-data', "ERROR", err.message)
+			}
+			return socket.emit('common-game-data', "ERROR", err)
+		}
+	})
+
+	socket.on('reactions', async (authToken, body) => {
+		const userUID = socket.handshake.userUID
+		const email = socket.handshake.email
+		let reqUserId = useruid_userid[userUID].toString()
+
+		try {
+			var game = await Game.findOne({ gameId: body.gameId })
+            if (!game) {
+                return socket.emit('reactions', "ERROR", "Reacting to invalid game id")
+            } else if (game.isStarted) {
+                let playersInGame = game.players
+				playersInGame = playersInGame.concat(game.waiting)
+				playersInGame = playersInGame.concat(game.spectators)
+                let playerObj
+                let allPlayers = {}
+                let playerUID = []
+                let isAdmin = false
+                for (var id of playersInGame) {
+					return emitToUserId(id, 'reactions', body.data)
+                }
+            } else {
+				return socket.emit('reactions', "ERROR", "Game has not yet started")
+            }
+		} catch (err) {
+			if (err.message) {
+				return socket.emit('reactions', "ERROR", err.message)
+			}
+			return socket.emit('reactions', "ERROR", err)
 		}
 	})
 

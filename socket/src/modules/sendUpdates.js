@@ -161,7 +161,7 @@ exports.emitDataToAllInGame = (gameId) => {
                 emitToUserUID(userid_useruid[userId], 'common-game-data', "SUCCESS", data)
             }
 
-            for (var userId of game.waiting) {
+            for (var userId of game.spectators) {
                 data["playerStatus"] = "SPECTATING"
                 data["isAdmin"] = false
                 emitToUserUID(userid_useruid[userId], 'common-game-data', "SUCCESS", data)

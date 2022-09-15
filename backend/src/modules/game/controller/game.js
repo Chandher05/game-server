@@ -1,5 +1,6 @@
 import Users from '../../../models/mongoDB/users';
 import Game from '../../../models/mongoDB/game';
+import GameMember from '../../../models/mongoDB/gameMember';
 import constants from '../../../utils/constants';
 import GenerateId from '../../../utils/generateId';
 
@@ -33,7 +34,7 @@ exports.createGame = async (req, res) => {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 				.send("User is already part of a game. Please refresh page")
 		}
-		
+
 		game = await Game.find({
 			isStarted: true,
 			isEnded: false
@@ -41,7 +42,7 @@ exports.createGame = async (req, res) => {
 
 		if (game.length > 5) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send("Game rooms are full! Please wait for a few minutes")
+				.send("Game rooms are full! Please wait for a few minutes")
 		}
 
 		game = await Game.findOne({
@@ -108,7 +109,7 @@ exports.joinGame = async (req, res) => {
 
 		let game
 		game = await Game.findOne({
-			$or: [{players: req.body.userId}, {waiting: req.body.userId}],
+			$or: [{ players: req.body.userId }, { waiting: req.body.userId }],
 			isEnded: false
 		})
 		if (game) {
@@ -116,7 +117,7 @@ exports.joinGame = async (req, res) => {
 				.send(`User is already part of a game ${game.gameId}.`)
 		}
 
-		
+
 		game = await Game.findOne({
 			gameId: req.body.gameId
 		})
@@ -128,17 +129,42 @@ exports.joinGame = async (req, res) => {
 				.send("User has already joined game. Please refresh.")
 		} else if (game.players.length + game.waiting.length === 5) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send("Game is full")
+				.send("Game is full")
 		} else if (game.isStarted == true) {
 
-			game = await Game.findOne({
+			let hasPlayerLeft = await GameMember.findOne({
 				gameId: req.body.gameId,
-				$or: [{players: req.body.userId}, {waiting: req.body.userId}],
-				isEnded: false
+				userId: req.body.userId
 			})
-			if (game) {
-				return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User has already joined game")
+
+			if (hasPlayerLeft) {
+				game = await Game.findOneAndUpdate(
+					{
+						gameId: req.body.gameId
+					},
+					{
+						$push: {
+							players: req.body.userId
+						}
+					}
+				)
+
+				await GameMember.findOneAndUpdate(
+					{
+						gameId: req.body.gameId,
+						userId: req.body.userId
+					},
+					{
+						didPlayerLeave: false
+					}
+				)
+
+				return res
+					.status(constants.STATUS_CODE.SUCCESS_STATUS)
+					.send({
+						gameId: req.body.gameId,
+						createdUser: game.createdUser
+					})
 			}
 
 			game = await Game.findOneAndUpdate(
@@ -151,7 +177,7 @@ exports.joinGame = async (req, res) => {
 					}
 				}
 			)
-	
+
 			game = await Game.findOneAndUpdate(
 				{
 					gameId: req.body.gameId
@@ -163,22 +189,13 @@ exports.joinGame = async (req, res) => {
 				}
 			)
 			return res
-			.status(constants.STATUS_CODE.SUCCESS_STATUS)
-			.send({
-				gameId: req.body.gameId,
-				createdUser: game.createdUser
-			})
+				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+				.send({
+					gameId: req.body.gameId,
+					createdUser: game.createdUser
+				})
 		}
-			
-		game = await Game.findOne({
-			gameId: req.body.gameId,
-			$or: [{players: req.body.userId}, {waiting: req.body.userId}],
-			isEnded: false
-		})
-		if (game) {
-			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send("User has already joined game")
-		}
+
 
 		game = await Game.findOneAndUpdate(
 			{
@@ -225,7 +242,7 @@ exports.joinGame = async (req, res) => {
  */
 exports.quitFromLobby = async (req, res) => {
 	try {
-		
+
 		if (req.body.userUID in allUserUIDs) {
 			req.body.userId = allUserUIDs[req.body.userUID]
 		} else {
@@ -246,10 +263,10 @@ exports.quitFromLobby = async (req, res) => {
 				.send("Game does not exist")
 		} else if (game.isStarted) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send("Game has already started")
+				.send("Game has already started")
 		} else if (game.isEnded) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send("Game has already ended")
+				.send("Game has already ended")
 		} else if (req.body.userId.toString() === game.createdUser.toString()) {
 			let newCreatedUser
 			if (game.players.length > 1) {
@@ -322,7 +339,7 @@ exports.spectateGame = async (req, res) => {
 
 		let game
 		game = await Game.findOne({
-			$or: [{players: req.body.userId}, {spectators: req.body.userId}, {waiting: req.body.userId}],
+			$or: [{ players: req.body.userId }, { spectators: req.body.userId }, { waiting: req.body.userId }],
 			isEnded: false
 		})
 		if (game) {
@@ -336,16 +353,16 @@ exports.spectateGame = async (req, res) => {
 
 		if (!game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send(`Invalid game id`)
+				.send(`Invalid game id`)
 		} else if (game.isEnded) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send(`Game has ended`)
+				.send(`Game has ended`)
 		} else if (!game.isStarted) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-			.send(`Wait for game to start`)		
+				.send(`Wait for game to start`)
 		}
 
-		
+
 		await Game.updateOne(
 			{
 				gameId: req.body.gameId
