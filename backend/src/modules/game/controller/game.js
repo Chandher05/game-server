@@ -58,6 +58,11 @@ exports.createGame = async (req, res) => {
 				})
 		}
 
+		let maxScore = req.body.maxScore ? req.body.maxScore : 100 
+		let scoreWhenEndWithPair = req.body.scoreWhenEndWithPair ? req.body.scoreWhenEndWithPair : -25 
+		let scoreWhenWrongCall = req.body.scoreWhenWrongCall ? req.body.scoreWhenWrongCall : 50
+		let canDeclareFirstRound = req.body.canDeclareFirstRound ? req.body.canDeclareFirstRound : true 
+
 		let gameId = await GenerateId(6)
 		const gameData = new Game({
 			players: [req.body.userId],
@@ -69,7 +74,11 @@ exports.createGame = async (req, res) => {
 			previousDroppedCards: [],
 			previousDroppedPlayer: " ",
 			lastPlayedTime: " ",
-			lastPlayedAction: " "
+			lastPlayedAction: " ",
+			maxScore: maxScore,
+			endWithPair: scoreWhenEndWithPair,
+			wrongCall: scoreWhenWrongCall,
+			canDeclareFirstRound: canDeclareFirstRound
 		})
 
 		await gameData.save()
