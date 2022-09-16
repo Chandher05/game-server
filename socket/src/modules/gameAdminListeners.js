@@ -39,7 +39,6 @@ var GameAdminListers = (socket) => {
 
 			var startedUser = null
 			for (var userId of game.players) {
-				console.log(userId)
 				let result, cardsForPlayer
 				let userObj = await Users.findByIdAndUpdate(
 					userId,

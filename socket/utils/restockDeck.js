@@ -2,7 +2,7 @@ import Game from '../src/models/mongoDB/game';
 import { shuffle } from './getCards';
 
 var restockDeck = (gameId) => {
-    return new Promise( async(resolve) => {
+    return new Promise(async (resolve) => {
         let game = await Game.findOne({
             gameId: gameId
         })
@@ -10,8 +10,6 @@ var restockDeck = (gameId) => {
             resolve()
             return
         }
-
-        console.log(`Restocking deck for ${gameId}`)
 
         let openedCards = game.openedCards
         for (var card in game.previousDroppedCards) {

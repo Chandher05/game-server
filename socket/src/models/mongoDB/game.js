@@ -81,9 +81,9 @@ const Game = new mongoose.Schema({
         required: true,
         default: true
     },
-    createdAt : {
-        type : Date,
-        default : Date.now,
+    createdAt: {
+        type: Date,
+        default: Date.now,
     }
 }, { versionKey: false })
 

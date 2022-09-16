@@ -19,7 +19,6 @@ cron.schedule("*/5 * * * * *", async () => {
             gameId = gameObj.gameId
 
             if (!gameObj.isStarted) {
-                console.log("emitLobbyDataToAllInGame", gameId)
                 return await emitLobbyDataToAllInGame(gameId)
             } else if (gameObj.isRoundComplete) {
                 if (timestamp - gameObj.lastPlayedTime > 1000 * 1000) {
@@ -46,7 +45,6 @@ cron.schedule("*/5 * * * * *", async () => {
             } else if (timestamp - gameObj.lastPlayedTime > 60 * 1000) {
                 await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
             }
-            console.log("emitDataToAllInGame", gameId)
             return await emitDataToAllInGame(gameId)
 
         }
@@ -56,7 +54,7 @@ cron.schedule("*/5 * * * * *", async () => {
         }
         console.log("Cron job err", err)
     }
-// }
+    // }
 })
 
 // func()

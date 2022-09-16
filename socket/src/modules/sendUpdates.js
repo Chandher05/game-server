@@ -1,7 +1,7 @@
 import Game from '../models/mongoDB/game';
 import Users from '../models/mongoDB/users';
 import GameMember from '../models/mongoDB/gameMember';
-import calculateScore from '../../utils/calculateScore'
+import { calculateScore } from '../../utils/calculateScore'
 import roundStatus from '../../utils/roundStatus';
 import { emitToUserUID, emitToUserId } from './emitter'
 import { sysidConnected, userid_useruid, useruid_sysid, useruid_userid } from '../../utils/trackConnections'
@@ -51,14 +51,14 @@ exports.emitLobbyDataToAllInGame = (gameId) => {
 exports.emitDataToAllInGame = (gameId) => {
 
     return new Promise(async (resolve, reject) => {
-        try{
+        try {
             var game = await Game.findOne({ gameId: gameId })
             if (!game) {
                 reject("Could not send update. Invalid game id")
             } else if (!game.isStarted) {
                 reject("Could not send update. Game has not started")
             }
-    
+
             let playersInGame = game.players
             let playerObj
             let allPlayers = {}
@@ -71,15 +71,15 @@ exports.emitDataToAllInGame = (gameId) => {
                     isAdmin: isAdmin
                 }
             }
-    
+
             var allGameMembers = await GameMember.find({
                 gameId: gameId
             })
-    
+
             let memberUserId
             let playerData
             let arrOfPlayers = []
-    
+
             for (var member of allGameMembers) {
                 memberUserId = member.userId.toString()
                 if (memberUserId in allPlayers) {
@@ -91,7 +91,7 @@ exports.emitDataToAllInGame = (gameId) => {
                         hasPlayerLeft: true
                     }
                 }
-    
+
                 if (member.isEliminated) {
                     allPlayers[memberUserId]["isEliminated"] = true
                     allPlayers[memberUserId]["cardsInHand"] = null
@@ -105,7 +105,7 @@ exports.emitDataToAllInGame = (gameId) => {
                         allPlayers[memberUserId]["cardsInHand"] = member.currentCards.length
                         allPlayers[memberUserId]["roundScore"] = null
                     }
-    
+
                 }
                 allPlayers[memberUserId]["totalScore"] = member.score
                 allPlayers[memberUserId]["previousScores"] = member.roundScores
@@ -113,7 +113,7 @@ exports.emitDataToAllInGame = (gameId) => {
                 playerData["userId"] = memberUserId
                 arrOfPlayers.push(playerData)
             }
-    
+
             let playerDeclaredType
             if (game.isRoundComplete) {
                 let playerTotals = roundStatus(allGameMembers)
@@ -128,7 +128,7 @@ exports.emitDataToAllInGame = (gameId) => {
                     playerDeclaredType = "NOT_LOWEST"
                 }
             }
-    
+
             let waitingPlayers = []
             let waitingPlayerObj
             for (var member of game.waiting) {
@@ -148,25 +148,25 @@ exports.emitDataToAllInGame = (gameId) => {
                 players: arrOfPlayers,
                 // isAdmin: null
             }
-    
+
             for (var userId of game.players) {
                 data["playerStatus"] = "PLAYING"
                 data["isAdmin"] = userId.toString() === game.createdUser.toString() ? true : false
                 emitToUserUID(userid_useruid[userId], 'common-game-data', "SUCCESS", data)
             }
-    
+
             for (var userId of game.waiting) {
                 data["playerStatus"] = "WAITING"
                 data["isAdmin"] = false
                 emitToUserUID(userid_useruid[userId], 'common-game-data', "SUCCESS", data)
             }
-    
-            for (var userId of game.waiting) {
+
+            for (var userId of game.spectators) {
                 data["playerStatus"] = "SPECTATING"
                 data["isAdmin"] = false
                 emitToUserUID(userid_useruid[userId], 'common-game-data', "SUCCESS", data)
             }
-    
+
             resolve()
         } catch (err) {
             reject("Could not send update. ".concat(err.message))

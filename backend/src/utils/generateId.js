@@ -14,8 +14,8 @@ var generateId = (length) => {
             game = await Game.findOne({
                 gameId: result
             })
-            resolve(result)
         }
+        resolve(result)
     })
 }
 

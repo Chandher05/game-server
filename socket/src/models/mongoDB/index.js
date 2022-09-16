@@ -4,7 +4,7 @@ import config from '../../../config'
 import mongoose from 'mongoose'
 
 mongoose.connect(config.database.mongoDbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(() => console.log('MongoDB Connected'))
+    .then(() => console.log('MongoDB Connected'))
 mongoose.Promise = global.Promise
 let db = mongoose.connection
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
