@@ -30,7 +30,10 @@ const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
     const user = res.user;
+    console.log('Calling POST on Login')
     await user.getIdToken().then(function (idToken) {  // <------ Check this line
+      localStorage.setItem("access_token", idToken)
+      console.log(idToken, 'this is from idtoken')
       fetch(`${import.meta.env.VITE_API}/users/login`, {
         headers: {
           Authorization: `Bearer ${idToken}`,

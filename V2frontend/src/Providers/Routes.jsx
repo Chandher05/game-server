@@ -28,6 +28,7 @@ function PageRoutes() {
 			<Routes>
 				<Route path="/login" element={<GoogleLogin />} />
 				<Route path="/" element={<PrivateGoogleRoute><Home /></PrivateGoogleRoute>} >
+					<Route path="/" element={<Gameroom></Gameroom>} />
 					<Route path="leaderboard" element={<Leaderboard></Leaderboard>} />
 					<Route path="halloffame" element={<HallOfFame></HallOfFame>} />
 					<Route path="account" element={<Account></Account>} />
