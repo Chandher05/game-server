@@ -11,3 +11,6 @@
 /backend/serviceAccountKey.json
 /backend-server.env
 /socket-server.env
+/V2frontend/node_modules/
+/V2frontend/.env
+/V2frontend/package-lock.json
