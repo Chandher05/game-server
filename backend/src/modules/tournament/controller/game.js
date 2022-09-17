@@ -851,7 +851,6 @@ exports.spectateGame = async (req, res) => {
  */
 exports.stopSpectateGame = async (req, res) => {
 	try {
-		console.log("REMOVING STUFF")
 		await Game.updateOne(
 			{
 				gameId: req.body.gameId

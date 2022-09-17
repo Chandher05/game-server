@@ -40,17 +40,17 @@ cron.schedule("*/5 * * * * *", async () => {
                 userId: gameObj.currentPlayer
             })
 
-            if (currentGameMemberForGame.didPlayerLeave) {
-                await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
-            } else if (timestamp - gameObj.lastPlayedTime > 60 * 1000) {
-                await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
-            }
+            // if (currentGameMemberForGame.didPlayerLeave) {
+            //     await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
+            // } else if (timestamp - gameObj.lastPlayedTime > 60 * 1000) {
+            //     await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
+            // }
             return await emitDataToAllInGame(gameId)
 
         }
     } catch (err) {
         if (err.message) {
-            console.log("Cron job err", err.message)
+            console.log("Cron job err 1", err.message)
         }
         console.log("Cron job err", err)
     }

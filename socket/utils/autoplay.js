@@ -68,7 +68,7 @@ exports.playRandom = async (gameId, userId, game, gameMember) => {
             }
             resolve()
         } catch (err) {
-            reject("Error in autoplay")
+            reject("Error in autoplay", err)
         }
     })
 }

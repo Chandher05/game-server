@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 // router for modules
 const usersRouter = require('../src/modules/user/router/users');
 const gameRouter = require('../src/modules/game/router/game');
+const adminRouter = require('../src/modules/admin/router/admin');
 
 // database connections
 require('../src/models/mongoDB/index');
@@ -54,7 +55,6 @@ var checkAuth = async (req, res, next) => {
 	try {
 		let authHeader = req.headers.authorization
 		let authToken = authHeader.substring(7, authHeader.length)
-		console.log(authToken);
 		let decodedToken = await admin.auth().verifyIdToken(authToken)
 		const uid = decodedToken.uid;
 		let userRecord = await admin.auth().getUser(uid)
@@ -71,6 +71,7 @@ var checkAuth = async (req, res, next) => {
 app.use('/', checkAuth);
 app.use('/users', usersRouter);
 app.use('/game', gameRouter);
+app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

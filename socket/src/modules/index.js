@@ -16,12 +16,16 @@ var socketListener = (io) => {
     // io middleware
     io.use(async (socket, next) => {
         if ("sysid" in socket.handshake.headers) {
-            sysidConnected[socket.handshake.headers.sysid] = {
-                socket: socket,
-                socketid: socket.id
+            if (socket.handshake.headers.sysid in sysidConnected) {
+                next(new Error("sysid already exists"));
+            } else {
+                sysidConnected[socket.handshake.headers.sysid] = {
+                    socket: socket,
+                    socketid: socket.id
+                }
+                console.table(sysidConnected);
+                next()
             }
-            console.table(sysidConnected);
-            next()
         } else {
             next(new Error("Thou shall not pass without sysid"));
         }
