@@ -2,7 +2,7 @@ import Users from '../models/mongoDB/users'
 import Game from '../models/mongoDB/game'
 import GameMember from '../models/mongoDB/gameMember'
 import { getCards, shuffle } from '../../utils/getCards'
-import { emitToUserUID } from './emitter'
+import { emitToUserUID, emitToUserId } from './emitter'
 import { sysidConnected, userid_useruid, useruid_sysid, useruid_userid } from '../../utils/trackConnections'
 import { emitLobbyDataToAllInGame, emitDataToAllInGame } from './sendUpdates'
 
@@ -164,6 +164,7 @@ var GameAdminListers = (socket) => {
 						currentCards: cardsForPlayer
 					}
 				)
+				emitToUserId(player.userId, "cards-in-hand", "SUCCESS", cardsForPlayer)
 			}
 
 			let timestamp = Date.now()
@@ -291,6 +292,7 @@ var GameAdminListers = (socket) => {
 					currentCards: cardsForPlayer
 				})
 				await gameMemberObj.save()
+				emitToUserId(userId, "cards-for-player", "SUCCESS", cardsForPlayer)
 			}
 
 			let game = await Game.findOneAndUpdate(

@@ -80,6 +80,7 @@ exports.emitDataToAllInGame = (gameId) => {
             let memberUserId
             let playerData
             let arrOfPlayers = []
+            let hasCurrentPlayerDroppedCards
 
             for (var member of allGameMembers) {
                 memberUserId = member.userId.toString()
@@ -108,6 +109,10 @@ exports.emitDataToAllInGame = (gameId) => {
                     }
 
                 }
+                if (memberUserId === game.currentPlayer.toString()) {
+                    hasCurrentPlayerDroppedCards = member.hasPlayerDroppedCards
+                }
+
                 allPlayers[memberUserId]["totalScore"] = member.score
                 allPlayers[memberUserId]["previousScores"] = member.roundScores
                 playerData = allPlayers[memberUserId]
@@ -145,14 +150,16 @@ exports.emitDataToAllInGame = (gameId) => {
                 playerDeclaredType: game.isRoundComplete ? playerDeclaredType : null, // PAIR, LOWEST, SAME, HIGHEST
                 isGameComplete: game.isEnded,
                 waitingPlayers: game.isEnded ? waitingPlayers : null,
-                currentPlayer: game.currentPlayer.toString(),
+                // currentPlayer: game.currentPlayer.toString(),
                 players: arrOfPlayers,
                 // isAdmin: null
+                canPlayersDeclare: hasCurrentPlayerDroppedCards || game.canDeclareFirstRound
             }
 
             for (var userId of game.players) {
                 data["playerStatus"] = "PLAYING"
                 data["isAdmin"] = userId.toString() === game.createdUser.toString() ? true : false
+                data["currentPlayer"] = userId.toString() === game.currentPlayer.toString() ? true : false
                 emitToUserUID(userid_useruid[userId], 'common-game-data', "SUCCESS", data)
             }
 

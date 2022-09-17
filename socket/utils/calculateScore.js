@@ -1,4 +1,4 @@
-exports.CardValues = (number) => {
+var CardValues = (number) => {
     var pos = number % 13
     if (pos === 0 || pos > 10) {
         return 10
@@ -6,7 +6,7 @@ exports.CardValues = (number) => {
     return pos
 }
 
-exports.calculateScore = (allCards) => {
+var calculateScore = (allCards) => {
     if (allCards.length === 0) {
         return "-"
     }
@@ -16,4 +16,9 @@ exports.calculateScore = (allCards) => {
         total += CardValues(card)
     }
     return total
+}
+
+module.exports = {
+    CardValues: CardValues,
+    calculateScore: calculateScore
 }

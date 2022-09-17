@@ -152,6 +152,7 @@ var PlayerListeners = (socket) => {
 						createdUser: newCreatedUser
 					}
 				)
+				await emitDataToAllInGame(body.gameId)
 			} else {
 				await Game.updateOne(
 					{
@@ -164,10 +165,10 @@ var PlayerListeners = (socket) => {
 						}
 					}
 				)
+				await emitDataToAllInGame(body.gameId)
 			}
 
-			socket.emit('common-game-data', "LEAVE_GAME")
-			return await emitDataToAllInGame(body.gameId)
+			return socket.emit('common-game-data', "LEAVE_GAME")
 		} catch (err) {
 			if (err.message) {
 				return socket.emit('common-game-data', "ERROR", err.message)
@@ -215,8 +216,11 @@ var PlayerListeners = (socket) => {
 			}
 			if (removePlayerUID in useruid_sysid) {
 				removePlayerSysId = useruid_sysid[removePlayerUID]
-				removePlayerSocket = sysidConnected[removePlayerSysId]["socket"]
-				removePlayerSocket.emit('common-game-data', "LEAVE_GAME")
+				removePlayerSysId = [...removePlayerSysId]
+				for (var sysid of removePlayerSysId) {
+					removePlayerSocket = sysidConnected[sysid]["socket"]
+					removePlayerSocket.emit('common-game-data', "LEAVE_GAME")
+				}
 			}
 			
 			return await emitDataToAllInGame(body.gameId)
@@ -263,10 +267,10 @@ var PlayerListeners = (socket) => {
 		try {
 			var game = await Game.findOne({ gameId: body.gameId })
             if (!game) {
-                return socket.emit('reactions', "ERROR", "Reacting to invalid game id")
+                return socket.emit('common-game-data', "ERROR", "Requested game updates for invalid game id")
             }
 
-			gameMember = await GameMember.findOne({
+			let gameMember = await GameMember.findOne({
 				gameId: body.gameId,
 				userId: reqUserId
 			})
@@ -276,9 +280,9 @@ var PlayerListeners = (socket) => {
 			return await emitDataToAllInGame(body.gameId)
 		} catch (err) {
 			if (err.message) {
-				return socket.emit('reactions', "ERROR", err.message)
+				return socket.emit('common-game-data', "ERROR", err.message)
 			}
-			return socket.emit('reactions', "ERROR", err)
+			return socket.emit('common-game-data', "ERROR", err)
 		}
 	})
 
