@@ -81,6 +81,12 @@ const Game = new mongoose.Schema({
         required: true,
         default: true
     },
+    autoplayTimer: {
+        type: Number,
+        required: true,
+        default: 60,
+        min: 45
+    },
     createdAt: {
         type: Date,
         default: Date.now,

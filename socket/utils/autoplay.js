@@ -33,7 +33,7 @@ exports.playRandom = async (gameId, userId, game, gameMember) => {
             var shouldDeclare = Math.random()
 
             if (playerTotal < 15 && shouldDeclare <= 0.2) {
-                console.log(`\n\n\nAutoplay: ${gameMember.userName} has declared`)
+                console.log(`Autoplay: ${gameMember.userName} has declared (Game ID: ${gameId})`)
                 await DeclareRound(gameId, userId, true)
                 return
             }
@@ -57,13 +57,13 @@ exports.playRandom = async (gameId, userId, game, gameMember) => {
             var nextPlayer = activePlayersIds[nextPlayerIndex]
 
             if (gameMember.currentCards.length === 6) {
-                console.log(`\n\n\nAutoplay: ${gameMember.userName} dropped ${selected} and played first turn`)
+                console.log(`Autoplay: ${gameMember.userName} dropped ${selected} and played first turn (Game ID: ${gameId})`)
                 await PlayCard.firstTurn(game, gameMember, selected, timestamp, nextPlayer)
             } else if (random > 0.5) {
-                console.log(`\n\n\nAutoplay: ${gameMember.userName} dropped ${selected} and picked from deck`)
+                console.log(`Autoplay: ${gameMember.userName} dropped ${selected} and picked from deck (Game ID: ${gameId})`)
                 await PlayCard.fromDeck(game, gameMember, selected, timestamp, nextPlayer)
             } else {
-                console.log(`\n\n\nAutoplay: ${gameMember.userName} dropped ${selected} and picked from the table`)
+                console.log(`Autoplay: ${gameMember.userName} dropped ${selected} and picked from the table (Game ID: ${gameId})`)
                 await PlayCard.fromTop(game, gameMember, selected, timestamp, nextPlayer)
             }
             resolve()

@@ -62,6 +62,7 @@ exports.createGame = async (req, res) => {
 		let scoreWhenEndWithPair = req.body.scoreWhenEndWithPair ? req.body.scoreWhenEndWithPair : -25 
 		let scoreWhenWrongCall = req.body.scoreWhenWrongCall ? req.body.scoreWhenWrongCall : 50
 		let canDeclareFirstRound = req.body.canDeclareFirstRound ? req.body.canDeclareFirstRound : true 
+		let autoplayTimer = req.body.autoplayTimer ? req.body.autoplayTimer : 60 
 
 		let gameId = await GenerateId(6)
 		const gameData = new Game({
@@ -78,7 +79,8 @@ exports.createGame = async (req, res) => {
 			maxScore: maxScore,
 			endWithPair: scoreWhenEndWithPair,
 			wrongCall: scoreWhenWrongCall,
-			canDeclareFirstRound: canDeclareFirstRound
+			canDeclareFirstRound: canDeclareFirstRound,
+			autoplayTimer: autoplayTimer
 		})
 
 		await gameData.save()
