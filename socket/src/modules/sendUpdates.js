@@ -32,6 +32,10 @@ exports.emitLobbyDataToAllInGame = (gameId) => {
                 }
                 for (var id of playersInGame) {
                     allPlayers.isAdmin = id.toString() === game.createdUser.toString() ? true : false
+                    allPlayers.maxScore = game.maxScore
+                    allPlayers.endWithPair = game.endWithPair
+                    allPlayers.wrongCall = game.wrongCall
+                    allPlayers.canDeclareFirstRound = game.canDeclareFirstRound
                     emitToUserId(id, 'lobby-listener', "WAITING", allPlayers)
                 }
                 resolve()
