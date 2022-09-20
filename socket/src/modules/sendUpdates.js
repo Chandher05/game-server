@@ -23,15 +23,20 @@ exports.emitLobbyDataToAllInGame = (gameId) => {
                 let isAdmin = false
                 for (var id of playersInGame) {
                     playerObj = await Users.findById(id)
-                    isAdmin = playerObj._id.toString() === playerObj.createdUser.toString() ? true : false
+                    isAdmin = playerObj._id.toString() === game.createdUser.toString() ? true : false
                     allPlayers[playerObj._id.toString()] = {
                         userName: playerObj.userName,
                         isAdmin: isAdmin
                     }
                     playerUID.push(playerObj.userUID)
                 }
-                for (var uid of playerUID) {
-                    emitToUserUID(uid, 'lobby-listener', "WAITING", allPlayers)
+                for (var id of playersInGame) {
+                    allPlayers.isAdmin = id.toString() === game.createdUser.toString() ? true : false
+                    allPlayers.maxScore = game.maxScore
+                    allPlayers.endWithPair = game.endWithPair
+                    allPlayers.wrongCall = game.wrongCall
+                    allPlayers.canDeclareFirstRound = game.canDeclareFirstRound
+                    emitToUserId(id, 'lobby-listener', "WAITING", allPlayers)
                 }
                 resolve()
             } else if (game.isStarted && !game.isEnded) {
@@ -79,6 +84,7 @@ exports.emitDataToAllInGame = (gameId) => {
             let memberUserId
             let playerData
             let arrOfPlayers = []
+            let hasCurrentPlayerDroppedCards
 
             for (var member of allGameMembers) {
                 memberUserId = member.userId.toString()
@@ -107,6 +113,10 @@ exports.emitDataToAllInGame = (gameId) => {
                     }
 
                 }
+                if (memberUserId === game.currentPlayer.toString()) {
+                    hasCurrentPlayerDroppedCards = member.hasPlayerDroppedCards
+                }
+
                 allPlayers[memberUserId]["totalScore"] = member.score
                 allPlayers[memberUserId]["previousScores"] = member.roundScores
                 playerData = allPlayers[memberUserId]
@@ -144,14 +154,16 @@ exports.emitDataToAllInGame = (gameId) => {
                 playerDeclaredType: game.isRoundComplete ? playerDeclaredType : null, // PAIR, LOWEST, SAME, HIGHEST
                 isGameComplete: game.isEnded,
                 waitingPlayers: game.isEnded ? waitingPlayers : null,
-                currentPlayer: game.currentPlayer.toString(),
+                // currentPlayer: game.currentPlayer.toString(),
                 players: arrOfPlayers,
                 // isAdmin: null
+                canPlayersDeclare: hasCurrentPlayerDroppedCards || game.canDeclareFirstRound
             }
 
             for (var userId of game.players) {
                 data["playerStatus"] = "PLAYING"
                 data["isAdmin"] = userId.toString() === game.createdUser.toString() ? true : false
+                data["currentPlayer"] = userId.toString() === game.currentPlayer.toString() ? true : false
                 emitToUserUID(userid_useruid[userId], 'common-game-data', "SUCCESS", data)
             }
 

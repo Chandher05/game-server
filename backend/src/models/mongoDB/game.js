@@ -81,9 +81,20 @@ const Game = new mongoose.Schema({
         required: true,
         default: true
     },
-    createdAt : {
-        type : Date,
-        default : Date.now,
+    autoplayTimer: {
+        type: Number,
+        required: true,
+        default: 60,
+        min: 45
+    },
+    isPublicGame: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
     }
 }, { versionKey: false })
 

@@ -11,18 +11,23 @@ const Messages = new mongoose.Schema({
         type: String,
         required: true
     },
-    createdAt : {
-        type : Date,
-        default : Date.now,
+    createdAt: {
+        type: Date,
+        default: Date.now,
     },
-    subject : {
-        type : String,
+    subject: {
+        type: String,
         required: true
     },
-    body : {
-        type : String,
+    body: {
+        type: String,
         required: true
-    }
+    },
+    seen: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
 }, { versionKey: false })
 
 export default mongoose.model('Messages', Messages)

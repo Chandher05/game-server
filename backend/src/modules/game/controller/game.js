@@ -62,6 +62,8 @@ exports.createGame = async (req, res) => {
 		let scoreWhenEndWithPair = req.body.scoreWhenEndWithPair ? req.body.scoreWhenEndWithPair : -25 
 		let scoreWhenWrongCall = req.body.scoreWhenWrongCall ? req.body.scoreWhenWrongCall : 50
 		let canDeclareFirstRound = req.body.canDeclareFirstRound ? req.body.canDeclareFirstRound : true 
+		let autoplayTimer = req.body.autoplayTimer ? req.body.autoplayTimer : 60 
+		let isPublicGame = req.body.isPublicGame ? req.body.isPublicGame : false 
 
 		let gameId = await GenerateId(6)
 		const gameData = new Game({
@@ -78,7 +80,9 @@ exports.createGame = async (req, res) => {
 			maxScore: maxScore,
 			endWithPair: scoreWhenEndWithPair,
 			wrongCall: scoreWhenWrongCall,
-			canDeclareFirstRound: canDeclareFirstRound
+			canDeclareFirstRound: canDeclareFirstRound,
+			autoplayTimer: autoplayTimer,
+			isPublicGame: isPublicGame
 		})
 
 		await gameData.save()
@@ -172,7 +176,8 @@ exports.joinGame = async (req, res) => {
 					.status(constants.STATUS_CODE.SUCCESS_STATUS)
 					.send({
 						gameId: req.body.gameId,
-						createdUser: game.createdUser
+						createdUser: game.createdUser,
+						isStarted: game.isStarted
 					})
 			}
 
@@ -201,7 +206,8 @@ exports.joinGame = async (req, res) => {
 				.status(constants.STATUS_CODE.SUCCESS_STATUS)
 				.send({
 					gameId: req.body.gameId,
-					createdUser: game.createdUser
+					createdUser: game.createdUser,
+					isStarted: game.isStarted
 				})
 		}
 
@@ -386,6 +392,43 @@ exports.spectateGame = async (req, res) => {
 		return res
 			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
 			.send("Spectating game")
+	} catch (error) {
+		console.log(`Error in game/spectateGame ${error}`)
+		return res
+			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
+			.send(error.message)
+	}
+}
+
+/**
+ * Spectate a game.
+ * @param  {Object} req request object
+ * @param  {Object} res response object
+ */
+exports.getPublicGames = async (req, res) => {
+	try {
+		let games = await Game.find({
+			isPublicGame: true
+		})
+
+		let returnObj = []
+		for (var gameObj of games) {
+			returnObj.push({
+				gameId: gameObj.gameId,
+				numOfPlayersInGame: gameObj.players.length,
+				numOfPlayersWaiting: gameObj.waiting.length,
+				numOfPlayersSpectating: gameObj.spectators.length,
+				isStarted: gameObj.isStarted,
+				maxScore: gameObj.maxScore,
+				endWithPair: gameObj.endWithPair,
+				wrongCall: gameObj.wrongCall,
+				canDeclareFirstRound: gameObj.canDeclareFirstRound,
+			})
+		}
+
+		return res
+			.status(constants.STATUS_CODE.CREATED_SUCCESSFULLY_STATUS)
+			.send(returnObj)
 	} catch (error) {
 		console.log(`Error in game/spectateGame ${error}`)
 		return res

@@ -12,11 +12,6 @@ module.exports = {
 		port: process.env.DB_DBPORT,
 		dialect: process.env.DB_DIALECT,
 	},
-	awsKeysJayasurya: {
-		AWS_SECRET_ACCESS: process.env.AWS_SECRET_ACCESS,
-		AWS_ACCESSKEY: process.env.AWS_ACCESSKEY,
-		REGION: process.env.REGION
-	},
 	nodemailer: {
 		EMAIL_ID: process.env.EMAIL_ID,
 		APP_PASSWORD: process.env.APP_PASSWORD

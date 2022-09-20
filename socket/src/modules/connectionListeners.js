@@ -23,7 +23,6 @@ var ConnectionListeners = (socket) => {
             useruid_sysid[userUID].add(socket.handshake.headers.sysid)
             sysidConnected[socket.handshake.headers.sysid]["userUID"] = userUID
             console.table(sysidConnected)
-            console.log("Recieved request from " + userId)
             next()
         } catch (err) {
             socket.disconnect(true)

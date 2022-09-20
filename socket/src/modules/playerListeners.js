@@ -54,6 +54,9 @@ var PlayerListeners = (socket) => {
 			// Validate if selected is part of what they have in hand
 			var selected = []
 			var cardValue = -1
+			if (body.selected.length < 1) {
+				return socket.emit('common-game-data', "ERROR", "No card selected to drop")
+			}
 			for (var temp of body.selected) {
 				if (gameMember.currentCards.includes(parseInt(temp))) {
 					if (cardValue == -1) {
@@ -76,6 +79,13 @@ var PlayerListeners = (socket) => {
 			} else {
 				return socket.emit('common-game-data', "ERROR", "Invalid type while dropping cards")
 			}
+
+			gameMember = await GameMember.findOne({
+				gameId: body.gameId,
+				userId: reqUserId
+			})
+
+			socket.emit('cards-in-hand', "SUCCESS", gameMember.currentCards)
 
 			return await emitDataToAllInGame(body.gameId)
 
@@ -142,6 +152,7 @@ var PlayerListeners = (socket) => {
 						createdUser: newCreatedUser
 					}
 				)
+				await emitDataToAllInGame(body.gameId)
 			} else {
 				await Game.updateOne(
 					{
@@ -154,10 +165,10 @@ var PlayerListeners = (socket) => {
 						}
 					}
 				)
+				await emitDataToAllInGame(body.gameId)
 			}
 
-			socket.emit('common-game-data', "LEAVE_GAME")
-			return await emitDataToAllInGame(body.gameId)
+			return socket.emit('common-game-data', "LEAVE_GAME")
 		} catch (err) {
 			if (err.message) {
 				return socket.emit('common-game-data', "ERROR", err.message)
@@ -205,8 +216,11 @@ var PlayerListeners = (socket) => {
 			}
 			if (removePlayerUID in useruid_sysid) {
 				removePlayerSysId = useruid_sysid[removePlayerUID]
-				removePlayerSocket = sysidConnected[removePlayerSysId]["socket"]
-				removePlayerSocket.emit('common-game-data', "LEAVE_GAME")
+				removePlayerSysId = [...removePlayerSysId]
+				for (var sysid of removePlayerSysId) {
+					removePlayerSocket = sysidConnected[sysid]["socket"]
+					removePlayerSocket.emit('common-game-data', "LEAVE_GAME")
+				}
 			}
 			
 			return await emitDataToAllInGame(body.gameId)
@@ -231,10 +245,6 @@ var PlayerListeners = (socket) => {
                 let playersInGame = game.players
 				playersInGame = playersInGame.concat(game.waiting)
 				playersInGame = playersInGame.concat(game.spectators)
-                let playerObj
-                let allPlayers = {}
-                let playerUID = []
-                let isAdmin = false
                 for (var id of playersInGame) {
 					return emitToUserId(id, 'reactions', body.data)
                 }
@@ -246,6 +256,33 @@ var PlayerListeners = (socket) => {
 				return socket.emit('reactions', "ERROR", err.message)
 			}
 			return socket.emit('reactions', "ERROR", err)
+		}
+	})
+
+	socket.on('get-game-updates', async (authToken, body) => {
+		const userUID = socket.handshake.userUID
+		const email = socket.handshake.email
+		let reqUserId = useruid_userid[userUID].toString()
+
+		try {
+			var game = await Game.findOne({ gameId: body.gameId })
+            if (!game) {
+                return socket.emit('common-game-data', "ERROR", "Requested game updates for invalid game id")
+            }
+
+			let gameMember = await GameMember.findOne({
+				gameId: body.gameId,
+				userId: reqUserId
+			})
+
+			socket.emit('cards-in-hand', "SUCCESS", gameMember.currentCards)
+
+			return await emitDataToAllInGame(body.gameId)
+		} catch (err) {
+			if (err.message) {
+				return socket.emit('common-game-data', "ERROR", err.message)
+			}
+			return socket.emit('common-game-data', "ERROR", err)
 		}
 	})
 

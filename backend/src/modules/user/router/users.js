@@ -13,5 +13,8 @@ router.get('/leaderboard', userController.leaderboard);
 router.get('/allUsers', userController.allUsers);
 router.post('/sendMessage', userController.sendMessage);
 router.get('/userStatus', userController.userStatus);
+router.get('/userNames', userController.userNames);
+router.post('/report/:userId', userController.reportUser);
+router.post('/claim', userController.claimOldUsername);
 
 module.exports = router;
