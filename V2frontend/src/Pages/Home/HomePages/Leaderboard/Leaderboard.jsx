@@ -1,17 +1,20 @@
 
 import { useState, useEffect } from 'react';
-import client from '../../../../Providers/API/get';
-import { Table } from "@mantine/core"
+import { Table } from "@mantine/core";
+import { useStoreState } from 'easy-peasy';
 
 function Leaderboard() {
   const [data, setData] = useState([]);
+  const authId = useStoreState((state) => state.authId);
 
   useEffect(() => {
-    client.get("/users/leaderboard").then((response) => {
-      console.log("Response", response)
-      setData(response.data);
-    })
-
+    fetch(import.meta.env.VITE_API + "/users/leaderboard", {
+      headers: {
+        Authorization: `Bearer ${authId}`,
+      },
+    }).then(async (response) => {
+      if (response.ok) setData(await response.json());
+    });
   }, [])
   return <Demo data={data}></Demo>
 }

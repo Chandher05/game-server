@@ -16,6 +16,7 @@ import HallOfFame from "../Pages/Home/HomePages/HallOfFame/HallOfFame";
 import Account from "../Pages/Home/HomePages/Account/Account";
 import Gameroom from "../Pages/Home/HomePages/Gameroom/Gameroom"
 import Rules from "../Pages/Home/HomePages/Rules/Rules";
+import WaitingScreen from "../Pages/Game/WaitingScreen";
 
 function PageRoutes() {
 	const [authenticated, setAuth] = useState(false);
@@ -35,6 +36,7 @@ function PageRoutes() {
 					<Route path="gameroom" element={<Gameroom></Gameroom>} />
 					<Route path="rules" element={<Rules></Rules>} />
 				</Route>
+				<Route path="/waiting" element={<PrivateGoogleRoute><WaitingScreen /></PrivateGoogleRoute>} />
 			</Routes>
 		</BrowserRouter>
 	)

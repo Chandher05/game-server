@@ -6,7 +6,7 @@ import {
   GoogleAuthProvider,
   getAuth,
   signInWithPopup,
-  signOut,
+  signOut
 } from "firebase/auth";
 
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -52,9 +52,15 @@ const logout = () => {
   signOut(auth);
 };
 
-// const getIdTokenOfUser = () => {
-//   return getIdToken(auth);
-// }
+const getIdTokenOfUser = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    return await user.getIdToken()
+  }
+  else {
+    throw "User not available"
+  }
+}
 
 
 
@@ -63,4 +69,5 @@ export {
   useAuthState,
   signInWithGoogle,
   logout,
+  getIdTokenOfUser
 };
