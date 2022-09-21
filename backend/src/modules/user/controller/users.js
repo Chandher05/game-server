@@ -62,11 +62,9 @@ exports.loginUser = async (req, res) => {
 exports.getUserProfile = async (req, res) => {
 	try {
 
-		if (req.params.userId == "null") {
-			return res.status(204).json()
-		}
-
-		let details = await Users.findById(req.params.userId)
+		let details = await Users.findOne({
+			userUID: req.body.userUID
+		})
 		if (details) {
 			details = details.toJSON()
 			delete details.password
@@ -474,6 +472,7 @@ exports.claimOldUsername = async (req, res) => {
 			.send("New username has to either current or old username")
 		}
 
+		console.log(req.body)
 		if (currentUserName == oldUserName) {
 			return res
 			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
