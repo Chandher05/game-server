@@ -229,7 +229,9 @@ exports.getStats = async (req, res) => {
 exports.leaderboard = async (req, res) => {
 	try {
 
-		let allUsers = await Users.find(),
+		let allUsers = await Users.find({
+			isActive: true
+		}),
 			user,
 			userId,
 			allUsersData = []

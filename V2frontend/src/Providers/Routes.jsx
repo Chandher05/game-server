@@ -17,6 +17,10 @@ import Account from "../Pages/Home/HomePages/Account/Account";
 import Gameroom from "../Pages/Home/HomePages/Gameroom/Gameroom"
 import Rules from "../Pages/Home/HomePages/Rules/Rules";
 import WaitingScreen from "../Pages/Game/WaitingScreen";
+import AdminHome from "../Pages/Admin/Home";
+import AdminUsers from "../Pages/Admin/HomePages/Users/Users";
+import AdminMessages from "../Pages/Admin/HomePages/Messages/Messages";
+import AdminClaimUsername from "../Pages/Admin/HomePages/ClaimUsername/ClaimUsername";
 
 function PageRoutes() {
 	const [authenticated, setAuth] = useState(false);
@@ -35,6 +39,11 @@ function PageRoutes() {
 					<Route path="account" element={<Account></Account>} />
 					<Route path="gameroom" element={<Gameroom></Gameroom>} />
 					<Route path="rules" element={<Rules></Rules>} />
+				</Route>
+				<Route path="/admin" element={<PrivateGoogleRoute><AdminHome /></PrivateGoogleRoute>} >
+					<Route path="/admin" element={<AdminUsers></AdminUsers>} />
+					<Route path="/admin/messages" element={<AdminMessages></AdminMessages>} />
+					<Route path="/admin/claim" element={<AdminClaimUsername></AdminClaimUsername>} />
 				</Route>
 				<Route path="/waiting" element={<PrivateGoogleRoute><WaitingScreen /></PrivateGoogleRoute>} />
 			</Routes>
