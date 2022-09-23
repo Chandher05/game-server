@@ -45,7 +45,7 @@ function PageRoutes() {
 					<Route path="/admin/messages" element={<AdminMessages></AdminMessages>} />
 					<Route path="/admin/claim" element={<AdminClaimUsername></AdminClaimUsername>} />
 				</Route>
-				<Route path="/waiting" element={<PrivateGoogleRoute><WaitingScreen /></PrivateGoogleRoute>} />
+				<Route path="/waiting/:gameId" element={<PrivateGoogleRoute><WaitingScreen /></PrivateGoogleRoute>} />
 			</Routes>
 		</BrowserRouter>
 	)

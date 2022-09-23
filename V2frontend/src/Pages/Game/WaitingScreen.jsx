@@ -1,9 +1,10 @@
 import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text } from "@mantine/core";
 import { IconCheck, IconCopy } from '@tabler/icons'
+import { useParams } from "react-router-dom"
 
-
-function WaitingScreen() {
-  let GameCode = "000000";
+function WaitingScreen(props) {
+  let params = useParams()
+  let GameCode = params.gameId;
   return (
     <Center p={"10px"} style={{ height: '100vh' }}>
       <Stack justify={'center'}>

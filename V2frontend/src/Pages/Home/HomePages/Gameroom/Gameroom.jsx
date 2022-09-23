@@ -10,11 +10,17 @@ function Gameroom() {
 
   const createGame = () => {
     fetch(import.meta.env.VITE_API + "/game/create", {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${authId}`,
       },
     }).then(async (response) => {
-      if (response.ok) Navigate('/waiting');
+      if (response.ok) {
+        response.json().then(json => {
+          let gameId = json.gameId
+          Navigate(`/waiting/${gameId}`)
+        })
+      };
     });
   }
   const joinGame = () => {

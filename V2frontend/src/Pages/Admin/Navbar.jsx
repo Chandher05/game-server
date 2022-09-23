@@ -1,13 +1,13 @@
 
 import { useState } from 'react';
-import { IconGauge, IconActivity, IconColumns, IconTrophy, IconUser, IconAdjustmentsAlt } from '@tabler/icons';
+import { IconGauge, IconActivity, IconColumns, IconMessage, IconUser, IconAdjustmentsAlt } from '@tabler/icons';
 import { Box, NavLink, Navbar as Nav } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 
 const data = [
-  { icon: IconActivity, label: 'Users', url: '' },
-  { icon: IconAdjustmentsAlt, label: 'Claim username', url: 'claim' },
-  { icon: IconUser, label: 'Messages', url: 'messages' }
+  { icon: IconUser, label: 'Users', url: '' },
+  { icon: IconGauge, label: 'Claim username', url: 'claim' },
+  { icon: IconMessage, label: 'Messages', url: 'messages' }
 ];
 
 function NavLinks({ }) {
