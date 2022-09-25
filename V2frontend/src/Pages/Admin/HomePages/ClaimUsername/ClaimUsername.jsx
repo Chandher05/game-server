@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useStoreState } from 'easy-peasy';
+import { Button, Center, Select, Stack, Text } from '@mantine/core';
 
 function ClaimUserName() {
   const [userNames, setUserNames] = useState([]);
@@ -15,21 +16,25 @@ function ClaimUserName() {
     });
 
 
-  }, [])
+  }, [authId])
 
-  return <Demo userNames={userNames}></Demo>
+  return <Demo userNames={userNames} authId={authId}></Demo>
 }
 
 export default ClaimUserName;
 
-function Demo({ userNames }) {
+function Demo({ userNames, authId }) {
   const [instruction, setInstruction] = useState([]);
-  const claimUserNameAPI = async () => {
 
+  const [currentUserName, setcurrentUserName] = useState("");
+  const [oldUserName, setoldUserName] = useState("");
+  const [newUserName, setnewUserName] = useState("");
+
+  const claimUserNameAPI = async () => {
     const data = {
-      currentUserName: "",
-      oldUserName: "",
-      newUserName: "",
+      currentUserName,
+      oldUserName,
+      newUserName,
     }
     fetch(import.meta.env.VITE_API + "/users/claim", {
       method: 'POST',
@@ -45,34 +50,29 @@ function Demo({ userNames }) {
 
   };
 
-  const oldUserNameRows = userNames.map(function (element) {
-    return <option value={element}>{element}</option>
-  });
-  const ocurrentUserNameRows = userNames.map(function (element) {
-    return <option value={element}>{element}</option>
-  });
-  const newUserNameRows = userNames.map(function (element) {
-    return <option value={element}>{element}</option>
-  });
-
   return (
-    <div>
-      Old Username
-      <select>
-        {oldUserNameRows}
-      </select>
-      Current Username
-      <select>
-        {ocurrentUserNameRows}
-      </select>
-      New Username
-      <select>
-        {newUserNameRows}
-      </select>
-      {/* TODO: Give an option for user to select what they want their new username as */}
-      <button onClick={claimUserNameAPI}>Claim username!</button>
-      <p>{instruction}</p>
-    </div>
+    <Center>
+      <Stack>
+        <Select label="Current Username"
+          data={userNames}
+          value={currentUserName}
+          onChange={setcurrentUserName}
+        ></Select>
+        <Select label="old Username"
+          data={userNames}
+          value={oldUserName}
+          onChange={setoldUserName}
+        ></Select>
+        <Select label="Username henceforth"
+          data={userNames}
+          value={newUserName}
+          onChange={setnewUserName}
+        ></Select>
+        {/* TODO: Give an option for user to select what they want their new username as */}
+        <Button onClick={claimUserNameAPI}>Claim username!</Button>
+        <Text>{instruction}</Text>
+      </Stack>
+    </Center>
   )
 }
 
