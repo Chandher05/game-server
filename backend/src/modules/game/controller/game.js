@@ -286,8 +286,8 @@ exports.quitFromLobby = async (req, res) => {
 			let newCreatedUser
 			if (game.players.length > 1) {
 				for (let playerUserId of game.players) {
-					if (playerUserId != game.createdUser) {
-						newCreatedUser = playerUserId
+					if (playerUserId.toString() != game.createdUser.toString()) {
+						newCreatedUser = playerUserId.toString()
 						break
 					}
 				}

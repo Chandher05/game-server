@@ -286,6 +286,31 @@ var PlayerListeners = (socket) => {
 		}
 	})
 
+	socket.on('get-lobby-updates', async (authToken, body) => {
+		const userUID = socket.handshake.userUID
+		const email = socket.handshake.email
+		let reqUserId = useruid_userid[userUID].toString()
+
+		try {
+			var game = await Game.findOne({ gameId: body.gameId })
+            if (!game) {
+                return socket.emit('common-game-data', "ERROR", "Requested game updates for invalid game id")
+            }
+
+			let gameMember = await GameMember.findOne({
+				gameId: body.gameId,
+				userId: reqUserId
+			})
+
+			return await emitLobbyDataToAllInGame(body.gameId)
+		} catch (err) {
+			if (err.message) {
+				return socket.emit('common-game-data', "ERROR", err.message)
+			}
+			return socket.emit('common-game-data', "ERROR", err)
+		}
+	})
+
 }
 
 export default PlayerListeners

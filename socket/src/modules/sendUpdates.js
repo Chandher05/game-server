@@ -21,13 +21,15 @@ exports.emitLobbyDataToAllInGame = (gameId) => {
                 let allPlayers = {}
                 let playerUID = []
                 let isAdmin = false
+                allPlayers["players"] = []
                 for (var id of playersInGame) {
                     playerObj = await Users.findById(id)
                     isAdmin = playerObj._id.toString() === game.createdUser.toString() ? true : false
-                    allPlayers[playerObj._id.toString()] = {
+                    allPlayers["players"].push({
+                        id: playerObj._id.toString(),
                         userName: playerObj.userName,
                         isAdmin: isAdmin
-                    }
+                    })
                     playerUID.push(playerObj.userUID)
                 }
                 for (var id of playersInGame) {
