@@ -44,7 +44,7 @@ function Account() {
   }, [])
   return (
     // Can we add send message also in this page?
-    <div>
+    <div style={{ margin: '10px', padding: '100px' }}>
       <Stats profileData={profileData} playerUserName={playerUserName} setProfileUserName={setProfileUserName} editDisabled={editDisabled} setEditDisabled={setEditDisabled} />
       <ClaimUserName userNames={userNames} profileData={profileData} selectedUserNameToUpdate={selectedUserNameToUpdate} setSelectedUserNameToUpdate={setSelectedUserNameToUpdate} />
     </div>
@@ -83,20 +83,24 @@ function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, 
 
   // TODO: Edit and update username
   return (
-    <div>
-      <p>Username: <input type="text" value={playerUserName} onChange={changeUserName} disabled={editDisabled} /></p>
-      {
-        editDisabled ?
-          <IconPencil onClick={toggleEdit} /> :
-          <Button onClick={saveUserName}>Save</Button>
-      }
-      <p>Email: {profileData.email}</p>
-      <p>Total games: {profileData.totalGames}</p>
-      <p>Wins: {profileData.totalWins}</p>
-      <p>Declares: {profileData.totalDeclares}</p>
-      <p>+50's: {profileData.totalFifties}</p>
-      <p>-25's: {profileData.totalPairs}</p>
-    </div>
+    <Center >
+      <Stack spacing='xs'>
+        <Group>
+          <Text>Username: <input type="text" value={playerUserName} onChange={changeUserName} disabled={editDisabled} /></Text>
+          {
+            editDisabled ?
+              <ActionIcon onClick={toggleEdit} ><IconPencil /></ActionIcon> :
+              <Button onClick={saveUserName}>Save</Button>
+          }
+        </Group>
+        <Text>Email: {profileData.email}</Text>
+        <Text>Total games: {profileData.totalGames}</Text>
+        <Text>Wins: {profileData.totalWins}</Text>
+        <Text>Declares: {profileData.totalDeclares}</Text>
+        <Text>+50's: {profileData.totalFifties}</Text>
+        <Text>-25's: {profileData.totalPairs}</Text>
+      </Stack>
+    </Center>
   )
 }
 
@@ -130,7 +134,7 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
       }
       // TODO: Error response
     });
-  };
+  }; ß
 
 
   return (
@@ -140,7 +144,7 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
         onClose={() => setOpened(false)}
         title="What do you want your username to be henceforth?"
       >
-        
+
         <SegmentedControl
           data={[
             { label: profileData.userName, value: profileData.userName },
@@ -149,7 +153,7 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
           value={newUsername}
           onChange={setNewUsername}
         />
-      <Button onClick={requestClaimUserName}>Submit request</Button>
+        <Button onClick={requestClaimUserName}>Submit request</Button>
       </Modal>
 
 

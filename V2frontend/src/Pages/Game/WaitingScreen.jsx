@@ -76,11 +76,6 @@ function DisplayData() {
   return (
     <Center p={"10px"} style={{ height: '100vh' }}>
       <Stack justify={'center'}>
-
-        <p>Max score: {data.maxScore}</p>
-        <p>End with pair: {data.endWithPair}</p>
-        <p>Wrong call: {data.wrongCall}</p>
-        <p>First round declare: {data.canDeclareFirstRound ? "TRUE" : "FALSE"}</p>
         <Title order={1}><Group>
           Code: <Text color={'blue'}>
             {GameCode}
@@ -91,6 +86,12 @@ function DisplayData() {
         <Title order={5} color="grey">share this with friends for them to join</Title>
         <Title order={3}>Friends who have joined</Title>
         {data.players ? <ListPlayers data={data}></ListPlayers> : ""}
+
+
+        <p>Max score: {data.maxScore}</p>
+        <p>End with pair: {data.endWithPair}</p>
+        <p>Wrong call: {data.wrongCall}</p>
+        <p>First round declare: {data.canDeclareFirstRound ? "TRUE" : "FALSE"}</p>
         <Button onClick={leaveGame}>Leave</Button>
         {data.isAdmin && data.players && data.players.length > 1 ? <Button>Start Game</Button> : ""}
       </Stack>
