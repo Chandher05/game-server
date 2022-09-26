@@ -231,8 +231,9 @@ exports.leaderboard = async (req, res) => {
 
 		let allUsers = await Users.find({
 			isActive: true
-		}),
-			user,
+		}).sort('userName')
+		
+		let	user,
 			userId,
 			allUsersData = []
 
@@ -248,6 +249,7 @@ exports.leaderboard = async (req, res) => {
 				totalDeclares: user.totalDeclares,
 				totalFifties: user.totalFifties,
 				totalPairs: user.totalPairs,
+				requestedUser: req.body.userUID == user.userUID
 			})
 		}
 
@@ -386,7 +388,7 @@ exports.userNames = async (req, res) => {
 
 		return res
 			.status(constants.STATUS_CODE.SUCCESS_STATUS)
-			.send(listOfUserNames)
+			.send(listOfUserNames.sort())
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)

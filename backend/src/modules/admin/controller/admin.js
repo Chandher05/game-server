@@ -32,7 +32,7 @@ exports.allUsers = async (req, res) => {
 				.send("Not an admin")
 		}
 
-		let allUsers = await Users.find()
+		let allUsers = await Users.find().sort('userName')
 
 		return res
 			.status(constants.STATUS_CODE.ACCEPTED_STATUS)
@@ -61,7 +61,7 @@ exports.getMessages = async (req, res) => {
 				.send("Not an admin")
 		}
 
-		let allMessages = await Messages.find()
+		let allMessages = await Messages.find().sort('-createdAt')
 
 		return res
 			.status(constants.STATUS_CODE.ACCEPTED_STATUS)

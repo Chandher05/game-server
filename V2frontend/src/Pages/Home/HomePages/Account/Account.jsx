@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Button } from "@mantine/core";
-import { Table } from "@mantine/core";
+import { Button, Select, Modal, SegmentedControl } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { IconPencil } from '@tabler/icons';
 
@@ -37,7 +36,6 @@ function Account() {
       if (response.ok) {
         response.json().then(json => {
           setUserNames(json)
-          setSelectedUserNameToUpdate(json[0])
         })
       }
     });
@@ -105,20 +103,19 @@ function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, 
 function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSelectedUserNameToUpdate }) {
 
   const [instruction, setInstruction] = useState([]);
+  const [newUsername, setNewUsername] = useState(profileData.userName);
+  const [opened, setOpened] = useState(false);
   const authId = useStoreState((state) => state.authId);
 
-  const changeSelectedUserName = (e) => {
-    console.log(e.target.value)
-    setSelectedUserNameToUpdate(e.target.value)
-  }
 
   const requestClaimUserName = async () => {
 
     const data = {
       currentUserName: profileData.userName,
       oldUserName: selectedUserNameToUpdate,
-      newUserName: profileData.userName,
+      newUserName: newUsername
     }
+    console.log(data)
     fetch(import.meta.env.VITE_API + "/users/claim", {
       method: 'POST',
       headers: {
@@ -127,25 +124,45 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
       },
       body: JSON.stringify(data)
     }).then(async (response) => {
-      if (response.ok) setInstruction("Check your email. Give an option for user to select what they want their new username as (Old or new)");
+      if (response.ok) {
+        setInstruction("Check your email");
+        setOpened(false)
+      }
       // TODO: Error response
     });
   };
 
-  const rows = userNames.map(function (element) {
-    if (profileData.userName != element) {
-      return <option value={element} key={element}>{element}</option>
-    }
-  });
 
   return (
-    <div>
-      <select value={selectedUserNameToUpdate} onChange={changeSelectedUserName}>
-        {rows}
-      </select>
+    <>
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title="What do you want your username to be henceforth?"
+      >
+        
+        <SegmentedControl
+          data={[
+            { label: profileData.userName, value: profileData.userName },
+            { label: selectedUserNameToUpdate, value: selectedUserNameToUpdate }
+          ]}
+          value={newUsername}
+          onChange={setNewUsername}
+        />
+      <Button onClick={requestClaimUserName}>Submit request</Button>
+      </Modal>
+
+
+      <Select
+        data={userNames}
+        value={selectedUserNameToUpdate}
+        onChange={setSelectedUserNameToUpdate}
+        placeholder="Select your old username"
+        searchable
+      ></Select>
       {/* TODO: Give an option for user to select what they want their new username as */}
-      <button onClick={requestClaimUserName}>Claim username!</button>
+      <Button disabled={selectedUserNameToUpdate === "" ? true : false} onClick={() => setOpened(true)}>Claim username!</Button>
       <p>{instruction}</p>
-    </div>
+    </>
   )
 }

@@ -57,16 +57,19 @@ function Demo({ userNames, authId }) {
           data={userNames}
           value={currentUserName}
           onChange={setcurrentUserName}
+          searchable
         ></Select>
         <Select label="old Username"
           data={userNames}
           value={oldUserName}
           onChange={setoldUserName}
+          searchable
         ></Select>
         <Select label="Username henceforth"
           data={userNames}
           value={newUserName}
           onChange={setnewUserName}
+          searchable
         ></Select>
         {/* TODO: Give an option for user to select what they want their new username as */}
         <Button onClick={claimUserNameAPI}>Claim username!</Button>
