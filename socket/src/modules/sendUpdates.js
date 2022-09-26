@@ -38,6 +38,8 @@ exports.emitLobbyDataToAllInGame = (gameId) => {
                     allPlayers.endWithPair = game.endWithPair
                     allPlayers.wrongCall = game.wrongCall
                     allPlayers.canDeclareFirstRound = game.canDeclareFirstRound
+                    allPlayers.autoplayTimer = game.autoplayTimer
+                    allPlayers.isPublicGame = game.isPublicGame
                     emitToUserId(id, 'lobby-listener', "WAITING", allPlayers)
                 }
                 resolve()

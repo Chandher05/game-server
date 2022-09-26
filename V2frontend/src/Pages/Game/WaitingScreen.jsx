@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button } from "@mantine/core";
-import { IconCheck, IconCopy } from '@tabler/icons'
+import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu } from "@mantine/core";
+import { IconCheck, IconCopy, IconMessageCircle } from '@tabler/icons'
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
@@ -74,28 +74,39 @@ function DisplayData() {
   })
 
   return (
-    <Center p={"10px"} style={{ height: '100vh' }}>
-      <Stack justify={'center'}>
-        <Title order={1}><Group>
-          Code: <Text color={'blue'}>
-            {GameCode}
-          </Text>
-          <CopyGameCode GameCode={GameCode} />
-        </Group>
-        </Title>
-        <Title order={5} color="grey">share this with friends for them to join</Title>
-        <Title order={3}>Friends who have joined</Title>
-        {data.players ? <ListPlayers data={data}></ListPlayers> : ""}
+    <>
+      <Center p={"10px"} style={{ height: '100vh' }}>
+        <Stack justify={'center'}>
+          <Menu shadow="md" width={200}>
+            <Menu.Target>
+              <Button variant="default">Game Settings</Button>
+            </Menu.Target>
 
+            <Menu.Dropdown>
+              <Menu.Label><IconMessageCircle size={14} /> Max score: {data.maxScore}</Menu.Label>
+              <Menu.Label><IconMessageCircle size={14} /> End with pair: {data.endWithPair}</Menu.Label>
+              <Menu.Label><IconMessageCircle size={14} /> Wrong call: {data.wrongCall}</Menu.Label>
+              <Menu.Label><IconMessageCircle size={14} /> First round declare: {data.canDeclareFirstRound ? "TRUE" : "FALSE"}</Menu.Label>
+              <Menu.Label><IconMessageCircle size={14} /> Autoplay timer: {data.autoplayTimer}</Menu.Label>
+              <Menu.Label><IconMessageCircle size={14} /> Public game: {data.isPublicGame ? "TRUE" : "FALSE"}</Menu.Label>
+            </Menu.Dropdown>
+          </Menu>
+          <Title order={1}><Group>
+            Code: <Text color={'blue'}>
+              {GameCode}
+            </Text>
+            <CopyGameCode GameCode={GameCode} />
+          </Group>
+          </Title>
+          <Title order={5} color="grey">share this with friends for them to join</Title>
+          <Title order={3}>Friends who have joined</Title>
+          {data.players ? <ListPlayers data={data}></ListPlayers> : ""}
 
-        <p>Max score: {data.maxScore}</p>
-        <p>End with pair: {data.endWithPair}</p>
-        <p>Wrong call: {data.wrongCall}</p>
-        <p>First round declare: {data.canDeclareFirstRound ? "TRUE" : "FALSE"}</p>
-        <Button onClick={leaveGame}>Leave</Button>
-        {data.isAdmin && data.players && data.players.length > 1 ? <Button>Start Game</Button> : ""}
-      </Stack>
-    </Center>
+          <Button onClick={leaveGame}>Leave</Button>
+          {data.isAdmin && data.players && data.players.length > 1 ? <Button>Start Game</Button> : ""}
+        </Stack>
+      </Center>
+    </>
   )
 }
 
