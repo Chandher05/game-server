@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Button, Select, Modal, SegmentedControl } from "@mantine/core";
+import { Button, Select, Modal, SegmentedControl, Center, Stack, Text, Group, ActionIcon } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { IconPencil } from '@tabler/icons';
 
@@ -44,7 +44,7 @@ function Account() {
   }, [])
   return (
     // Can we add send message also in this page?
-    <div style={{ margin: '10px', padding: '100px' }}>
+    <div>
       <Stats profileData={profileData} playerUserName={playerUserName} setProfileUserName={setProfileUserName} editDisabled={editDisabled} setEditDisabled={setEditDisabled} />
       <ClaimUserName userNames={userNames} profileData={profileData} selectedUserNameToUpdate={selectedUserNameToUpdate} setSelectedUserNameToUpdate={setSelectedUserNameToUpdate} />
     </div>
@@ -83,22 +83,27 @@ function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, 
 
   // TODO: Edit and update username
   return (
-    <Center >
-      <Stack spacing='xs'>
+    <Center style={{ padding: '20px' }}>
+      <Stack spacing={'xs'}>
+
         <Group>
           <Text>Username: <input type="text" value={playerUserName} onChange={changeUserName} disabled={editDisabled} /></Text>
           {
             editDisabled ?
-              <ActionIcon onClick={toggleEdit} ><IconPencil /></ActionIcon> :
+              <ActionIcon onClick={toggleEdit}>
+                <IconPencil />
+              </ActionIcon> :
               <Button onClick={saveUserName}>Save</Button>
           }
         </Group>
         <Text>Email: {profileData.email}</Text>
+        <Group>
+          <Text>Wins: {profileData.totalWins}</Text>
+          <Text>Declares: {profileData.totalDeclares}</Text>
+          <Text>+50's: {profileData.totalFifties}</Text>
+          <Text>-25's: {profileData.totalPairs}</Text>
+        </Group>
         <Text>Total games: {profileData.totalGames}</Text>
-        <Text>Wins: {profileData.totalWins}</Text>
-        <Text>Declares: {profileData.totalDeclares}</Text>
-        <Text>+50's: {profileData.totalFifties}</Text>
-        <Text>-25's: {profileData.totalPairs}</Text>
       </Stack>
     </Center>
   )
@@ -134,11 +139,11 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
       }
       // TODO: Error response
     });
-  }; ß
+  };
 
 
   return (
-    <>
+    <Center>
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
@@ -156,17 +161,18 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
         <Button onClick={requestClaimUserName}>Submit request</Button>
       </Modal>
 
-
-      <Select
-        data={userNames}
-        value={selectedUserNameToUpdate}
-        onChange={setSelectedUserNameToUpdate}
-        placeholder="Select your old username"
-        searchable
-      ></Select>
-      {/* TODO: Give an option for user to select what they want their new username as */}
-      <Button disabled={selectedUserNameToUpdate === "" ? true : false} onClick={() => setOpened(true)}>Claim username!</Button>
-      <p>{instruction}</p>
-    </>
+      <Group>
+        <Select
+          data={userNames}
+          value={selectedUserNameToUpdate}
+          onChange={setSelectedUserNameToUpdate}
+          placeholder="Select your old username"
+          searchable
+        ></Select>
+        {/* TODO: Give an option for user to select what they want their new username as */}
+        <Button disabled={selectedUserNameToUpdate === "" ? true : false} onClick={() => setOpened(true)}>Claim username!</Button>
+      </Group>
+      <Text>{instruction}</Text>
+    </Center>
   )
 }
