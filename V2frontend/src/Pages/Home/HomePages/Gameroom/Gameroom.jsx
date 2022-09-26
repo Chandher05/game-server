@@ -25,7 +25,6 @@ function Gameroom() {
       'autoplayTimer': autoplayTimer,
       'isPublicGame': isPublicGame,
     }
-    console.log(data)
     // return
     fetch(import.meta.env.VITE_API + "/game/create", {
       method: 'POST',
@@ -83,79 +82,91 @@ function Gameroom() {
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title="Admin settings"
+        title="Game settings"
       >
+        <Group position="apart" p={3}>
+          Max score
+          <SegmentedControl
+            data={[
+              { label: 100, value: 100 },
+              { label: 200, value: 200 },
+              { label: 250, value: 250 }
+            ]}
+            transitionDuration={250}
+            value={maxScore}
+            onChange={setMaxScore}
+          />
+        </Group>
 
-      Max score
-      <SegmentedControl
-        data={[
-          { label: 100, value: 100 },
-          { label: 200, value: 200 },
-          { label: 250, value: 250 }
-        ]}
-        transitionDuration={250}
-        value={maxScore}
-        onChange={setMaxScore}
-      /> <br/>
+        <Group position="apart" p={3}>
+          Ending with a pair
+          <SegmentedControl
+            data={[
+              { label: -15, value: -15 },
+              { label: -25, value: -25 },
+              { label: -40, value: -40 }
+            ]}
+            transitionDuration={250}
+            value={scoreWhenEndWithPair}
+            onChange={setScoreWhenEndWithPair}
+          />
+        </Group>
 
-      Score when players end with pair
-      <SegmentedControl
-        data={[
-          { label: -15, value: -15 },
-          { label: -25, value: -25 },
-          { label: -40, value: -40 }
-        ]}
-        transitionDuration={250}
-        value={scoreWhenEndWithPair}
-        onChange={setScoreWhenEndWithPair}
-      /><br/>
+        <Group position="apart" p={4}>
+          Score for wrong call
+          <SegmentedControl
+            data={[
+              { label: 25, value: 25 },
+              { label: 50, value: 50 },
+              { label: 75, value: 75 }
+            ]}
+            transitionDuration={250}
+            value={scoreWhenWrongCall}
+            onChange={setScoreWhenWrongCall}
+          /></Group>
 
-      Score for wrong call
-      <SegmentedControl
-        data={[
-          { label: 25, value: 25 },
-          { label: 50, value: 50 },
-          { label: 75, value: 75 }
-        ]}
-        transitionDuration={250}
-        value={scoreWhenWrongCall}
-        onChange={setScoreWhenWrongCall}
-      /><br/>
+        <Group position="apart" p={4}>
+          Can declare first round
+          <SegmentedControl
+            data={[
+              { label: "YES", value: true },
+              { label: "NO", value: false }
+            ]}
+            transitionDuration={250}
+            value={canDeclareFirstRound}
+            onChange={setCanDeclareFirstRound}
+          /></Group>
 
-      Can declare first round
-      <SegmentedControl
-        data={[
-          { label: "YES", value: true },
-          { label: "NO", value: false }
-        ]}
-        transitionDuration={250}
-        value={canDeclareFirstRound}
-        onChange={setCanDeclareFirstRound}
-      /><br/>
 
-      Autoplay timer
-      <SegmentedControl
-        data={[
-          { label: '45 sec', value: 45 },
-          { label: '60 sec', value: 60 },
-          { label: '90 sec', value: 90 }
-        ]}
-        transitionDuration={250}
-        value={autoplayTimer}
-        onChange={setAutoplayTimer}
-      /><br/>
+        <Group position="apart" p={4}>
+          Autoplay timer
+          <SegmentedControl
+            color={'red'}
+            data={[
+              { label: '45s', value: 45 },
+              { label: '60s', value: 60 },
+              { label: '90s', value: 90 }
+            ]}
+            transitionDuration={250}
+            value={autoplayTimer}
+            onChange={setAutoplayTimer}
+          /></Group>
 
-      Public game
-      <SegmentedControl
-        data={[
-          { label: "YES", value: true },
-          { label: "NO", value: false }
-        ]}
-        transitionDuration={250}
-        value={isPublicGame}
-        onChange={setIsPublicGame}
-      />
-        <Button onClick={createGame}>Create</Button>
+        <Group position="apart" p={4}>
+          Public game
+          <SegmentedControl
+            data={[
+              { label: "YES", value: true },
+              { label: "NO", value: false }
+            ]}
+            transitionDuration={250}
+            value={isPublicGame}
+            onChange={setIsPublicGame}
+          />
+        </Group>
+        <Group position="right" p={6}>
+          <Button onClick={createGame}>Create Game</Button>
+        </Group>
       </Modal>
       <Center styles={{ height: '100vh' }}>
         <Stack >
