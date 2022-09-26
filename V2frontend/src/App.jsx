@@ -4,6 +4,7 @@ import PageRoutes from "./Providers/Routes";
 import { useStoreRehydrated, StoreProvider } from "easy-peasy";
 import { store } from './Providers/Store';
 import { Loader } from "@mantine/core";
+import { NotificationsProvider } from '@mantine/notifications';
 import socket from './Providers/Socket/index'
 
 function WaitForStateRehydration({ children }) {
@@ -19,11 +20,13 @@ function App() {
   return (
     <div >
       <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
-        <StoreProvider store={store}>
-          <WaitForStateRehydration>
-            <PageRoutes></PageRoutes>
-          </WaitForStateRehydration>
-        </StoreProvider>
+        <NotificationsProvider>
+          <StoreProvider store={store}>
+            <WaitForStateRehydration>
+              <PageRoutes></PageRoutes>
+            </WaitForStateRehydration>
+          </StoreProvider>
+        </NotificationsProvider>
       </MantineProvider>
     </div>
   );

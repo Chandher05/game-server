@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useStoreState } from 'easy-peasy';
 import { Button, Center, Select, Stack, Text } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 
 function ClaimUserName() {
   const [userNames, setUserNames] = useState([]);
@@ -45,7 +46,17 @@ function Demo({ userNames, authId }) {
       body: JSON.stringify(data)
     }).then(async (response) => {
       if (response.ok) setInstruction("Success");
+      console.log(response);
+      throw new Error(response)
       // TODO: Error response
+    }).catch((error) => {
+      console.log('Error')
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: 'Please check the values and try again'
+      })
     });
 
   };
