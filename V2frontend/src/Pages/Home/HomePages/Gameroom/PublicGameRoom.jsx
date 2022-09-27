@@ -1,4 +1,6 @@
 import { IconHeart } from '@tabler/icons';
+import { useState, useEffect } from 'react';
+import { useStoreState } from "easy-peasy";
 import { Card, Image, Text, Group, Badge, Button, ActionIcon, createStyles, Grid } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
@@ -28,19 +30,37 @@ const useStyles = createStyles((theme) => ({
 
 
 
-export function PublicGameRoom() {
+export function PublicGameRoom({ joinGame }) {
+  const [games, setGames] = useState([]);
+  const authId = useStoreState((state) => state.authId);
+
+  useEffect(() => {
+    fetch(import.meta.env.VITE_API + "/game/public", {
+      headers: {
+        Authorization: `Bearer ${authId}`,
+      },
+    }).then(async (response) => {
+      if (response.ok) {
+        response.json().then(json => {
+          setGames(json);
+        })
+      }
+    });
+  }, [])
+
+  let gameCards = games.map((element) => (
+    <Grid.Col lg={4} md={6} sm={12} key={element.gameId}><BadgeCard title={element.gameId} description='Public game' joinGame={joinGame}></BadgeCard></Grid.Col>
+  ));
+
   return (
     <Grid style={{ margin: '10px' }}>
-      <Grid.Col lg={4} md={6} sm={12}><BadgeCard title={'123456'} description='Public game'></BadgeCard></Grid.Col>
-      <Grid.Col lg={4} md={6} sm={12}><BadgeCard title={'324532'} description='Public game'></BadgeCard></Grid.Col>
-      <Grid.Col lg={4} md={6} sm={12}><BadgeCard title={'432434'} description='Public game'></BadgeCard></Grid.Col>
-
+      {gameCards}
     </Grid>
   )
 }
 
 
-function BadgeCard({ title, description }) {
+function BadgeCard({ title, description, joinGame }) {
   const { classes, theme } = useStyles();
 
 
@@ -66,7 +86,7 @@ function BadgeCard({ title, description }) {
       </Card.Section>
 
       <Group mt="xs">
-        <Button radius="md" style={{ flex: 1 }}>
+        <Button radius="md" style={{ flex: 1 }} onClick={() => joinGame(title)}>
           Join Game
         </Button>
         <ActionIcon variant="default" radius="md" size={36}>
