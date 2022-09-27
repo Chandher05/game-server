@@ -25,7 +25,6 @@ function ClaimUserName() {
 export default ClaimUserName;
 
 function Demo({ userNames, authId }) {
-  const [instruction, setInstruction] = useState([]);
 
   const [currentUserName, setcurrentUserName] = useState("");
   const [oldUserName, setoldUserName] = useState("");
@@ -45,12 +44,16 @@ function Demo({ userNames, authId }) {
       },
       body: JSON.stringify(data)
     }).then(async (response) => {
-      if (response.ok) setInstruction("Success");
-      console.log(response);
+      if (response.ok) {
+        showNotification({
+          variant: 'outline',
+          color: 'green',
+          title: 'Success'
+        })
+      }
       throw new Error(response)
       // TODO: Error response
     }).catch((error) => {
-      console.log('Error')
       showNotification({
         variant: 'outline',
         color: 'red',
@@ -84,7 +87,6 @@ function Demo({ userNames, authId }) {
         ></Select>
         {/* TODO: Give an option for user to select what they want their new username as */}
         <Button onClick={claimUserNameAPI}>Claim username!</Button>
-        <Text>{instruction}</Text>
       </Stack>
     </Center>
   )

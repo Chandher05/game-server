@@ -408,6 +408,7 @@ exports.spectateGame = async (req, res) => {
 exports.getPublicGames = async (req, res) => {
 	try {
 		let games = await Game.find({
+			isEnded: false,
 			isPublicGame: true
 		})
 

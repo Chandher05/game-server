@@ -8,8 +8,6 @@ export const store = createStore(persist({
     state.authId = payload.authId;
   }),
   setUserName: action((state, payload) => {
-    console.log("HERE")
-    console.log(payload)
     state.userName = payload.userName
   }),
   setPhotoURL: action((state, payload) => {

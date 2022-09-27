@@ -1,13 +1,16 @@
 
 import { useState, useEffect } from 'react';
-import { Table } from "@mantine/core";
+import { Button, Table } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { IconArrowsSort } from '@tabler/icons';
+import { useToggle } from '@mantine/hooks';
+
 
 function Leaderboard() {
   const [data, setData] = useState([]);
   const [sortColumn, setSortColumn] = useState("");
   const [sortTypeDecrease, setSortTypeDecrease] = useState(true);
+  const [showAverage, toggleAverage] = useToggle([false, true]);
   const authId = useStoreState((state) => state.authId);
 
   useEffect(() => {
@@ -16,103 +19,51 @@ function Leaderboard() {
         Authorization: `Bearer ${authId}`,
       },
     }).then(async (response) => {
-      if (response.ok) setData(await response.json());
+      if (response.ok) {
+        response.json().then(json => {
+          for (var obj of json) {
+            obj["avgTotalWins"] = getAverage(obj, "totalWins")
+            obj["avgTotalDeclares"] = getAverage(obj, "totalDeclares")
+            obj["avgTotalFifties"] = getAverage(obj, "totalFifties")
+            obj["avgTotalPairs"] = getAverage(obj, "totalPairs")
+          }
+          setData(json);
+        })
+      }
     });
   }, [])
 
 
-  const sortValues = (e) => {
+  const getAverage = (obj, col) => {
+    var totalGames = obj.gamesCount
+    let average
+    if (totalGames == 0) {
+      average = 0
+    } else {
+      average = obj[col] / totalGames
+    }
+    return average.toFixed(2)
+  }
 
-    var columnNumber = parseInt(e.target.id, 10)
+  const sortValues = (e) => {
+    var key = e.target.id
     var varSortTypeDecrease
-    if (sortColumn === columnNumber) {
+    var allUserData = data
+    if (sortColumn === key) {
       setSortTypeDecrease(!sortTypeDecrease)
       varSortTypeDecrease = !sortTypeDecrease
     } else {
       varSortTypeDecrease = true
       setSortTypeDecrease(true)
-      setSortColumn(columnNumber)
+      setSortColumn(key)
     }
-    console.log(e.target.id, columnNumber, sortColumn, varSortTypeDecrease, sortTypeDecrease)
+    allUserData.sort(function (a, b) {
+      var val1 = a[key]
+      var val2 = b[key]
+      return varSortTypeDecrease ? val2 - val1 : val1 - val2
+    })
 
-    var allUserData = data
-
-    var scores = new Set()
-    var scoresUsers = {}
-
-    for (var userId in allUserData) {
-      var user = allUserData[userId]
-
-      switch (columnNumber) {
-
-        case 1:
-          scores.add(parseInt(user.gamesCount, 10))
-          if (scoresUsers[user.gamesCount]) {
-            scoresUsers[user.gamesCount].push(user)
-          } else {
-            scoresUsers[user.gamesCount] = [user]
-          }
-          break;
-
-        case 2:
-          scores.add(parseInt(user.totalWins, 10))
-          if (scoresUsers[user.totalWins]) {
-            scoresUsers[user.totalWins].push(user)
-          } else {
-            scoresUsers[user.totalWins] = [user]
-          }
-          break;
-
-        case 3:
-          scores.add(parseInt(user.totalDeclares, 10))
-          if (scoresUsers[user.totalDeclares]) {
-            scoresUsers[user.totalDeclares].push(user)
-          } else {
-            scoresUsers[user.totalDeclares] = [user]
-          }
-          break;
-
-        case 4:
-          scores.add(parseInt(user.totalFifties, 10))
-          if (scoresUsers[user.totalFifties]) {
-            scoresUsers[user.totalFifties].push(user)
-          } else {
-            scoresUsers[user.totalFifties] = [user]
-          }
-          break;
-
-        case 5:
-          scores.add(parseInt(user.totalPairs, 10))
-          if (scoresUsers[user.totalPairs]) {
-            scoresUsers[user.totalPairs].push(user)
-          } else {
-            scoresUsers[user.totalPairs] = [user]
-          }
-          break;
-
-        default:
-
-      }
-    }
-
-    var sortedScores
-    if (varSortTypeDecrease === true) {
-      sortedScores = Array.from(scores).sort(function (a, b) { return b - a })
-    } else {
-      sortedScores = Array.from(scores).sort(function (a, b) { return a - b })
-    }
-
-    var sortedUsers = []
-    for (var value of sortedScores) {
-      if (columnNumber === 4) {
-        sortedUsers = sortedUsers.concat(scoresUsers[value.toFixed(2)])
-      } else {
-        sortedUsers = sortedUsers.concat(scoresUsers[value])
-      }
-    }
-
-    setData(sortedUsers)
-
+    setData(allUserData)
   }
 
 
@@ -120,27 +71,45 @@ function Leaderboard() {
     <tr key={element.userId}>
       <td>{element.userName}</td>
       <td>{element.gamesCount}</td>
-      <td>{element.totalWins}</td>
-      <td>{element.totalDeclares}</td>
-      <td>{element.totalFifties}</td>
-      <td>{element.totalPairs}</td>
+      <td>{showAverage ? element.avgTotalWins : element.totalWins}</td>
+      <td>{showAverage ? element.avgTotalDeclares : element.totalDeclares}</td>
+      <td>{showAverage ? element.avgTotalFifties : element.totalFifties}</td>
+      <td>{showAverage ? element.avgTotalPairs : element.totalPairs}</td>
     </tr>
   ));
 
   return (
-    <Table highlightOnHover>
-      <thead>
-        <tr>
-          <th>User Name</th>
-          <th>Total Games <IconArrowsSort size={15} id="1" onClick={sortValues} /></th>
-          <th>Wins <IconArrowsSort size={15} id="2" onClick={sortValues} /></th>
-          <th>Total Declares <IconArrowsSort size={15} id="3" onClick={sortValues} /></th>
-          <th>+50 <IconArrowsSort size={15} id="4" onClick={sortValues} /></th>
-          <th>-25 <IconArrowsSort size={15} id="5" onClick={sortValues} /></th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </Table>
+    <>
+      <Button color={showAverage ? 'blue' : 'orange'} onClick={() => toggleAverage()}>{showAverage ? "Hide Average" : "Show Average"}</Button>
+      <Table highlightOnHover>
+        <thead>
+          <tr>
+            <th>User Name</th>
+            <th>
+              Total Games
+              <IconArrowsSort size={15} id="gamesCount" onClick={sortValues} />
+            </th>
+            <th>
+              Wins
+              <IconArrowsSort size={15} id={showAverage ? "avgTotalWins" : "totalWins"} onClick={sortValues} />
+            </th>
+            <th>
+              Total Declares
+              <IconArrowsSort size={15} id={showAverage ? "avgTotalDeclares" : "totalDeclares"} onClick={sortValues} />
+            </th>
+            <th>
+              +50
+              <IconArrowsSort size={15} id={showAverage ? "avgTotalFifties" : "totalFifties"} onClick={sortValues} />
+            </th>
+            <th>
+              -25
+              <IconArrowsSort size={15} id={showAverage ? "avgTotalPairs" : "totalPairs"} onClick={sortValues} />
+            </th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+    </>
   );
 }
 

@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
-import { Button, Select, Modal, SegmentedControl, Center, Stack, Text, Group, ActionIcon } from "@mantine/core";
+import { Button, Select, Modal, SegmentedControl, Center, Stack, Text, Group, ActionIcon, Textarea } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { IconPencil } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
 
 function Account() {
   const [profileData, setProfileData] = useState([]);
@@ -111,8 +112,8 @@ function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, 
 
 function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSelectedUserNameToUpdate }) {
 
-  const [instruction, setInstruction] = useState([]);
-  const [newUsername, setNewUsername] = useState(profileData.userName);
+  const [newUsername, setNewUsername] = useState("");
+  const [comments, setComments] = useState("");
   const [opened, setOpened] = useState(false);
   const authId = useStoreState((state) => state.authId);
 
@@ -124,7 +125,6 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
       oldUserName: selectedUserNameToUpdate,
       newUserName: newUsername
     }
-    console.log(data)
     fetch(import.meta.env.VITE_API + "/users/claim", {
       method: 'POST',
       headers: {
@@ -134,13 +134,46 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
       body: JSON.stringify(data)
     }).then(async (response) => {
       if (response.ok) {
-        setInstruction("Check your email");
+        showNotification({
+          variant: 'outline',
+          color: 'green',
+          title: 'Request submitted',
+          message: 'Please check your email for further instructions'
+        })
         setOpened(false)
       }
       // TODO: Error response
     });
   };
 
+  const updateComments = (e) => {
+    setComments(e.target.value)
+  } 
+
+  const sendMessage = () => {
+    const data = {
+      description: comments
+    }
+    fetch(import.meta.env.VITE_API + "/users/sendMessage", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authId}`,
+      },
+      body: JSON.stringify(data)
+    }).then(async (response) => {
+      if (response.ok) {
+        showNotification({
+          variant: 'outline',
+          color: 'green',
+          title: 'Thank you',
+          message: 'Your message has been sent'
+        })
+        setComments("")
+      }
+      // TODO: Error response
+    });
+  }
 
   return (
     <Center>
@@ -149,30 +182,38 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
         onClose={() => setOpened(false)}
         title="What do you want your username to be henceforth?"
       >
-
-        <SegmentedControl
-          data={[
-            { label: profileData.userName, value: profileData.userName },
-            { label: selectedUserNameToUpdate, value: selectedUserNameToUpdate }
-          ]}
-          value={newUsername}
-          onChange={setNewUsername}
-        />
-        <Button onClick={requestClaimUserName}>Submit request</Button>
+        <Stack>
+          <SegmentedControl
+            data={[
+              { label: profileData.userName, value: profileData.userName },
+              { label: selectedUserNameToUpdate, value: selectedUserNameToUpdate }
+            ]}
+            value={newUsername}
+            onChange={setNewUsername}
+          />
+          <Button onClick={requestClaimUserName}>Submit request</Button>
+        </Stack>
       </Modal>
 
-      <Group>
-        <Select
-          data={userNames}
-          value={selectedUserNameToUpdate}
-          onChange={setSelectedUserNameToUpdate}
-          placeholder="Select your old username"
-          searchable
-        ></Select>
-        {/* TODO: Give an option for user to select what they want their new username as */}
-        <Button disabled={selectedUserNameToUpdate === "" ? true : false} onClick={() => setOpened(true)}>Claim username!</Button>
-      </Group>
-      <Text>{instruction}</Text>
+      <Stack>
+        <Group>
+          <Select
+            data={userNames}
+            value={selectedUserNameToUpdate}
+            onChange={setSelectedUserNameToUpdate}
+            placeholder="Select your old username"
+            searchable
+          ></Select>
+          {/* TODO: Give an option for user to select what they want their new username as */}
+          <Button disabled={selectedUserNameToUpdate === "" ? true : false} onClick={() => setOpened(true)}>Claim username!</Button>
+        </Group>
+        {/* <Group> */}
+          <Textarea
+            placeholder="Your comment"
+            label="Your comment" onChange={updateComments} value={comments} />
+          <Button disabled={comments.length == 0 ? true : false} onClick={sendMessage}>Submit</Button>
+        {/* </Group> */}
+      </Stack>
     </Center>
   )
 }
