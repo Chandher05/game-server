@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetLobbyUpdates } from '../../Providers/Socket/emitters'
 import { LobbyListener } from '../../Providers/Socket/listeners'
-import socket from '../../Providers/Socket/index'
 
 function WaitingScreen() {
   let params = useParams()
@@ -67,7 +66,7 @@ function DisplayData() {
   };
 
 
-  LobbyListener((status, data, err) => {
+  LobbyListener((status, data) => {
     if (status === "WAITING") {
       setData(data)
     }

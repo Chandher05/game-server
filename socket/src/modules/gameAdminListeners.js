@@ -95,7 +95,6 @@ var GameAdminListers = (socket) => {
 
 	})
 
-
 	socket.on('next-round', async (authToken, body) => {
 		const userUID = socket.handshake.userUID
 		const email = socket.handshake.email
@@ -322,6 +321,62 @@ var GameAdminListers = (socket) => {
 			return socket.emit('common-game-data', "ERROR", error)
 		}
 	})
+
+	socket.on('remove-player', async (authToken, body) => {
+
+		const userUID = socket.handshake.userUID
+		const email = socket.handshake.email
+		let reqUserId = useruid_userid[userUID].toString()
+
+		try {
+
+			let game
+			game = await Game.findOne({
+				gameId: body.gameId
+			})
+			if (!game) {
+				return socket.emit('common-game-data', "ERROR", "Invalid game id")
+			}
+
+			if (reqUserId !== game.createdUser.toString()) {
+				return socket.emit('common-game-data', "ERROR", "Only game admin can remove players")
+			} else if (body.userId.toString() === game.createdUser.toString()) {
+				return socket.emit('common-game-data', "ERROR", "Cannot remove yourself from game. Please leave game")
+			} else {
+				await Game.updateOne(
+					{
+						gameId: body.gameId
+					},
+					{
+						$pull: {
+							players: body.userId
+						}
+					}
+				)
+			}
+
+			let removePlayerUID, removePlayerSysId, removePlayerSocket
+			if (body.userId in userid_useruid) {
+				removePlayerUID = userid_useruid[body.userId]
+			}
+			if (removePlayerUID in useruid_sysid) {
+				removePlayerSysId = useruid_sysid[removePlayerUID]
+				removePlayerSysId = [...removePlayerSysId]
+				for (var sysid of removePlayerSysId) {
+					removePlayerSocket = sysidConnected[sysid]["socket"]
+					removePlayerSocket.emit('common-game-data', "LEAVE_GAME")
+				}
+			}
+			
+			return await emitDataToAllInGame(body.gameId)
+		} catch (err) {
+			if (err.message) {
+				return socket.emit('common-game-data', "ERROR", err.message)
+			}
+			return socket.emit('common-game-data', "ERROR", err)
+		}
+	})
+
 }
 
 export default GameAdminListers

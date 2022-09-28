@@ -76,28 +76,3 @@ cron.schedule("*/5 * * * * *", async () => {
     }
     
 })
-
-// cron.schedule("0 0 0 */1 * *", async () => {
-//     try {
-//         let timestamp = Date.now()
-//         timestamp = timestamp - (24 * 60 * 60 * 1000)
-//         let oldGames = await Game.find({
-//             lastPlayedTime: {
-// 				$lte: timestamp
-// 			}
-//         }) 
-//         await Game.deleteMany({
-//             lastPlayedTime: {
-// 				$lte: timestamp
-// 			}
-//         })
-//         for (var gameObj of oldGames) {
-//             console.log(`Deleted game data from database ${gameObj.gameId}`)
-//             await GameMember.deleteMany({
-//                 gameId: gameObj.gameId
-//             })
-//         }
-//     } catch (err) {
-//         console.log("Error in daily cron job", err.message)
-//     }
-// })
