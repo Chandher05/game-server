@@ -17,6 +17,7 @@ import Account from "../Pages/Home/HomePages/Account/Account";
 import Gameroom from "../Pages/Home/HomePages/Gameroom/Gameroom"
 import Rules from "../Pages/Home/HomePages/Rules/Rules";
 import WaitingScreen from "../Pages/Game/WaitingScreen";
+import GameRoomTable from "../Pages/Game/GameRoom";
 import AdminHome from "../Pages/Admin/Home";
 import AdminUsers from "../Pages/Admin/HomePages/Users/Users";
 import AdminMessages from "../Pages/Admin/HomePages/Messages/Messages";
@@ -46,6 +47,7 @@ function PageRoutes() {
 					<Route path="/admin/claim" element={<AdminClaimUsername></AdminClaimUsername>} />
 				</Route>
 				<Route path="/waiting/:gameId" element={<PrivateGoogleRoute><WaitingScreen /></PrivateGoogleRoute>} />
+				<Route path="/game/:gameId" element={<PrivateGoogleRoute><GameRoomTable /></PrivateGoogleRoute>} />
 			</Routes>
 		</BrowserRouter>
 	)
@@ -59,7 +61,7 @@ function PrivateGoogleRoute({ children, ...rest }) {
 	const setUserName = useStoreActions((actions) => actions.setUserName);
 	const setPhotoURL = useStoreActions((actions) => actions.setPhotoURL);
 
-	console.log(`Autheticated - ${auth}`)
+	// console.log(`Autheticated - ${auth}`)
 	// console.log(`User - ${user.getIdToken()}`)
 
 	useEffect(() => {

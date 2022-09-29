@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStoreState } from "easy-peasy";
 import CreateGameModal from "./CreateGameModal";
 import PublicGameRoom from "./PublicGameRoom";
+import { showNotification } from '@mantine/notifications';
 
 function Gameroom() {
   const Navigate = useNavigate();
@@ -35,8 +36,17 @@ function Gameroom() {
           let gameId = json.gameId
           Navigate(`/waiting/${gameId}`)
         })
-      };
-    });
+      } else {
+        throw new Error(response)
+      }
+    }).catch((err) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: 'Please refresh the page and try again'
+      })
+    })
   }
   const joinGame = (gameId) => {
     if (gameId.length == 0) {
@@ -61,14 +71,23 @@ function Gameroom() {
         if (response.ok) {
           response.json().then(json => {
             let gameId = json.gameId
-            // if (json.isStarted) {
-              // Navigate(`/game/${gameId}`)
-              // } else {
+            if (json.isStarted) {
+              Navigate(`/game/${gameId}`)
+              } else {
                 Navigate(`/waiting/${gameId}`)
-            // }
+            }
           })
+        }  else {
+          throw new Error(response)
         }
-      });
+      }).catch((error) => {
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: 'Please refresh the page and try again'
+        })
+      })
     }
   }
   const spectateGame = () => {

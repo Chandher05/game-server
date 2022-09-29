@@ -52,14 +52,16 @@ const logout = () => {
   signOut(auth);
 };
 
-const getIdTokenOfUser = async () => {
-  const user = auth.currentUser;
-  if (user) {
-    return await user.getIdToken()
-  }
-  else {
-    throw "User not available"
-  }
+const getIdTokenOfUser = () => {
+  return new Promise(async (res, err) => {
+    const user = auth.currentUser;
+    if (user) {
+      return res(await user.getIdToken())
+    }
+    else {
+      err("User not available")
+    }
+  })
 }
 
 

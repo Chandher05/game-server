@@ -4,7 +4,7 @@ import { IconCheck, IconCopy, IconMessageCircle, IconClockHour4, IconBrandGoogle
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
-import { GetLobbyUpdates } from '../../Providers/Socket/emitters'
+import { GetLobbyUpdates, StartGame } from '../../Providers/Socket/emitters'
 import { LobbyListener } from '../../Providers/Socket/listeners'
 
 function WaitingScreen() {
@@ -31,8 +31,8 @@ function WaitingScreen() {
         })
       };
     });
+    GetLobbyUpdates(GameCode)
   }, [])
-  GetLobbyUpdates(GameCode)
 
   return <DisplayData></DisplayData>
 }
@@ -69,6 +69,8 @@ function DisplayData() {
   LobbyListener((status, data) => {
     if (status === "WAITING") {
       setData(data)
+    } else if (status === "GAME_STARTED") {
+      Navigate(`/game/${GameCode}`)
     }
   })
 
@@ -103,7 +105,7 @@ function DisplayData() {
           {data.players ? <ListPlayers data={data}></ListPlayers> : ""}
 
           <Button color={'red'} onClick={leaveGame}>Leave</Button>
-          {data.isAdmin && data.players && data.players.length > 1 ? <Button>Start Game</Button> : ""}
+          {data.isAdmin && data.players && data.players.length > 1 ? <Button onClick={() => StartGame(GameCode)}>Start Game</Button> : ""}
         </Stack>
       </Center>
     </>

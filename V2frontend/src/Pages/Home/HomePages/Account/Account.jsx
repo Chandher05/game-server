@@ -141,14 +141,22 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
           message: 'Please check your email for further instructions'
         })
         setOpened(false)
+      } else {
+        throw new Error(response)
       }
-      // TODO: Error response
-    });
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: 'Please refresh the page and try again'
+      })
+    })
   };
 
   const updateComments = (e) => {
     setComments(e.target.value)
-  } 
+  }
 
   const sendMessage = () => {
     const data = {
@@ -170,9 +178,17 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
           message: 'Your message has been sent'
         })
         setComments("")
+      } else {
+        throw new Error(response)
       }
-      // TODO: Error response
-    });
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: 'Please refresh the page and try again'
+      })
+    })
   }
 
   return (
@@ -191,7 +207,7 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
             value={newUsername}
             onChange={setNewUsername}
           />
-          <Button onClick={requestClaimUserName}>Submit request</Button>
+          <Button onClick={requestClaimUserName} disabled={newUsername.length===0}>Submit request</Button>
         </Stack>
       </Modal>
 
@@ -208,10 +224,10 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
           <Button disabled={selectedUserNameToUpdate === "" ? true : false} onClick={() => setOpened(true)}>Claim username!</Button>
         </Group>
         {/* <Group> */}
-          <Textarea
-            placeholder="Your comment"
-            label="Your comment" onChange={updateComments} value={comments} />
-          <Button disabled={comments.length == 0 ? true : false} onClick={sendMessage}>Submit</Button>
+        <Textarea
+          placeholder="Your comment"
+          label="Your comment" onChange={updateComments} value={comments} />
+        <Button disabled={comments.length == 0 ? true : false} onClick={sendMessage}>Submit</Button>
         {/* </Group> */}
       </Stack>
     </Center>

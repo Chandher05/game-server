@@ -1,23 +1,23 @@
 import socket from './index'
-import { useStoreState } from 'easy-peasy';
+import { getIdTokenOfUser } from '../Firebase/config';
 
 
-export function Login() {
-    const authId = useStoreState((state) => state.authId);
+export async function Login() {
+    const authId = await getIdTokenOfUser()
     socket.emit('login', authId)
 }
 
 // Waiting Screen
-export function GetLobbyUpdates(gameId) {
-    const authId = useStoreState((state) => state.authId);
+export async function GetLobbyUpdates(gameId) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId
     }
     socket.emit('get-lobby-updates', authId, body)
 }
 
-export function StartGame(gameId) {
-    const authId = useStoreState((state) => state.authId);
+export async function StartGame(gameId) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId
     }
@@ -25,16 +25,16 @@ export function StartGame(gameId) {
 }
 
 // Game common
-export function GetGameUpdates(gameId) {
-    const authId = useStoreState((state) => state.authId);
+export async function GetGameUpdates(gameId) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId
     }
     socket.emit('get-game-updates', authId, body)
 }
 
-export function DropCards(gameId, selected, type) {
-    const authId = useStoreState((state) => state.authId);
+export async function DropCards(gameId, selected, type) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId,
         selected: selected,
@@ -43,24 +43,24 @@ export function DropCards(gameId, selected, type) {
     socket.emit('drop-cards', authId, body)
 }
 
-export function Declare(gameId) {
-    const authId = useStoreState((state) => state.authId);
+export async function Declare(gameId) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId
     }
     socket.emit('declare', authId, body)
 }
 
-export function LeaveGame(gameId) {
-    const authId = useStoreState((state) => state.authId);
+export async function LeaveGame(gameId) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId
     }
     socket.emit('leave-game', authId, body)
 }
 
-export function Reactions(gameId, data) {
-    const authId = useStoreState((state) => state.authId);
+export async function Reactions(gameId, data) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId,
         data: data
@@ -69,24 +69,24 @@ export function Reactions(gameId, data) {
 }
 
 // Game admin
-export function NextRound(gameId) {
-    const authId = useStoreState((state) => state.authId);
+export async function NextRound(gameId) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId
     }
     socket.emit('next-round', authId, body)
 }
 
-export function RestartGame(gameId) {
-    const authId = useStoreState((state) => state.authId);
+export async function RestartGame(gameId) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId
     }
     socket.emit('restart-game', authId, body)
 }
 
-export function RemovePlayer(gameId, userId) {
-    const authId = useStoreState((state) => state.authId);
+export async function RemovePlayer(gameId, userId) {
+    const authId = await getIdTokenOfUser()
     const body = {
         gameId: gameId,
         userId: userId
