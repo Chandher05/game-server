@@ -4,6 +4,7 @@ import { Button, Select, Modal, SegmentedControl, Center, Stack, Text, Group, Ac
 import { useStoreState } from 'easy-peasy';
 import { IconPencil } from '@tabler/icons';
 import { showNotification } from '@mantine/notifications';
+import { StatsControls } from './Stats'
 
 function Account() {
   const [profileData, setProfileData] = useState([]);
@@ -47,6 +48,7 @@ function Account() {
     // Can we add send message also in this page?
     <div>
       <Stats profileData={profileData} playerUserName={playerUserName} setProfileUserName={setProfileUserName} editDisabled={editDisabled} setEditDisabled={setEditDisabled} />
+
       <ClaimUserName userNames={userNames} profileData={profileData} selectedUserNameToUpdate={selectedUserNameToUpdate} setSelectedUserNameToUpdate={setSelectedUserNameToUpdate} />
     </div>
   )
@@ -98,13 +100,7 @@ function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, 
           }
         </Group>
         <Text>Email: {profileData.email}</Text>
-        <Group>
-          <Text>Wins: {profileData.totalWins}</Text>
-          <Text>Declares: {profileData.totalDeclares}</Text>
-          <Text>+50's: {profileData.totalFifties}</Text>
-          <Text>-25's: {profileData.totalPairs}</Text>
-        </Group>
-        <Text>Total games: {profileData.totalGames}</Text>
+        <StatsControls statValues={profileData}></StatsControls>
       </Stack>
     </Center>
   )
@@ -193,6 +189,7 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
 
   return (
     <Center>
+
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
@@ -207,7 +204,7 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
             value={newUsername}
             onChange={setNewUsername}
           />
-          <Button onClick={requestClaimUserName} disabled={newUsername.length===0}>Submit request</Button>
+          <Button onClick={requestClaimUserName} disabled={newUsername.length === 0}>Submit request</Button>
         </Stack>
       </Modal>
 

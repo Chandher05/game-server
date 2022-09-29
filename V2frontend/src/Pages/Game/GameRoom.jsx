@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu } from "@mantine/core";
+import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu, Grid } from "@mantine/core";
 import { IconCheck, IconCopy, IconMessageCircle, IconClockHour4, IconBrandGoogleOne, IconWorld, IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
@@ -42,10 +42,30 @@ function GameRoom() {
   })
 
   return (
-    <>
-      <Text>This is game room</Text>
-      <Button onClick={() => LeaveGame(GameCode)}>Leave game</Button>
-    </>
+    <div style={{ padding: '80px' }}>
+      <Grid grow>
+        <Grid.Col span={8}>
+          <Text>This is game room</Text>
+        </Grid.Col>
+        <Grid.Col span={4}>
+          <Button onClick={() => LeaveGame(GameCode)}>Leave game</Button>
+        </Grid.Col>
+
+        <Grid.Col span={4} style={{ minHeight: '200px' }}>
+          Table
+        </Grid.Col>
+        <Grid.Col span={4} style={{ minHeight: '200px' }}>
+          Deck
+        </Grid.Col>
+        <Grid.Col span={4} style={{ minHeight: '200px' }}>
+          Players
+        </Grid.Col>
+
+        <Grid.Col span={12}>
+          Your Cards and Buttons
+        </Grid.Col>
+      </Grid>
+    </div>
   )
 }
 
