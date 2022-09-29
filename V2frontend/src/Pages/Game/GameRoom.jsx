@@ -1,11 +1,44 @@
 import { useState, useEffect } from 'react';
-import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu, Grid } from "@mantine/core";
-import { IconCheck, IconCopy, IconMessageCircle, IconClockHour4, IconBrandGoogleOne, IconWorld, IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
+import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Switch, Text } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetGameUpdates, LeaveGame } from '../../Providers/Socket/emitters'
-import { CommonGameData } from '../../Providers/Socket/listeners'
+import { CommonGameData } from '../../Providers/Socket/listeners';
+import { IconAlertCircle } from '@tabler/icons';
+
+
+
+//MockData for Players 
+const playerData = [
+  {
+    "username": "Sujith",
+    "description": <Image width={'10px'} src={'../../../public/Cards/1B.svg'}></Image>,
+    "score": 34
+  },
+  {
+    "username": "Jayasurya",
+    "description": <Image width={'10px'} src={'../../../public/Cards/1B.svg'}></Image>,
+    "score": 34
+  },
+  {
+    "username": "Lipi",
+    "description": <Image width={'10px'} src={'../../../public/Cards/1B.svg'}></Image>,
+    "score": 34
+  },
+  {
+    "username": "Anjali",
+    "description": <Image width={'10px'} src={'../../../public/Cards/1B.svg'}></Image>,
+    "score": 34
+  },
+  {
+    "username": "Sravanth",
+    "description": <Image width={'10px'} src={'../../../public/Cards/1B.svg'}></Image>,
+    "score": 34
+  }
+];
+
+
 
 function GameRoom() {
   let params = useParams()
@@ -45,24 +78,47 @@ function GameRoom() {
     <div style={{ padding: '80px' }}>
       <Grid grow>
         <Grid.Col span={8}>
-          <Text>This is game room</Text>
+          <Alert icon={<IconAlertCircle size={16} />} title="Sujith's Turn" radius="md">
+            Picked from the table
+          </Alert>
         </Grid.Col>
         <Grid.Col span={4}>
           <Button onClick={() => LeaveGame(GameCode)}>Leave game</Button>
         </Grid.Col>
-
         <Grid.Col span={4} style={{ minHeight: '200px' }}>
-          Table
+          <Image width={'200px'} src={'../../../public/Cards/2H.svg'}></Image>
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '200px' }}>
-          Deck
+          <Image width={'200px'} src={'../../../public/Cards/1B.svg'}></Image>
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '200px' }}>
-          Players
+          <PlayersCards data={playerData} />
         </Grid.Col>
 
         <Grid.Col span={12}>
-          Your Cards and Buttons
+          <Box
+            sx={(theme) => ({
+              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+              textAlign: 'center',
+              padding: theme.spacing.xl,
+              borderRadius: theme.radius.md,
+              cursor: 'pointer',
+
+              '&:hover': {
+                backgroundColor:
+                  theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
+              },
+            })}
+          >
+            <Grid>
+              <Grid.Col md={1}>  <Image width={'100px'} src={'../../../public/Cards/2H.svg'}></Image></Grid.Col>
+              <Grid.Col md={1}>  <Image width={'100px'} src={'../../../public/Cards/2S.svg'}></Image></Grid.Col>
+              <Grid.Col md={1}>  <Image width={'100px'} src={'../../../public/Cards/TH.svg'}></Image></Grid.Col>
+              <Grid.Col md={1}>  <Image width={'100px'} src={'../../../public/Cards/4C.svg'}></Image></Grid.Col>
+              <Grid.Col md={1}>  <Image width={'100px'} src={'../../../public/Cards/KS.svg'}></Image></Grid.Col>
+
+            </Grid>
+          </Box>
         </Grid.Col>
       </Grid>
     </div>
@@ -70,3 +126,60 @@ function GameRoom() {
 }
 
 export default GameRoom;
+
+
+// SubComponents for GameRoom - 
+
+
+const useStyles = createStyles((theme) => ({
+  card: {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+  },
+
+  item: {
+    '& + &': {
+      paddingTop: theme.spacing.sm,
+      marginTop: theme.spacing.sm,
+      borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
+        }`,
+    },
+  },
+
+  switch: {
+    '& *': {
+      cursor: 'pointer',
+    },
+  },
+
+  title: {
+    lineHeight: 1,
+  },
+}));
+
+
+export function PlayersCards({ data }) {
+  const { classes } = useStyles();
+
+  const items = data.map((item) => (
+    <Group position="apart" className={classes.item} noWrap spacing="xl">
+      <div>
+        <Text>{item.username}</Text>
+        <Text size="xs" color="dimmed">
+          {item.description}
+        </Text>
+      </div>
+      <Text size="md" color="dimmed">
+        {item.score}
+      </Text>
+    </Group>
+  ));
+
+  return (
+    <Card withBorder radius="md" p="md" className={classes.card}>
+      <Text size="lg" className={classes.title} weight={500}>
+        Players
+      </Text>
+      {items}
+    </Card>
+  );
+}
