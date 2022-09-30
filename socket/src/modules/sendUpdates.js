@@ -104,12 +104,12 @@ exports.emitDataToAllInGame = (gameId) => {
 
                 if (member.isEliminated) {
                     allPlayers[memberUserId]["isEliminated"] = true
-                    allPlayers[memberUserId]["cardsInHand"] = null
+                    allPlayers[memberUserId]["cardsInHand"] = 0
                     allPlayers[memberUserId]["roundScore"] = null
                 } else {
                     allPlayers[memberUserId]["isEliminated"] = false
                     if (game.isRoundComplete) {
-                        allPlayers[memberUserId]["cardsInHand"] = null
+                        allPlayers[memberUserId]["cardsInHand"] = 0
                         allPlayers[memberUserId]["roundScore"] = calculateScore(member.currentCards)
                     } else {
                         allPlayers[memberUserId]["cardsInHand"] = member.currentCards.length
@@ -155,9 +155,9 @@ exports.emitDataToAllInGame = (gameId) => {
                 discardPile: game.previousDroppedCards,
                 // playerStatus: "", // PLAYING, WAITING, SPECTATING
                 isRoundComplete: game.isRoundComplete,
-                playerDeclaredType: game.isRoundComplete ? playerDeclaredType : null, // PAIR, LOWEST, SAME, HIGHEST
+                playerDeclaredType: game.isRoundComplete ? playerDeclaredType : "", // PAIR, LOWEST, SAME, HIGHEST
                 isGameComplete: game.isEnded,
-                waitingPlayers: game.isEnded ? waitingPlayers : null,
+                waitingPlayers: game.isEnded ? waitingPlayers : [],
                 // currentPlayer: game.currentPlayer.toString(),
                 players: arrOfPlayers,
                 // isAdmin: null
