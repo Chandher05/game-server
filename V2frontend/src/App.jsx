@@ -5,7 +5,7 @@ import { useStoreRehydrated, StoreProvider } from "easy-peasy";
 import { store } from './Providers/Store';
 import { Loader } from "@mantine/core";
 import { NotificationsProvider } from '@mantine/notifications';
-import socket from './Providers/Socket/index'
+import OfflineDetector from '../src/Pages/Login/OfflineDetector'
 
 function WaitForStateRehydration({ children }) {
   const isRehydrated = useStoreRehydrated();
@@ -23,6 +23,7 @@ function App() {
         <NotificationsProvider>
           <StoreProvider store={store}>
             <WaitForStateRehydration>
+              <OfflineDetector />
               <PageRoutes></PageRoutes>
             </WaitForStateRehydration>
           </StoreProvider>
