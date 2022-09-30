@@ -9,9 +9,15 @@ import { showNotification } from '@mantine/notifications';
 
 function Gameroom() {
   const Navigate = useNavigate();
-  const [gameCode, setGameCode] = useState([]);
+  const [gameCode, setGameCode] = useState("");
   const [opened, setOpened] = useState(false);
   const authId = useStoreState((state) => state.authId);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const queryGamecode = params.get('gamecode');
+    setGameCode(queryGamecode)
+  }, [])
 
   const createGame = (maxScore, scoreWhenEndWithPair, scoreWhenWrongCall, canDeclareFirstRound, autoplayTimer, isPublicGame) => {
     const data = {
@@ -73,11 +79,11 @@ function Gameroom() {
             let gameId = json.gameId
             if (json.isStarted) {
               Navigate(`/game/${gameId}`)
-              } else {
-                Navigate(`/waiting/${gameId}`)
+            } else {
+              Navigate(`/waiting/${gameId}`)
             }
           })
-        }  else {
+        } else {
           throw new Error(response)
         }
       }).catch((error) => {
@@ -105,6 +111,7 @@ function Gameroom() {
   }
 
 
+  // console.log(window.location.origin)
   return (
     <>
       <CreateGameModal opened={opened} setOpened={setOpened} createGame={createGame} />
@@ -112,7 +119,7 @@ function Gameroom() {
         <Stack >
           <Button color={"green"} size="lg" onClick={() => setOpened(true)}><IconBrandAppleArcade />&nbsp; Create Game</Button>
           <br></br>
-          <Input placeholder="Game ID" size="lg" onChange={changeGameCode}></Input>
+          <Input placeholder="Game ID" size="lg" onChange={changeGameCode} value={gameCode}></Input>
           <Group>
             <Button size="lg" onClick={() => joinGame(gameCode)} ><IconFriends />&nbsp; Join Game</Button>
             <Button size="lg" color={'yellow'} onClick={spectateGame}><IconEye />&nbsp; Spectate Game</Button>

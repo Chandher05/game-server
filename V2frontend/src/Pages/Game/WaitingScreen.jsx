@@ -100,6 +100,14 @@ function DisplayData() {
               <CopyGameCode GameCode={GameCode} />
             </Group>
           </Title>
+          <Title order={4}>
+            <Group position='apart'>
+              <Text color={'blue'}>
+                {window.location.origin + "?gamecode=" + GameCode}
+              </Text>
+              <CopyGameCode GameCode={window.location.origin + "?gamecode=" + GameCode} />
+            </Group>
+          </Title>
           <Title order={5} color="grey">Share this with your friends for them to join.</Title>
           <Title order={3}>Friends who have joined</Title>
           {data.players ? <ListPlayers data={data}></ListPlayers> : ""}
