@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Switch, Text } from "@mantine/core";
+import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Switch, Text, Center } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
@@ -11,7 +11,7 @@ const sampleData =
 {
   "lastPlayedUser": "Jayasurya17",
   "lastPlayedAction": "will start the game",
-  "discardPile": [],
+  "discardPile": [1, 1, 1],
   "isRoundComplete": false,
   "playerDeclaredType": "",
   "isGameComplete": false,
@@ -187,7 +187,7 @@ function GameRoom() {
   })
 
   let discardPile = commonData["discardPile"].map((element) => {
-    return <Image key={element} width={'200px'} src={`../../../public/Cards/${getCardImage(element)}`}></Image>
+    return <Image key={element} width={'100px'} src={`../../../public/Cards/${getCardImage(element)}`}></Image>
   })
 
   return (
@@ -213,10 +213,12 @@ function GameRoom() {
           }
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '100px' }}>
-          {discardPile}
+          <Group spacing={'xs'}>{discardPile}</Group>
         </Grid.Col>
-        <Grid.Col span={4} style={{ minHeight: '200px' }}>
-          <Image width={'200px'} src={'../../../public/Cards/1B.svg'}></Image>
+        <Grid.Col span={4} style={{ minHeight: '200px' }} >
+          <Center>
+            <Image width={'100px'} src={'../../../public/Cards/1B.svg'}></Image>
+          </Center>
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '200px' }}>
           <PlayersCards data={commonData.players} isRoundComplete={commonData.isRoundComplete} isGameComplete={commonData.isGameComplete} />
