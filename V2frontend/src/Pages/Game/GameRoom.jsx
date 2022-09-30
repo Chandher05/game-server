@@ -5,69 +5,68 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetGameUpdates, LeaveGame, NextRound, RestartGame } from '../../Providers/Socket/emitters'
 import { CommonGameData, CardsInHand } from '../../Providers/Socket/listeners';
-import { IconAlertCircle } from '@tabler/icons';
-
-
-// Sample game data
-// {
-//   "lastPlayedUser": "Jayasurya17",
-//   "lastPlayedAction": "will start the game",
-//   "discardPile": [],
-//   "isRoundComplete": false,
-//   "playerDeclaredType": "",
-//   "isGameComplete": false,
-//   "waitingPlayers": [],
-//   "players": [
-//       {
-//           "userName": "Jayasurya17",
-//           "isAdmin": true,
-//           "hasPlayerLeft": false,
-//           "isEliminated": false,
-//           "cardsInHand": 6,
-//           "roundScore": null,
-//           "totalScore": 75,
-//           "previousScores": [12, 30, 25, 0, 13],
-//           "userId": "63176f6e7cef672348864eeb"
-//       },
-//       {
-//           "userName": "Under The Lamp Club",
-//           "isAdmin": false,
-//           "hasPlayerLeft": false,
-//           "isEliminated": false,
-//           "cardsInHand": 5,
-//           "roundScore": null,
-//           "totalScore": 20,
-//           "previousScores": [0, 0, 0, 20, 0],
-//           "userId": "63255f7295b9972f5cbb26ab"
-//       },
-//       {
-//           "userName": "User left game",
-//           "isAdmin": false,
-//           "hasPlayerLeft": true,
-//           "isEliminated": false,
-//           "cardsInHand": 5,
-//           "roundScore": null,
-//           "totalScore": 80,
-//           "previousScores": [10, 20, 30, 10, 10],
-//           "userId": "63255f7295b9972f5cb956ab"
-//       },
-//       {
-//           "userName": "User eliminated",
-//           "isAdmin": false,
-//           "hasPlayerLeft": false,
-//           "isEliminated": true,
-//           "cardsInHand": 5,
-//           "roundScore": null,
-//           "totalScore": 120,
-//           "previousScores": [40, 40, 40],
-//           "userId": "63255f729512972f5cbb26ab"
-//       }
-//   ],
-//   "canPlayersDeclare": true,
-//   "playerStatus": "PLAYING",
-//   "isAdmin": false,
-//   "currentPlayer": false"
-// }
+import { IconPlayCard } from '@tabler/icons';
+// sample data
+const sampleData =
+{
+  "lastPlayedUser": "Jayasurya17",
+  "lastPlayedAction": "will start the game",
+  "discardPile": [],
+  "isRoundComplete": false,
+  "playerDeclaredType": "",
+  "isGameComplete": false,
+  "waitingPlayers": [],
+  "players": [
+    {
+      "userName": "Jayasurya17",
+      "isAdmin": true,
+      "hasPlayerLeft": false,
+      "isEliminated": false,
+      "cardsInHand": 6,
+      "roundScore": null,
+      "totalScore": 75,
+      "previousScores": [12, 30, 25, 0, 13],
+      "userId": "63176f6e7cef672348864eeb"
+    },
+    {
+      "userName": "Under The Lamp Club",
+      "isAdmin": false,
+      "hasPlayerLeft": false,
+      "isEliminated": false,
+      "cardsInHand": 5,
+      "roundScore": null,
+      "totalScore": 20,
+      "previousScores": [0, 0, 0, 20, 0],
+      "userId": "63255f7295b9972f5cbb26ab"
+    },
+    {
+      "userName": "User left game",
+      "isAdmin": false,
+      "hasPlayerLeft": true,
+      "isEliminated": false,
+      "cardsInHand": 5,
+      "roundScore": null,
+      "totalScore": 80,
+      "previousScores": [10, 20, 30, 10, 10],
+      "userId": "63255f7295b9972f5cb956ab"
+    },
+    {
+      "userName": "User eliminated",
+      "isAdmin": false,
+      "hasPlayerLeft": false,
+      "isEliminated": true,
+      "cardsInHand": 5,
+      "roundScore": null,
+      "totalScore": 120,
+      "previousScores": [40, 40, 40],
+      "userId": "63255f729512972f5cbb26ab"
+    }
+  ],
+  "canPlayersDeclare": true,
+  "playerStatus": "PLAYING",
+  "isAdmin": false,
+  "currentPlayer": false
+}
 
 
 // Valid values
@@ -143,8 +142,10 @@ function GameRoom() {
   CommonGameData((status, data) => {
     if (status == "LEAVE_GAME") {
       Navigate(`/`)
-    } else if (status == "SUCCESS") {``
-      setCommonData(data)
+    } else if (status == "SUCCESS") {
+      ``
+      // setCommonData(data)
+      setCommonData(sampleData)
     }
   })
 
@@ -193,7 +194,7 @@ function GameRoom() {
             // use commonData.playerDeclaredType to do animations
             // Valid values empty string, PAIR, LOWEST, SAME, HIGHEST
           }
-          <Alert icon={<IconAlertCircle size={16} />} title={commonData.lastPlayedUser} radius="md">
+          <Alert icon={<IconPlayCard size={'2rem'} />} title={commonData.lastPlayedUser} radius="md">
             {commonData.lastPlayedAction}
           </Alert>
         </Grid.Col>
@@ -207,7 +208,7 @@ function GameRoom() {
                 <></>
           }
         </Grid.Col>
-        <Grid.Col span={4} style={{ minHeight: '200px' }}>
+        <Grid.Col span={4} style={{ minHeight: '100px' }}>
           {discardPile}
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '200px' }}>
@@ -234,18 +235,18 @@ function GameRoom() {
           >
             {
               commonData.playerStatus === "PLAYING" ?
-              <Grid>
+                <Grid>
                   {cards}
                 </Grid> :
-              // Show loading icon (Waiting for next game to start)
-                commonData.playerStatus === "WAITING"?
-                <></>:
-                <></>
+                // Show loading icon (Waiting for next game to start)
+                commonData.playerStatus === "WAITING" ?
+                  <></> :
+                  <></>
             }
           </Box>
         </Grid.Col>
       </Grid>
-    </div>
+    </div >
   )
 }
 
@@ -285,7 +286,7 @@ export function PlayersCards({ data, currentPlayer, isRoundComplete, isGameCompl
   const { classes } = useStyles();
 
   const items = data.map((item) => {
-    let cards = Array(item.cardsInHand).fill(<Image width={'10px'} src={'../../../public/Cards/1B.svg'}></Image>)
+    let cards = [...Array(item.cardsInHand)].map((e, i) => { return <Image width={'10px'} src='/Cards/1B.svg' /> });
     // if data.currentPlayer == true highlight player
     return <Group position="apart" className={classes.item} noWrap spacing="xl" key={item.userId}>
       <Text size="md" color={item.isEliminated ? "red" : "dimmed"}>
@@ -297,9 +298,9 @@ export function PlayersCards({ data, currentPlayer, isRoundComplete, isGameCompl
           <Text size="md" color="dimmed">
             {item.roundScore}
           </Text> :
-          <Text size="xs" color="dimmed">
+          <Group spacing={'xs'}>
             {cards}
-          </Text>
+          </Group>
         // Add admin icon if item.isAdmin == true
         // Add left icon if item.hasPlayerLeft == true
       }
