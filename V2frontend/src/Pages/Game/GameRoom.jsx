@@ -11,7 +11,7 @@ const sampleData =
 {
   "lastPlayedUser": "Jayasurya17",
   "lastPlayedAction": "will start the game",
-  "discardPile": [1, 1, 1],
+  "discardPile": [1, 14, 27],
   "isRoundComplete": false,
   "playerDeclaredType": "",
   "isGameComplete": false,
@@ -58,7 +58,7 @@ const sampleData =
       "isAdmin": false,
       "hasPlayerLeft": false,
       "isEliminated": true,
-      "cardsInHand": 5,
+      "cardsInHand": 0,
       "roundScore": null,
       "totalScore": 120,
       "previousScores": [40, 40, 40],
@@ -183,11 +183,13 @@ function GameRoom() {
   }
 
   let cards = cardsInHand.map((element) => {
-    return <Grid.Col md={1} key={element}>  <Image width={'100px'} src={`../../../public/Cards/${getCardImage(element)}`}></Image></Grid.Col>
+    return <Grid.Col md={1} key={element}><SingleCard element={element} /> </Grid.Col>
+
+    // <Image style={{ cursor: 'pointer', }} width={'100px'} src={`../../../public/Cards/${getCardImage(element)}`}></Image>
   })
 
-  let discardPile = commonData["discardPile"].map((element) => {
-    return <Image key={element} width={'100px'} src={`../../../public/Cards/${getCardImage(element)}`}></Image>
+  let discardPile = commonData["discardPile"].map((element, i) => {
+    return <Grid.Col md={1} key={i} >  <Image key={element} width={'100px'} src={`/Cards/${getCardImage(element)}`}></Image> </Grid.Col>
   })
 
   return (
@@ -213,7 +215,7 @@ function GameRoom() {
           }
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '100px' }}>
-          <Group spacing={'xs'}>{discardPile}</Group>
+          <Grid spacing={'xs'}>{discardPile}</Grid>
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '200px' }} >
           <Center>
@@ -231,7 +233,6 @@ function GameRoom() {
               textAlign: 'center',
               padding: theme.spacing.xl,
               borderRadius: theme.radius.md,
-              cursor: 'pointer',
 
               '&:hover': {
                 backgroundColor:
@@ -294,11 +295,13 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
   const items = data.map((item) => {
     let cards = [...Array(item.cardsInHand)].map((e, i) => { return <Image width={'10px'} src='/Cards/1B.svg' /> });
     // if item.currentPlayer == true highlight player
-    return <Group position="apart" className={classes.item} noWrap spacing="xl" key={item.userId}>
-      <Text size="md" color={item.isEliminated ? "red" : "dimmed"}>
-        {item.totalScore}
-      </Text>
-      <Text>{item.userName}</Text>
+    return <Group position="apart" className={classes.item} noWrap spacing="xl" key={item.userId} style={{ padding: '5px', backgroundColor: item.currentPlayer ? '#06283D' : '' }}>
+      <Group>
+        <Text size="md" color={item.isEliminated ? "#F66B0E" : "dimmed"} p={5}>
+          {item.totalScore}
+        </Text>
+        <Text>{item.userName}</Text>
+      </Group>
       {
         isRoundComplete || isGameComplete ?
           <Text size="md" color="dimmed">
@@ -321,4 +324,24 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
       {items}
     </Card>
   );
+}
+
+
+function SingleCard({ element }) {
+  const [width, setWidth] = useState(true);
+  const getCardImage = (cardNum) => {
+    cardNum -= 1
+    const cardValue = cardNum % 13
+    const cardSuit = parseInt(cardNum / 13)
+    const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"]
+    const suits = ["C", "D", "H", "S"]
+    let image = values[cardValue] + suits[cardSuit] + ".svg"
+    return image
+  }
+
+  // if (!cardsInHand) return <></>;
+  if (width) return <Image onClick={() => setWidth(false)} style={{ cursor: 'pointer', }} width={'100px'} src={`/Cards/${getCardImage(element)}`}></Image>;
+  return <Image onClick={() => setWidth(true)} style={{ cursor: 'pointer', }} width={'105px'} src={`/Cards/${getCardImage(element)}`}></Image>;
+
+
 }
