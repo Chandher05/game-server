@@ -26,6 +26,7 @@ const sampleData =
       "roundScore": null,
       "totalScore": 75,
       "previousScores": [12, 30, 25, 0, 13],
+      "currentPlayer": true,
       "userId": "63176f6e7cef672348864eeb"
     },
     {
@@ -37,6 +38,7 @@ const sampleData =
       "roundScore": null,
       "totalScore": 20,
       "previousScores": [0, 0, 0, 20, 0],
+      "currentPlayer": false,
       "userId": "63255f7295b9972f5cbb26ab"
     },
     {
@@ -48,6 +50,7 @@ const sampleData =
       "roundScore": null,
       "totalScore": 80,
       "previousScores": [10, 20, 30, 10, 10],
+      "currentPlayer": false,
       "userId": "63255f7295b9972f5cb956ab"
     },
     {
@@ -59,6 +62,7 @@ const sampleData =
       "roundScore": null,
       "totalScore": 120,
       "previousScores": [40, 40, 40],
+      "currentPlayer": false,
       "userId": "63255f729512972f5cbb26ab"
     }
   ],
@@ -215,7 +219,7 @@ function GameRoom() {
           <Image width={'200px'} src={'../../../public/Cards/1B.svg'}></Image>
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '200px' }}>
-          <PlayersCards data={commonData.players} currentPlayer={commonData.currentPlayer} isRoundComplete={commonData.isRoundComplete} isGameComplete={commonData.isGameComplete} />
+          <PlayersCards data={commonData.players} isRoundComplete={commonData.isRoundComplete} isGameComplete={commonData.isGameComplete} />
         </Grid.Col>
 
         <Grid.Col span={12}>
@@ -282,12 +286,12 @@ const useStyles = createStyles((theme) => ({
 }));
 
 
-export function PlayersCards({ data, currentPlayer, isRoundComplete, isGameComplete }) {
+export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
   const { classes } = useStyles();
 
   const items = data.map((item) => {
     let cards = [...Array(item.cardsInHand)].map((e, i) => { return <Image width={'10px'} src='/Cards/1B.svg' /> });
-    // if data.currentPlayer == true highlight player
+    // if item.currentPlayer == true highlight player
     return <Group position="apart" className={classes.item} noWrap spacing="xl" key={item.userId}>
       <Text size="md" color={item.isEliminated ? "red" : "dimmed"}>
         {item.totalScore}

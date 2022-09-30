@@ -121,6 +121,7 @@ exports.emitDataToAllInGame = (gameId) => {
                     hasCurrentPlayerDroppedCards = member.hasPlayerDroppedCards
                 }
 
+                allPlayers[memberUserId]["currentPlayer"] = memberUserId.toString() === game.currentPlayer.toString() ? true : false
                 allPlayers[memberUserId]["totalScore"] = member.score
                 allPlayers[memberUserId]["previousScores"] = member.roundScores
                 playerData = allPlayers[memberUserId]
