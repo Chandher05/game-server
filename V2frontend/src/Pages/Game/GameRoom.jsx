@@ -1,12 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Switch, Text, Center } from "@mantine/core";
+import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Switch, Text, Center, Menu, ActionIcon, Stack } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetGameUpdates, LeaveGame, NextRound, RestartGame, DropCards, Declare } from '../../Providers/Socket/emitters'
 import { CommonGameData, CardsInHand } from '../../Providers/Socket/listeners';
-import { IconPlayCard, IconUser, IconRun } from '@tabler/icons';
+import { IconPlayCard, IconUser, IconRun, IconSettings, IconMessageCircle, IconTrash, IconArrowsLeftRight, IconLogout } from '@tabler/icons';
+
 // sample data
+
+const getCardImage = (cardNum) => {
+  cardNum -= 1
+  const cardValue = cardNum % 13
+  const cardSuit = parseInt(cardNum / 13)
+  const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"]
+  const suits = ["C", "D", "H", "S"]
+  let image = values[cardValue] + suits[cardSuit] + ".svg"
+  return image
+}
+
+
 const sampleData =
 {
   "lastPlayedUser": "Jayasurya17",
@@ -136,7 +149,7 @@ function GameRoom() {
     if (status == "LEAVE_GAME") {
       Navigate(`/`)
     } else if (status == "SUCCESS") {
-      data = sampleData
+      // data = sampleData
       setCommonData(data)
       // if (!data.currentPlayer) {
       //   setSelected([])
@@ -154,7 +167,7 @@ function GameRoom() {
     if (!commonData.currentPlayer) {
       return
     }
-    let temp = selected
+    let temp = JSON.parse(JSON.stringify(selected))
     if (selected.length == 0) {
       temp.push(cardValue)
     } else if (selected.includes(cardValue)) {
@@ -167,15 +180,6 @@ function GameRoom() {
     setSelected(temp)
   }
 
-  const getCardImage = (cardNum) => {
-    cardNum -= 1
-    const cardValue = cardNum % 13
-    const cardSuit = parseInt(cardNum / 13)
-    const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"]
-    const suits = ["C", "D", "H", "S"]
-    let image = values[cardValue] + suits[cardSuit] + ".svg"
-    return image
-  }
 
   // if commonData.canPlayersDeclare == true, commonData.currentPlayer == true and function returns < 15, enable declare button
   const calculateScore = () => {
@@ -208,13 +212,14 @@ function GameRoom() {
   })
 
   let discardPile = commonData["discardPile"].map((element, i) => {
-    return <Grid.Col md={1} key={i} >  <Image key={element} width={'100px'} src={`/Cards/${getCardImage(element)}`}></Image> </Grid.Col>
+    return <Image key={element} width={'100px'} src={`/Cards/${getCardImage(element)}`}></Image>
   })
 
   return (
-    <div style={{ padding: '80px' }}>
+    <div style={{ padding: '20px' }}>
       <Grid grow>
-        <Grid.Col span={8}>
+
+        <Grid.Col span={11}>
           {
             // use commonData.playerDeclaredType to do animations
             // Valid values empty string, PAIR, LOWEST, SAME, HIGHEST
@@ -223,24 +228,17 @@ function GameRoom() {
             {commonData.lastPlayedAction}
           </Alert>
         </Grid.Col>
-        <Grid.Col span={4}>
-          <Button onClick={() => LeaveGame(GameCode)}>Leave game</Button>
-          {
-            commonData.isGameComplete && commonData.isAdmin ?
-              <Button onClick={() => RestartGame(GameCode)}>Start new game</Button> :
-              commonData.isRoundComplete && commonData.isAdmin ?
-                <Button onClick={() => NextRound(GameCode)}>Start next round</Button> :
-                <></>
-          }
+        <Grid.Col span={1}>
+          <MenuActions LeaveGame={LeaveGame}></MenuActions>
         </Grid.Col>
-        <Grid.Col span={4} style={{ minHeight: '100px' }}>
-          <Grid spacing={'xs'}>{discardPile}</Grid>
-        </Grid.Col>
-        <Grid.Col span={4} style={{ minHeight: '200px' }} >
-          <Center>
+        <Grid.Col span={4} >
+          <Group>
+            {discardPile}
             <Image width={'100px'} src={'/Cards/1B.svg'}></Image>
-          </Center>
+
+          </Group>
         </Grid.Col>
+
         <Grid.Col span={4} style={{ minHeight: '200px' }}>
           <PlayersCards data={commonData.players} isRoundComplete={commonData.isRoundComplete} isGameComplete={commonData.isGameComplete} />
         </Grid.Col>
@@ -252,42 +250,55 @@ function GameRoom() {
               textAlign: 'center',
               padding: theme.spacing.xl,
               borderRadius: theme.radius.md,
+              minHeight: '200px'
 
-              '&:hover': {
-                backgroundColor:
-                  theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-              },
             })}
           >
             {
               commonData.playerStatus === "PLAYING" ?
-                <Grid>
-                  <Button
-                    hidden={commonData.currentPlayer && cardsInHand.length == 6 ? false : true}
-                    // disabled={selected.length == 0}
-                    onClick={() => DropCards(GameCode, selected, 'Start')}>
-                    Drop Cards
-                  </Button>
-                  <Button
-                    hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
-                    // disabled={selected.length == 0}
-                    onClick={() => DropCards(GameCode, selected, 'Table')}>
-                    Pick from table
-                  </Button>
-                  <Button
-                    hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
-                    // disabled={selected.length == 0}
-                    onClick={() => DropCards(GameCode, selected, 'Deck')}>
-                    Pick from deck
-                  </Button>
-                  {cards}
+                <>
+                  <Stack>
+                    <Group grow>
+                      <Button
+                        hidden={commonData.currentPlayer && cardsInHand.length == 6 ? false : true}
+                        disabled={selected.length == 0}
+                        onClick={() => DropCards(GameCode, selected, 'Start')}>
+                        Drop Cards
+                      </Button>
+                      <Button
+                        hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
+                        disabled={selected.length == 0}
+                        onClick={() => DropCards(GameCode, selected, 'Table')}>
+                        Pick from table
+                      </Button>
+                      <Button
+                        hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
+                        disabled={selected.length == 0}
+                        onClick={() => DropCards(GameCode, selected, 'Deck')}>
+                        Pick from deck
+                      </Button>
+                      <Button
+                        hidden={commonData.canPlayersDeclare && commonData.currentPlayer && calculateScore() < 15 ? false : true}
+                        onClick={() => Declare(GameCode)}>
+                        Declare
+                      </Button>
+                      {
+                        commonData.isGameComplete && commonData.isAdmin ?
 
-                  <Button
-                    hidden={commonData.canPlayersDeclare && commonData.currentPlayer && calculateScore() < 15 ? false : true}
-                    onClick={() => Declare(GameCode)}>
-                    Declare
-                  </Button>
-                </Grid> :
+                          <Button onClick={() => RestartGame(GameCode)}>Start new game</Button> :
+                          commonData.isRoundComplete && commonData.isAdmin ?
+
+                            <Button onClick={() => NextRound(GameCode)}>Start next round</Button> :
+                            <></>
+                      }
+                    </Group>
+                    <Grid>
+                      {cards}
+                    </Grid>
+                  </Stack>
+
+                </>
+                :
                 // Show loading icon (Waiting for next game to start)
                 commonData.playerStatus === "WAITING" ?
                   <></> :
@@ -343,6 +354,16 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
           {item.totalScore}
         </Text>
         <Text>{item.userName}</Text>
+        {
+          item.isAdmin ?
+            <IconUser /> :
+            <></>
+        }
+        {
+          item.hasPlayerLeft ?
+            <IconRun /> :
+            <></>
+        }
       </Group>
       {
         isRoundComplete || isGameComplete ?
@@ -352,16 +373,6 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
           <Group spacing={'xs'}>
             {cards}
           </Group>
-      }
-      {
-        item.isAdmin ?
-          <IconUser /> :
-          <></>
-      }
-      {
-        item.hasPlayerLeft ?
-          <IconRun /> :
-          <></>
       }
     </Group>
   });
@@ -394,4 +405,20 @@ function SingleCard({ element }) {
   return <Image onClick={() => setWidth(true)} style={{ cursor: 'pointer', }} width={'105px'} src={`/Cards/${getCardImage(element)}`}></Image>;
 
 
+}
+
+
+function MenuActions({ LeaveGame, RestartGame, GameCode, commonData }) {
+  return (
+    <Menu shadow="md" width={200} position={'right-start'}>
+      <Menu.Target>
+        <ActionIcon style={{ padding: '4px' }} color={'red'} variant='filled' size={'lg'}><IconLogout size={34}></IconLogout></ActionIcon>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Item color="red" icon={<IconSettings size={14} />} onClick={() => LeaveGame(GameCode)}>
+          Quit Game
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
+  );
 }
