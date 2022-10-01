@@ -18,7 +18,7 @@ export function LobbyListener(cb) {
 
 export function CommonGameData(cb) {
     socket.on('common-game-data', (status, data, err) => {
-        if (data == "ERROR") {
+        if (status == "ERROR") {
             showNotification({
                 variant: 'outline',
                 color: 'red',

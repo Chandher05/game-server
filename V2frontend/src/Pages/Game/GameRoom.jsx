@@ -3,9 +3,9 @@ import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Switch, Tex
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
-import { GetGameUpdates, LeaveGame, NextRound, RestartGame } from '../../Providers/Socket/emitters'
+import { GetGameUpdates, LeaveGame, NextRound, RestartGame, DropCards, Declare } from '../../Providers/Socket/emitters'
 import { CommonGameData, CardsInHand } from '../../Providers/Socket/listeners';
-import { IconPlayCard } from '@tabler/icons';
+import { IconPlayCard, IconUser, IconRun } from '@tabler/icons';
 // sample data
 const sampleData =
 {
@@ -69,7 +69,7 @@ const sampleData =
   "canPlayersDeclare": true,
   "playerStatus": "PLAYING",
   "isAdmin": false,
-  "currentPlayer": false
+  "currentPlayer": true
 }
 
 
@@ -106,19 +106,8 @@ function GameRoom() {
   let GameCode = params.gameId;
   const Navigate = useNavigate();
   const [cardsInHand, setCardsInHand] = useState([]);
-  const [commonData, setCommonData] = useState({
-    "lastPlayedUser": "",
-    "lastPlayedAction": "",
-    "discardPile": [],
-    "isRoundComplete": false,
-    "playerDeclaredType": null,
-    "isGameComplete": false,
-    "waitingPlayers": [],
-    "currentPlayer": "",
-    "players": [],
-    "playerStatus": "SPECTATING",
-    "isAdmin": false
-  });
+  const [selected, setSelected] = useState([]);
+  const [commonData, setCommonData] = useState(sampleData);
   const authId = useStoreState((state) => state.authId);
 
   useEffect(() => {
@@ -147,9 +136,11 @@ function GameRoom() {
     if (status == "LEAVE_GAME") {
       Navigate(`/`)
     } else if (status == "SUCCESS") {
-      ``
-      // setCommonData(data)
-      setCommonData(sampleData)
+      data = sampleData
+      setCommonData(data)
+      // if (!data.currentPlayer) {
+      //   setSelected([])
+      // }
     }
   })
 
@@ -158,6 +149,23 @@ function GameRoom() {
       setCardsInHand(data)
     }
   })
+
+  const selectCards = (cardValue) => {
+    if (!commonData.currentPlayer) {
+      return
+    }
+    let temp = selected
+    if (selected.length == 0) {
+      temp.push(cardValue)
+    } else if (selected.includes(cardValue)) {
+      temp.pop(cardValue)
+    } else if ((selected[0] - cardValue) % 13 == 0) {
+      temp.push(cardValue)
+    } else {
+      temp = [cardValue]
+    }
+    setSelected(selected)
+  }
 
   const getCardImage = (cardNum) => {
     cardNum -= 1
@@ -183,7 +191,18 @@ function GameRoom() {
   }
 
   let cards = cardsInHand.map((element) => {
-    return <Grid.Col md={1} key={element}><SingleCard element={element} /> </Grid.Col>
+    element = parseInt(element)
+    return (
+      <Grid.Col md={1} key={element}>
+        <Image
+          onClick={() => selectCards(element)}
+          style={{ cursor: 'pointer', }}
+          width={selected.includes(element) ? '105px' : '100px'}
+          src={`/Cards/${getCardImage(element)}`}
+          key={element} />
+      </Grid.Col>
+    )
+    // return <Grid.Col md={1} key={element}><SingleCard element={element} /> </Grid.Col>
 
     // <Image style={{ cursor: 'pointer', }} width={'100px'} src={`../../../public/Cards/${getCardImage(element)}`}></Image>
   })
@@ -219,7 +238,7 @@ function GameRoom() {
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '200px' }} >
           <Center>
-            <Image width={'100px'} src={'../../../public/Cards/1B.svg'}></Image>
+            <Image width={'100px'} src={'/Cards/1B.svg'}></Image>
           </Center>
         </Grid.Col>
         <Grid.Col span={4} style={{ minHeight: '200px' }}>
@@ -243,7 +262,31 @@ function GameRoom() {
             {
               commonData.playerStatus === "PLAYING" ?
                 <Grid>
+                  <Button
+                    hidden={commonData.currentPlayer && cardsInHand.length == 6 ? false : true}
+                    // disabled={selected.length == 0}
+                    onClick={() => DropCards(GameCode, selected, 'Start')}>
+                    Drop Cards
+                  </Button>
+                  <Button
+                    hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
+                    // disabled={selected.length == 0}
+                    onClick={() => DropCards(GameCode, selected, 'Table')}>
+                    Pick from table
+                  </Button>
+                  <Button
+                    hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
+                    // disabled={selected.length == 0}
+                    onClick={() => DropCards(GameCode, selected, 'Deck')}>
+                    Pick from deck
+                  </Button>
                   {cards}
+
+                  <Button
+                    hidden={commonData.canPlayersDeclare && commonData.currentPlayer && calculateScore() < 15 ? false : true}
+                    onClick={() => Declare(GameCode)}>
+                    Declare
+                  </Button>
                 </Grid> :
                 // Show loading icon (Waiting for next game to start)
                 commonData.playerStatus === "WAITING" ?
@@ -294,7 +337,6 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
 
   const items = data.map((item) => {
     let cards = [...Array(item.cardsInHand)].map((e, i) => { return <Image width={'10px'} src='/Cards/1B.svg' /> });
-    // if item.currentPlayer == true highlight player
     return <Group position="apart" className={classes.item} noWrap spacing="xl" key={item.userId} style={{ padding: '5px', backgroundColor: item.currentPlayer ? '#06283D' : '' }}>
       <Group>
         <Text size="md" color={item.isEliminated ? "#F66B0E" : "dimmed"} p={5}>
@@ -310,8 +352,16 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
           <Group spacing={'xs'}>
             {cards}
           </Group>
-        // Add admin icon if item.isAdmin == true
-        // Add left icon if item.hasPlayerLeft == true
+      }
+      {
+        item.isAdmin ?
+          <IconUser /> :
+          <></>
+      }
+      {
+        item.hasPlayerLeft ?
+          <IconRun /> :
+          <></>
       }
     </Group>
   });
