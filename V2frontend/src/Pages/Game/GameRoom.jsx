@@ -164,7 +164,7 @@ function GameRoom() {
     } else {
       temp = [cardValue]
     }
-    setSelected(selected)
+    setSelected(temp)
   }
 
   const getCardImage = (cardNum) => {
