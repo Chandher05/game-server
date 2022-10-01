@@ -11,6 +11,7 @@ var PlayerListeners = (socket) => {
 
 	socket.on('drop-cards', async (authToken, body) => {
 
+		console.log(body)
 		const userUID = socket.handshake.userUID
 		const email = socket.handshake.email
 		let reqUserId = useruid_userid[userUID]
