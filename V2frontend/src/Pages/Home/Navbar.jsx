@@ -12,11 +12,12 @@ const data = [
   { icon: IconColumns, label: 'Leaderboard ', url: 'leaderboard' },
 ];
 
-function NavLinks({ }) {
+function NavLinks({ setOpened }) {
   const navigate = useNavigate();
   const [active, setActive] = useState(0);
 
   const onClickNavigate = (index) => {
+    setOpened(false)
     navigate(data[index].url);
     setActive(index)
   }
@@ -35,10 +36,10 @@ function NavLinks({ }) {
   return <Box sx={{ width: '100%' }}>{items}</Box>;
 }
 
-function Navbar() {
+function Navbar({opened, setOpened}) {
   return (
-    <Nav width={{ base: 300 }} height={"100%"} p="xs">
-      <NavLinks></NavLinks>
+    <Nav hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 200, lg: 300 }}>
+      <NavLinks setOpened={setOpened}></NavLinks>
     </Nav>
   )
 }

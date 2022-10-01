@@ -63,11 +63,11 @@ export function StatsControls({ statValues }) {
   const { classes } = useStyles();
   const { totalGames, totalWins, totalDeclares, totalFifties, totalPairs } = statValues;
   const data = [
-    { label: 'Total Games', val: totalGames },
+    { label: 'Games', val: totalGames },
     { label: 'Wins', val: totalWins },
     { label: 'Declares', val: totalDeclares },
-    { label: '+50s', val: totalFifties },
-    { label: '-25s', val: totalPairs },
+    { label: '+50', val: totalFifties },
+    { label: '-25', val: totalPairs },
   ];
 
   const stats = data.map((stat) => (

@@ -1,13 +1,16 @@
 
-import { AppShell, Header, Title } from '@mantine/core';
+import { AppShell, Header, Title, MediaQuery, Burger, useMantineTheme } from '@mantine/core';
 import { Outlet, useNavigate } from 'react-router-dom'
 import Navbar from "./Navbar";
 import { useState, useEffect } from 'react';
-import { useStoreState } from 'easy-peasy'; 
+import { useStoreState } from 'easy-peasy';
 
 function Home() {
   const Navigate = useNavigate();
   const authId = useStoreState((state) => state.authId);
+  const [opened, setOpened] = useState(false);
+  const theme = useMantineTheme();
+
   useEffect(() => {
     fetch(import.meta.env.VITE_API + "/users/userStatus", {
       headers: {
@@ -25,14 +28,26 @@ function Home() {
       };
     });
   }, [])
-  
+
   return (
     <AppShell
       padding="md"
-      navbar={<Navbar ></Navbar>
+      navbar={<Navbar opened={opened} setOpened={setOpened}></Navbar>
       }
       header={<Header height={60} p="md" >
-        <Title order={4}>DeclareGame.in</Title>
+        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+          <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+            <Burger
+              opened={opened}
+              onClick={() => setOpened((o) => !o)}
+              size="sm"
+              color={theme.colors.gray[6]}
+              mr="xl"
+            />
+          </MediaQuery>
+
+          <Title order={4}>DeclareGame.in</Title>
+        </div>
       </Header>}
       styles={(theme) => ({
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },

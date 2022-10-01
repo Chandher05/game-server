@@ -18,6 +18,7 @@ import Gameroom from "../Pages/Home/HomePages/Gameroom/Gameroom"
 import Rules from "../Pages/Home/HomePages/Rules/Rules";
 import WaitingScreen from "../Pages/Game/WaitingScreen";
 import GameRoomTable from "../Pages/Game/GameRoom";
+import AdminLogin from "../Pages/Admin/Login";
 import AdminHome from "../Pages/Admin/Home";
 import AdminUsers from "../Pages/Admin/HomePages/Users/Users";
 import AdminMessages from "../Pages/Admin/HomePages/Messages/Messages";
@@ -32,7 +33,7 @@ function PageRoutes() {
 	return (
 		<BrowserRouter >
 			<Routes>
-				<Route path="/login" element={<GoogleLogin />} />
+				<Route path="/login" element={<PrivateGoogleLogin><GoogleLogin /></PrivateGoogleLogin>} />
 				<Route path="/" element={<PrivateGoogleRoute><Home /></PrivateGoogleRoute>} >
 					<Route path="/" element={<Gameroom></Gameroom>} />
 					<Route path="leaderboard" element={<Leaderboard></Leaderboard>} />
@@ -42,9 +43,10 @@ function PageRoutes() {
 					<Route path="rules" element={<Rules></Rules>} />
 				</Route>
 				<Route path="/admin" element={<PrivateGoogleRoute><AdminHome /></PrivateGoogleRoute>} >
-					<Route path="/admin" element={<AdminUsers></AdminUsers>} />
-					<Route path="/admin/messages" element={<AdminMessages></AdminMessages>} />
-					<Route path="/admin/claim" element={<AdminClaimUsername></AdminClaimUsername>} />
+					<Route path="/admin" element={<AdminLogin handleAuth={handleAuth}></AdminLogin>} />
+					<Route path="/admin/users" element={<PrivateAdminRoute authenticated={authenticated}><AdminUsers></AdminUsers></PrivateAdminRoute>} />
+					<Route path="/admin/messages" element={<PrivateAdminRoute authenticated={authenticated}><AdminMessages></AdminMessages></PrivateAdminRoute>} />
+					<Route path="/admin/claim" element={<PrivateAdminRoute authenticated={authenticated}><AdminClaimUsername></AdminClaimUsername></PrivateAdminRoute>} />
 				</Route>
 				<Route path="/waiting/:gameId" element={<PrivateGoogleRoute><WaitingScreen /></PrivateGoogleRoute>} />
 				<Route path="/game/:gameId" element={<PrivateGoogleRoute><GameRoomTable /></PrivateGoogleRoute>} />
@@ -92,3 +94,11 @@ function PrivateGoogleRoute({ children, ...rest }) {
 	return user ? children : <Navigate to="/login" />;
 }
 
+function PrivateGoogleLogin({ children, ...rest }) {
+	const [user, loading, error] = useAuthState(auth);
+	return user ? <Navigate to="/" /> : children;
+}
+
+function PrivateAdminRoute({ authenticated, children, ...rest }) {
+	return authenticated ? children : <Navigate to="/admin" />
+}

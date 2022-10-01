@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Button, Table } from "@mantine/core";
+import { BackgroundImage, Button, Table } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { IconArrowsSort } from '@tabler/icons';
 import { useToggle } from '@mantine/hooks';
@@ -68,7 +68,7 @@ function Leaderboard() {
 
 
   const rows = data.map((element) => (
-    <tr key={element.userId}>
+    <tr key={element.userId} style={{ backgroundColor: element.requestedUser ? '#373A40' : '' }}>
       <td>{element.userName}</td>
       <td>{element.gamesCount}</td>
       <td>{showAverage ? element.avgTotalWins : element.totalWins}</td>
