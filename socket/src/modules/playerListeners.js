@@ -11,7 +11,6 @@ var PlayerListeners = (socket) => {
 
 	socket.on('drop-cards', async (authToken, body) => {
 
-		console.log(body)
 		const userUID = socket.handshake.userUID
 		const email = socket.handshake.email
 		let reqUserId = useruid_userid[userUID]
@@ -86,7 +85,7 @@ var PlayerListeners = (socket) => {
 				userId: reqUserId
 			})
 
-			socket.emit('cards-in-hand', "SUCCESS", gameMember.currentCards)
+			emitToUserUID(userUID, 'cards-in-hand', "SUCCESS", gameMember.currentCards)
 
 			return await emitDataToAllInGame(body.gameId)
 
@@ -180,7 +179,7 @@ var PlayerListeners = (socket) => {
 				}
 			)
 
-			return socket.emit('common-game-data', "LEAVE_GAME")
+			return emitToUserUID(userUID, 'common-game-data', "LEAVE_GAME")
 		} catch (err) {
 			if (err.message) {
 				return socket.emit('common-game-data', "ERROR", err.message)

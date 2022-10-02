@@ -1,7 +1,7 @@
 import { IconHeart } from '@tabler/icons';
 import { useState, useEffect } from 'react';
 import { useStoreState } from "easy-peasy";
-import { Card, Image, Text, Group, Badge, Button, ActionIcon, createStyles, Grid } from '@mantine/core';
+import { Card, Image, Text, Group, Space, Button, Divider, createStyles, Grid } from '@mantine/core';
 import { IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
 
 const useStyles = createStyles((theme) => ({
@@ -53,10 +53,18 @@ export function PublicGameRoom({ joinGame, spectateGame }) {
     <Grid.Col lg={4} md={6} sm={12} key={element.gameId}><BadgeCard data={element} description='Public game' joinGame={joinGame} spectateGame={spectateGame}></BadgeCard></Grid.Col>
   ));
 
+  if (games.length == 0) {
+    return <></>
+  }
+
   return (
-    <Grid style={{ margin: '10px' }}>
-      {gameCards}
-    </Grid>
+    <>
+      <Space h="xl" />
+      <Divider my="md" label="Public games" labelPosition="center" />
+      <Grid style={{ margin: '10px' }}>
+        {gameCards}
+      </Grid>
+    </>
   )
 }
 
@@ -73,9 +81,12 @@ function BadgeCard({ data, description, joinGame, spectateGame }) {
           <Text size="lg" weight={500}>
             {data.gameId}
           </Text>
+          <Text size="lg" weight={500} color={data.isStarted ? 'green.7' : 'orange.7'}>
+            {data.isStarted ? 'Started' : 'Waiting'}
+          </Text>
         </Group>
         <Text size="sm" mt="xs">
-          {description} ({data.numOfPlayersInGame} players active)
+          {data.numOfPlayersInGame} player(s) active
         </Text>
       </Card.Section>
 
@@ -89,10 +100,10 @@ function BadgeCard({ data, description, joinGame, spectateGame }) {
       </Card.Section>
 
       <Group mt="xs">
-        <Button radius="md" style={{ flex: 1 }} onClick={() => joinGame(data.gameId)}>
+        <Button radius="md" color={'blue.7'} style={{ flex: 1 }} onClick={() => joinGame(data.gameId)}>
           Join Game
         </Button>
-        <Button radius="md" color={'yellow'} style={{ flex: 1 }} onClick={() => spectateGame(data.gameId)}>
+        <Button radius="md" color={'yellow.7'} style={{ flex: 1 }} onClick={() => spectateGame(data.gameId)} disabled={!data.isStarted}>
           Spectate Game
         </Button>
         {/* <ActionIcon variant="default" radius="md" size={36}>

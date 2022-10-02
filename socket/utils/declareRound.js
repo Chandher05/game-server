@@ -3,6 +3,14 @@ import Users from '../src/models/mongoDB/users';
 import GameMember from '../src/models/mongoDB/gameMember';
 import { CardValues } from './calculateScore';
 
+const getCardValue = (cardNum) => {
+    cardNum = parseInt(cardNum)
+    cardNum -= 1
+    const cardValue = cardNum % 13
+    const values = ["Aces", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jacks", "Queens", "Kings"]
+    return values[cardValue]
+  }
+
 var endGame = (gameId, userName, isAutoPlay) => {
     return new Promise(async (resolve) => {
         await Game.updateOne(
@@ -112,10 +120,10 @@ var declareRound = (gameId, userId, isAutoPlay) => {
                 } else if (player.currentCards.length == 2 && (player.currentCards[0] - player.currentCards[1]) % 13 == 0) {
                     isPair = true
                     playerScore = game.endWithPair
-                    lastPlayedAction = "declared with a pair"
+                    lastPlayedAction = "Pair of " + getCardValue(player.currentCards[0])
                 } else if (total < 15) {
                     playerScore = total
-                    lastPlayedAction = `declared with ${total} points`
+                    lastPlayedAction = `Declared with ${total} points`
                 } else {
                     reject("Cannot declare with 15 or more points")
                     return
@@ -146,7 +154,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
                 previousDroppedPlayer: playerUserName,
                 lastPlayedAction: lastPlayedAction,
                 isRoundComplete: true,
-                previousDroppedCards: [],
+                // previousDroppedCards: [],
                 lastPlayedTime: Date.now(),
                 $inc: {
                     roundsComplete: 1
