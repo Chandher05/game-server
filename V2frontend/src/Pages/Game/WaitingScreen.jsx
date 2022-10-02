@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu } from "@mantine/core";
+import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu, Loader } from "@mantine/core";
 import { IconCheck, IconCopy, IconMessageCircle, IconClockHour4, IconBrandGoogleOne, IconWorld, IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
@@ -73,6 +73,14 @@ function DisplayData() {
       Navigate(`/game/${GameCode}`)
     }
   })
+
+  if (!data.players) {
+    return (
+      <Center>
+        <Loader variant="bars" />
+      </Center>
+    )
+  }
 
   return (
     <>

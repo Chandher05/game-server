@@ -2,6 +2,7 @@ import { IconHeart } from '@tabler/icons';
 import { useState, useEffect } from 'react';
 import { useStoreState } from "easy-peasy";
 import { Card, Image, Text, Group, Badge, Button, ActionIcon, createStyles, Grid } from '@mantine/core';
+import { IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -30,7 +31,7 @@ const useStyles = createStyles((theme) => ({
 
 
 
-export function PublicGameRoom({ joinGame }) {
+export function PublicGameRoom({ joinGame, spectateGame }) {
   const [games, setGames] = useState([]);
   const authId = useStoreState((state) => state.authId);
 
@@ -49,7 +50,7 @@ export function PublicGameRoom({ joinGame }) {
   }, [])
 
   let gameCards = games.map((element) => (
-    <Grid.Col lg={4} md={6} sm={12} key={element.gameId}><BadgeCard title={element.gameId} description='Public game' joinGame={joinGame}></BadgeCard></Grid.Col>
+    <Grid.Col lg={4} md={6} sm={12} key={element.gameId}><BadgeCard data={element} description='Public game' joinGame={joinGame} spectateGame={spectateGame}></BadgeCard></Grid.Col>
   ));
 
   return (
@@ -60,7 +61,7 @@ export function PublicGameRoom({ joinGame }) {
 }
 
 
-function BadgeCard({ title, description, joinGame }) {
+function BadgeCard({ data, description, joinGame, spectateGame }) {
   const { classes, theme } = useStyles();
 
 
@@ -70,28 +71,33 @@ function BadgeCard({ title, description, joinGame }) {
       <Card.Section className={classes.section} mt="md">
         <Group position="apart">
           <Text size="lg" weight={500}>
-            {title}
+            {data.gameId}
           </Text>
         </Group>
         <Text size="sm" mt="xs">
-          {description}
+          {description} ({data.numOfPlayersInGame} players active)
         </Text>
       </Card.Section>
 
       <Card.Section className={classes.section}>
         <Text mt="md" className={classes.label} color="dimmed">
-          Winning Condition -
+          Winning Condition
         </Text>
-
+        <Text>Max score: {data.maxScore}</Text>
+        <Text>End with pair: {data.endWithPair}</Text>
+        <Text>Wrong call: {data.wrongCall}</Text>
       </Card.Section>
 
       <Group mt="xs">
-        <Button radius="md" style={{ flex: 1 }} onClick={() => joinGame(title)}>
+        <Button radius="md" style={{ flex: 1 }} onClick={() => joinGame(data.gameId)}>
           Join Game
         </Button>
-        <ActionIcon variant="default" radius="md" size={36}>
+        <Button radius="md" color={'yellow'} style={{ flex: 1 }} onClick={() => spectateGame(data.gameId)}>
+          Spectate Game
+        </Button>
+        {/* <ActionIcon variant="default" radius="md" size={36}>
           <IconHeart size={18} className={classes.like} stroke={1.5} />
-        </ActionIcon>
+        </ActionIcon> */}
       </Group>
     </Card>
   );

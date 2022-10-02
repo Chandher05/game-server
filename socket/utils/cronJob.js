@@ -45,27 +45,27 @@ cron.schedule("*/5 * * * * *", async () => {
                 userId: gameObj.currentPlayer
             })
 
-            // if (currentGameMemberForGame.didPlayerLeave) {
-            //     await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
-            // } else if (timestamp - gameObj.lastPlayedTime > gameObj.autoplayTimer * 1000) {
-            //     await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
-            //     currentGameMemberForGame = await GameMember.findOne({
-            //         gameId: gameId,
-            //         userId: gameObj.currentPlayer
-            //     })
+            if (currentGameMemberForGame.didPlayerLeave) {
+                await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
+            } else if (timestamp - gameObj.lastPlayedTime > gameObj.autoplayTimer * 1000) {
+                await playRandom(gameId, gameObj.currentPlayer.toString(), gameObj, currentGameMemberForGame)
+                currentGameMemberForGame = await GameMember.findOne({
+                    gameId: gameId,
+                    userId: gameObj.currentPlayer
+                })
 
-            //     if (gameObj.currentPlayer in userid_useruid) {
-            //         autoplayPlayerUID = userid_useruid[gameObj.currentPlayer]
-            //     }
-            //     if (autoplayPlayerUID in useruid_sysid) {
-            //         autoplayPlayerSysId = useruid_sysid[autoplayPlayerUID]
-            //         autoplayPlayerSysId = [...autoplayPlayerSysId]
-            //         for (var sysid of autoplayPlayerSysId) {
-            //             autoplayPlayerSocket = sysidConnected[sysid]["socket"]
-            //             autoplayPlayerSocket.emit('cards-in-hand', "SUCCESS", currentGameMemberForGame.currentCards)
-            //         }
-            //     }
-            // }
+                if (gameObj.currentPlayer in userid_useruid) {
+                    autoplayPlayerUID = userid_useruid[gameObj.currentPlayer]
+                }
+                if (autoplayPlayerUID in useruid_sysid) {
+                    autoplayPlayerSysId = useruid_sysid[autoplayPlayerUID]
+                    autoplayPlayerSysId = [...autoplayPlayerSysId]
+                    for (var sysid of autoplayPlayerSysId) {
+                        autoplayPlayerSocket = sysidConnected[sysid]["socket"]
+                        autoplayPlayerSocket.emit('cards-in-hand', "SUCCESS", currentGameMemberForGame.currentCards)
+                    }
+                }
+            }
             await emitDataToAllInGame(gameId)
         }
     } catch (err) {

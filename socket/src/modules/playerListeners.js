@@ -162,7 +162,8 @@ var PlayerListeners = (socket) => {
 					{
 						$pull: {
 							players: reqUserId,
-							waiting: reqUserId
+							waiting: reqUserId,
+							spectators: reqUserId
 						}
 					}
 				)
@@ -221,7 +222,9 @@ var PlayerListeners = (socket) => {
 				userId: reqUserId
 			})
 
-			socket.emit('cards-in-hand', "SUCCESS", gameMember.currentCards)
+			if (gameMember) {
+				socket.emit('cards-in-hand', "SUCCESS", gameMember.currentCards)
+			}
 
 			return await emitDataToAllInGame(body.gameId)
 		} catch (err) {

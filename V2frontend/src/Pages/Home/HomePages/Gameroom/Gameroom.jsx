@@ -50,7 +50,7 @@ function Gameroom() {
         variant: 'outline',
         color: 'red',
         title: 'Something went wrong!',
-        message: 'Please refresh the page and try again'
+        message: 'Check game code and try again'
       })
     })
   }
@@ -96,14 +96,40 @@ function Gameroom() {
       })
     }
   }
-  const spectateGame = () => {
-    fetch(import.meta.env.VITE_API + "/game/spectate", {
-      headers: {
-        Authorization: `Bearer ${authId}`,
-      },
-    }).then(async (response) => {
-      if (response.ok) Navigate('/waiting');
-    });
+  const spectateGame = (gameId) => {
+    if (gameId.length == 0) {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Error',
+        message: 'Please enter a game code to spectate game'
+      })
+    } else {
+      const data = {
+        gameId: gameId
+      }
+      fetch(import.meta.env.VITE_API + "/game/spectate", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authId}`,
+        },
+        body: JSON.stringify(data)
+      }).then(async (response) => {
+        if (response.ok) {
+          Navigate(`/game/${gameId}`)
+        } else {
+          throw new Error()
+        }
+      }).catch((error) => {
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: "Check game code and try again"
+        })
+      })
+    }
   }
 
   const changeGameCode = (e) => {
@@ -122,12 +148,12 @@ function Gameroom() {
           <Input placeholder="Game ID" size="lg" onChange={changeGameCode} value={gameCode}></Input>
           <Group>
             <Button size="lg" onClick={() => joinGame(gameCode)} ><IconFriends />&nbsp; Join Game</Button>
-            <Button size="lg" color={'yellow'} onClick={spectateGame}><IconEye />&nbsp; Spectate Game</Button>
+            <Button size="lg" color={'yellow'} onClick={() => spectateGame(gameCode)}><IconEye />&nbsp; Spectate Game</Button>
           </Group>
         </Stack>
       </Center>
       <Container>
-        <PublicGameRoom joinGame={joinGame}></PublicGameRoom>
+        <PublicGameRoom joinGame={joinGame} spectateGame={spectateGame}></PublicGameRoom>
       </Container>
     </>
   )

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Switch, Text, Center, Menu, ActionIcon, Stack } from "@mantine/core";
+import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text, Center, Menu, ActionIcon, Stack, Loader, Space, Title, MediaQuery } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
@@ -25,7 +25,7 @@ const sampleData =
   "lastPlayedUser": "Jayasurya17",
   "lastPlayedAction": "will start the game",
   "discardPile": [1, 14, 27],
-  "isRoundComplete": false,
+  "isRoundComplete": true,
   "playerDeclaredType": "",
   "isGameComplete": false,
   "waitingPlayers": [],
@@ -120,7 +120,20 @@ function GameRoom() {
   const Navigate = useNavigate();
   const [cardsInHand, setCardsInHand] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [commonData, setCommonData] = useState(sampleData);
+  const [leaveGameModalOpened, setLeaveGameModalOpened] = useState(false);
+  const [commonData, setCommonData] = useState({
+    "lastPlayedUser": "",
+    "lastPlayedAction": "",
+    "discardPile": [],
+    "isRoundComplete": false,
+    "playerDeclaredType": null,
+    "isGameComplete": false,
+    "waitingPlayers": [],
+    "currentPlayer": "",
+    "players": [],
+    "playerStatus": "SPECTATING",
+    "isAdmin": false
+  });
   const authId = useStoreState((state) => state.authId);
 
   useEffect(() => {
@@ -197,14 +210,14 @@ function GameRoom() {
   let cards = cardsInHand.map((element) => {
     element = parseInt(element)
     return (
-      <Grid.Col md={1} key={element}>
-        <Image
-          onClick={() => selectCards(element)}
-          style={{ cursor: 'pointer', }}
-          width={selected.includes(element) ? '105px' : '100px'}
-          src={`/Cards/${getCardImage(element)}`}
-          key={element} />
-      </Grid.Col>
+      // <Grid.Col md={1} key={element}>
+      <Image
+        onClick={() => selectCards(element)}
+        style={{ width: '100px', cursor: 'pointer', margin: '5px', padding: '4px', backgroundColor: (selected.includes(element) ? '#FAB005' : '') }}
+        // width={'100px'}
+        src={`/Cards/${getCardImage(element)}`}
+        key={element} />
+      // </Grid.Col>
     )
     // return <Grid.Col md={1} key={element}><SingleCard element={element} /> </Grid.Col>
 
@@ -215,11 +228,80 @@ function GameRoom() {
     return <Image key={element} width={'100px'} src={`/Cards/${getCardImage(element)}`}></Image>
   })
 
+  let playerCardsInHandGrid = (
+    <Box
+      sx={(theme) => ({
+        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+        textAlign: 'center',
+        padding: theme.spacing.xl,
+        borderRadius: theme.radius.md,
+        minHeight: '200px'
+
+      })}
+    >
+
+      <Stack>
+        <Grid>
+          <Grid.Col span={4}>
+            <Button
+              color={'indigo.7'}
+              fullWidth={true}
+              hidden={commonData.currentPlayer && cardsInHand.length == 6 ? false : true}
+              disabled={selected.length == 0}
+              onClick={() => DropCards(GameCode, selected, 'Start')}>
+              Drop Cards
+            </Button>
+            <Button
+              color={'blue.7'}
+              fullWidth={true}
+              hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
+              disabled={selected.length == 0}
+              onClick={() => DropCards(GameCode, selected, 'Table')}>
+              Drop and pick from table
+            </Button>
+          </Grid.Col>
+          <Grid.Col span={4}>
+            Total: {calculateScore()}
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Button
+              color={'cyan.7'}
+              fullWidth={true}
+              hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
+              disabled={selected.length == 0}
+              onClick={() => DropCards(GameCode, selected, 'Deck')}>
+              Drop and pick from deck
+            </Button>
+          </Grid.Col>
+        </Grid>
+        <Group position='center'>
+          {cards}
+        </Group>
+        <Group position='center'>
+          <Button
+            color={'yellow.7'}
+            fullWidth={true}
+            hidden={commonData.canPlayersDeclare && commonData.currentPlayer && calculateScore() < 15 ? false : true}
+            onClick={() => Declare(GameCode)}>
+            Declare
+          </Button>
+        </Group>
+      </Stack>
+
+    </Box>
+  )
+
+  if (commonData.lastPlayedAction.length === 0) {
+    return (
+      <Center>
+        <Loader variant="bars" />
+      </Center>
+    )
+  }
   return (
     <div style={{ padding: '20px' }}>
-      <Grid grow>
-
-        <Grid.Col span={11}>
+      <Grid>
+        <Grid.Col span={6}>
           {
             // use commonData.playerDeclaredType to do animations
             // Valid values empty string, PAIR, LOWEST, SAME, HIGHEST
@@ -228,84 +310,71 @@ function GameRoom() {
             {commonData.lastPlayedAction}
           </Alert>
         </Grid.Col>
-        <Grid.Col span={1}>
-          <MenuActions LeaveGame={LeaveGame}></MenuActions>
+        <Grid.Col span={5}>
+          <Center>
+            {
+              commonData.isGameComplete && !commonData.isAdmin ?
+                <><Loader variant="bars" /> <Space w="xs" /> <Text>Admin will start new game</Text></> :
+                commonData.isRoundComplete && !commonData.isAdmin ?
+                  <><Loader variant="bars" /> <Space w="xs" /> <Text>Admin will start next round</Text></> :
+                  commonData.isGameComplete && commonData.isAdmin ?
+
+                    <Button onClick={() => RestartGame(GameCode)}>Start new game</Button> :
+                    commonData.isRoundComplete && commonData.isAdmin ?
+
+                      <Button onClick={() => NextRound(GameCode)}>Start next round</Button> :
+                      <></>
+            }
+          </Center>
         </Grid.Col>
-        <Grid.Col span={4} >
+        <Grid.Col span={1}>
+          <Center>
+            <ActionIcon onClick={() => setLeaveGameModalOpened(true)} style={{ padding: '4px' }} color={'red.7'} variant='filled' size={'lg'}><IconLogout size={34}></IconLogout></ActionIcon>
+            <LeaveGameModal leaveGameModalOpened={leaveGameModalOpened} setLeaveGameModalOpened={setLeaveGameModalOpened} />
+          </Center>
+          {/* <MenuActions LeaveGame={LeaveGame} GameCode={GameCode}></MenuActions> */}
+        </Grid.Col>
+      </Grid>
+      <Grid>
+        <Grid.Col span={6} >
           <Group>
             {discardPile}
-            <Image width={'100px'} src={'/Cards/1B.svg'}></Image>
+            <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+              <Image width={'100px'} src={'/Cards/1B.svg'}></Image>
+            </MediaQuery>
 
           </Group>
         </Grid.Col>
 
-        <Grid.Col span={4} style={{ minHeight: '200px' }}>
+        <Grid.Col span={6} style={{ minHeight: '200px' }}>
           <PlayersCards data={commonData.players} isRoundComplete={commonData.isRoundComplete} isGameComplete={commonData.isGameComplete} />
         </Grid.Col>
+      </Grid>
 
-        <Grid.Col span={12}>
-          <Box
-            sx={(theme) => ({
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-              textAlign: 'center',
-              padding: theme.spacing.xl,
-              borderRadius: theme.radius.md,
-              minHeight: '200px'
-
-            })}
-          >
-            {
-              commonData.playerStatus === "PLAYING" ?
-                <>
-                  <Stack>
-                    <Group grow>
-                      <Button
-                        hidden={commonData.currentPlayer && cardsInHand.length == 6 ? false : true}
-                        disabled={selected.length == 0}
-                        onClick={() => DropCards(GameCode, selected, 'Start')}>
-                        Drop Cards
-                      </Button>
-                      <Button
-                        hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
-                        disabled={selected.length == 0}
-                        onClick={() => DropCards(GameCode, selected, 'Table')}>
-                        Pick from table
-                      </Button>
-                      <Button
-                        hidden={commonData.currentPlayer && cardsInHand.length < 6 ? false : true}
-                        disabled={selected.length == 0}
-                        onClick={() => DropCards(GameCode, selected, 'Deck')}>
-                        Pick from deck
-                      </Button>
-                      <Button
-                        hidden={commonData.canPlayersDeclare && commonData.currentPlayer && calculateScore() < 15 ? false : true}
-                        onClick={() => Declare(GameCode)}>
-                        Declare
-                      </Button>
-                      {
-                        commonData.isGameComplete && commonData.isAdmin ?
-
-                          <Button onClick={() => RestartGame(GameCode)}>Start new game</Button> :
-                          commonData.isRoundComplete && commonData.isAdmin ?
-
-                            <Button onClick={() => NextRound(GameCode)}>Start next round</Button> :
-                            <></>
-                      }
-                    </Group>
-                    <Grid>
-                      {cards}
-                    </Grid>
-                  </Stack>
-
-                </>
-                :
-                // Show loading icon (Waiting for next game to start)
-                commonData.playerStatus === "WAITING" ?
-                  <></> :
-                  <></>
-            }
-          </Box>
-        </Grid.Col>
+      <Grid>
+        {
+          commonData.playerStatus === "PLAYING" ?
+            <>
+              <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+                <Grid.Col span={12}>
+                  {playerCardsInHandGrid}
+                </Grid.Col>
+              </MediaQuery>
+              <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+                <Grid.Col span={6} offset={3}>
+                  {playerCardsInHandGrid}
+                </Grid.Col>
+              </MediaQuery>
+            </>
+            :
+            commonData.playerStatus === "WAITING" ?
+              <Grid.Col span={12} padding={'10px'}>
+                <Center>
+                  <Loader variant="dots" /> <Space w="xl" /> <Text>Waiting current for game to end</Text>
+                </Center>
+              </Grid.Col> :
+              <></>
+        }
       </Grid>
     </div >
   )
@@ -421,4 +490,23 @@ function MenuActions({ LeaveGame, RestartGame, GameCode, commonData }) {
       </Menu.Dropdown>
     </Menu>
   );
+}
+
+function LeaveGameModal({ leaveGameModalOpened, setLeaveGameModalOpened }) {
+  let params = useParams()
+  let GameCode = params.gameId;
+
+  return (
+    <Modal
+      opened={leaveGameModalOpened}
+      onClose={() => setLeaveGameModalOpened(false)}
+    >
+      <Center><Title>Are you sure?</Title></Center>
+      <Space h="xl" />
+      <Group position="apart" p={6}>
+        <Button onClick={() => setLeaveGameModalOpened(false)} color={'gray.7'}>Cancel</Button>
+        <Button onClick={() => LeaveGame(GameCode)} color={'red.7'}>Leave</Button>
+      </Group>
+    </Modal>
+  )
 }

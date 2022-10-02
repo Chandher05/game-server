@@ -2,13 +2,13 @@ import socket from './index'
 import { showNotification } from '@mantine/notifications';
 
 export function LobbyListener(cb) {
-    socket.on('lobby-listener', (status, data, err) => {
-        if (data == "ERROR") {
+    socket.on('lobby-listener', (status, data) => {
+        if (status == "ERROR") {
             showNotification({
                 variant: 'outline',
                 color: 'red',
                 title: 'Something went wrong!',
-                message: err
+                message: data
             })
         } else {
             cb(status, data)
@@ -17,13 +17,13 @@ export function LobbyListener(cb) {
 }
 
 export function CommonGameData(cb) {
-    socket.on('common-game-data', (status, data, err) => {
+    socket.on('common-game-data', (status, data) => {
         if (status == "ERROR") {
             showNotification({
                 variant: 'outline',
                 color: 'red',
                 title: 'Something went wrong!',
-                message: err
+                message: data
             })
         } else {
             cb(status, data)
@@ -32,13 +32,13 @@ export function CommonGameData(cb) {
 }
 
 export function CardsInHand(cb) {
-    socket.on('cards-in-hand', (status, data, err) => {
-        if (data == "ERROR") {
+    socket.on('cards-in-hand', (status, data) => {
+        if (status == "ERROR") {
             showNotification({
                 variant: 'outline',
                 color: 'red',
                 title: 'Something went wrong!',
-                message: err
+                message: data
             })
         } else {
             cb(status, data)
@@ -47,13 +47,13 @@ export function CardsInHand(cb) {
 }
 
 export function Reactions(cb) {
-    socket.on('reactions', (status, data, err) => {
-        if (data == "ERROR") {
+    socket.on('reactions', (status, data) => {
+        if (status == "ERROR") {
             showNotification({
                 variant: 'outline',
                 color: 'red',
                 title: 'Something went wrong!',
-                message: err
+                message: data
             })
         } else {
             cb(status, data)
