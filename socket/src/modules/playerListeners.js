@@ -170,6 +170,16 @@ var PlayerListeners = (socket) => {
 				await emitDataToAllInGame(body.gameId)
 			}
 
+			await GameMember.findOneAndUpdate(
+				{
+					gameId: body.gameId,
+					userId: reqUserId
+				},
+				{
+					didPlayerLeave: true
+				}
+			)
+
 			return socket.emit('common-game-data', "LEAVE_GAME")
 		} catch (err) {
 			if (err.message) {
