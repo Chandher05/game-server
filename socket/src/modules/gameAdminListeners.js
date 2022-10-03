@@ -174,6 +174,7 @@ var GameAdminListers = (socket) => {
 				{
 					currentPlayer: nextUserIdToStart,
 					isRoundComplete: false,
+					previousDroppedCards: [],
 					cardsInDeck: availableCards,
 					lastPlayedTime: timestamp,
 					previousDroppedPlayer: nextUserNameToStart,

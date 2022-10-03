@@ -1,15 +1,13 @@
 import socket from './index'
-import { getIdTokenOfUser } from '../Firebase/config';
-
 
 export async function Login() {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     socket.emit('login', authId)
 }
 
 // Waiting Screen
 export async function GetLobbyUpdates(gameId) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId
     }
@@ -17,7 +15,7 @@ export async function GetLobbyUpdates(gameId) {
 }
 
 export async function StartGame(gameId) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId
     }
@@ -26,7 +24,7 @@ export async function StartGame(gameId) {
 
 // Game common
 export async function GetGameUpdates(gameId) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId
     }
@@ -34,7 +32,7 @@ export async function GetGameUpdates(gameId) {
 }
 
 export async function DropCards(gameId, selected, type) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId,
         selected: selected,
@@ -44,7 +42,7 @@ export async function DropCards(gameId, selected, type) {
 }
 
 export async function Declare(gameId) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId
     }
@@ -52,7 +50,7 @@ export async function Declare(gameId) {
 }
 
 export async function LeaveGame(gameId) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId
     }
@@ -60,7 +58,7 @@ export async function LeaveGame(gameId) {
 }
 
 export async function Reactions(gameId, data) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId,
         data: data
@@ -70,7 +68,7 @@ export async function Reactions(gameId, data) {
 
 // Game admin
 export async function NextRound(gameId) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId
     }
@@ -78,7 +76,7 @@ export async function NextRound(gameId) {
 }
 
 export async function RestartGame(gameId) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId
     }
@@ -86,7 +84,7 @@ export async function RestartGame(gameId) {
 }
 
 export async function RemovePlayer(gameId, userId) {
-    const authId = await getIdTokenOfUser()
+    const authId = sessionStorage.getItem('access_token')
     const body = {
         gameId: gameId,
         userId: userId

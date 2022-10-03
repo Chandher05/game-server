@@ -202,7 +202,8 @@ exports.getStats = async (req, res) => {
 		}
 
 		const returnValue = {
-			gamesCount: user.totalGames,
+			userName: user.userName,
+			totalGames: user.totalGames,
 			totalWins: user.totalWins,
 			totalDeclares: user.totalDeclares,
 			totalFifties: user.totalFifties,

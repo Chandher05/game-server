@@ -3,9 +3,11 @@ import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
-import { GetGameUpdates, LeaveGame, NextRound, RestartGame, DropCards, Declare } from '../../Providers/Socket/emitters'
+import { RemovePlayer } from '../../Providers/Socket/emitters'
 import { CommonGameData, CardsInHand } from '../../Providers/Socket/listeners';
 import { IconPlayCard, IconUser, IconRun, IconSettings, IconMessageCircle, IconTrash, IconArrowsLeftRight, IconLogout } from '@tabler/icons';
+import { StatsControls } from '../Home/HomePages/Account/Stats'
+import { showNotification } from '@mantine/notifications';
 
 const getCardImage = (cardNum) => {
   cardNum -= 1
@@ -19,9 +21,35 @@ const getCardImage = (cardNum) => {
 
 function GameRoomTableAndScore({ commonData }) {
 
+  const [userStats, setUserStats] = useState({});
+  const [opened, setOpened] = useState(false);
+  const [userId, setUserId] = useState("");
+  const authId = sessionStorage.getItem('access_token');
+
   let discardPile = commonData["discardPile"].map((element, i) => {
     return <Image key={element} width={'100px'} src={`/Cards/${getCardImage(element)}`}></Image>
   })
+
+  let hasPlayerLeft = {}
+  commonData["players"].map((element) => {
+    hasPlayerLeft[element.userId] = element.hasPlayerLeft
+  })
+
+  const showUserStats = (userId) => {
+    fetch(import.meta.env.VITE_API + "/users/stats/" + userId, {
+      headers: {
+        Authorization: `Bearer ${authId}`,
+      },
+    }).then(async (response) => {
+      if (response.ok) {
+        response.json().then(json => {
+          setUserStats(json)
+          setOpened(true)
+          setUserId(userId)
+        })
+      };
+    });
+  }
 
   return (
     <Grid>
@@ -36,7 +64,8 @@ function GameRoomTableAndScore({ commonData }) {
       </Grid.Col>
 
       <Grid.Col span={6} style={{ minHeight: '200px' }}>
-        <PlayersCards data={commonData.players} isRoundComplete={commonData.isRoundComplete} isGameComplete={commonData.isGameComplete} />
+        <PlayersCards data={commonData.players} isRoundComplete={commonData.isRoundComplete} isGameComplete={commonData.isGameComplete} showUserStats={showUserStats} />
+        <PlayerStatsModel userId={userId} userStats={userStats} opened={opened} setOpened={setOpened} isAdmin={commonData.isAdmin} currentUserId={commonData.userId} hasPlayerLeft={hasPlayerLeft[userId]} />
       </Grid.Col>
     </Grid>
   )
@@ -74,7 +103,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 
-export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
+export function PlayersCards({ data, isRoundComplete, isGameComplete, showUserStats }) {
   const { classes } = useStyles();
 
   const items = data.map((item) => {
@@ -84,7 +113,7 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
         <Text size="md" color={item.isEliminated ? "#F66B0E" : "dimmed"} p={5}>
           {item.totalScore}
         </Text>
-        <Text>{item.userName}</Text>
+        <Text onClick={() => showUserStats(item.userId)}>{item.userName}</Text>
         {
           item.isAdmin ?
             <IconUser /> :
@@ -116,4 +145,62 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete }) {
       {items}
     </Card>
   );
+}
+
+
+function PlayerStatsModel({ userId, userStats, opened, setOpened, isAdmin, currentUserId, hasPlayerLeft }) {
+
+  let params = useParams()
+  let GameCode = params.gameId;
+  const authId = sessionStorage.getItem('access_token');
+
+  const reportPlayer = () => {
+    fetch(import.meta.env.VITE_API + "/users/report/" + userId, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authId}`,
+      }
+    }).then(async (response) => {
+      if (response.ok) {
+        showNotification({
+          variant: 'outline',
+          color: 'green',
+          title: 'User reported'
+        })
+        setOpened(false)
+      } else {
+        throw new Error(response)
+      }
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: 'Please refresh the page and try again'
+      })
+      setOpened(false)
+    })
+  }
+
+  const removePlayerFromGame = () => {
+    RemovePlayer(GameCode, userId)
+    setOpened(false)
+  }
+
+  return (
+    <Modal
+      opened={opened}
+      onClose={() => setOpened(false)}
+      title={userStats.userName + " stats"}
+      size={400}
+    >
+      <StatsControls statValues={userStats} />
+      <Space h="xl" />
+      <Group position="apart">
+        <Button color={'red.7'} onClick={reportPlayer} hidden={currentUserId === userId}>Report</Button>
+        <Button color={'yellow.7'} onClick={removePlayerFromGame} hidden={!isAdmin || currentUserId === userId || hasPlayerLeft }>Remove player</Button>
+      </Group>
+    </Modal>
+  )
 }
