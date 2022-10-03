@@ -69,12 +69,12 @@ const getIdTokenOfUser = async () => {
 async function refeshToken() {
   const user = auth.currentUser;
   if (user) {
-    const idToken = await user.getIdToken()
+    const idToken = await user.getIdToken(true);
     console.log('IdTokem from Refresh Token', idToken)
     sessionStorage.setItem("access_token", idToken)
     authTimeout = setTimeout(() => {
       refeshToken();
-    }, 3480000);
+    }, 3480000); //58 min - refresh token 
   }
 }
 
