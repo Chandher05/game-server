@@ -33,8 +33,19 @@ function HallOfFame() {
                   <Image src="/HallOfFame/winner-2.jpeg" alt="winner-1" />
                 </Card.Section>
 
-                <Text weight={500} size="lg" mt="md">
+                <Text weight={700} size="xl" mt="md">
                   Winner: Shaivya Sahare
+                </Text>
+                <Text weight={300} size="md" mt="md">
+                  <p>
+                    Runners up: Jampana Sriteja, Jishnu Mohan
+                  </p>
+                  <p>
+                    Finalist: Charumitra Sardana
+                  </p>
+                  <p>
+                    Participants: Anjali Ramesh, Chandher Shekar R, Arshmeen Baveja, Rhea Miranda
+                  </p>
                 </Text>
 
                 <Text mt="xs" color="dimmed" size="sm">
@@ -91,10 +102,7 @@ function HallOfFame() {
                   Winner: Jayasurya Pinaki
                 </Text>
 
-                <Text mt="xs" color="dimmed" size="sm">
-                  Shaivya used to the winnings from this tournament to help a organization who is trying to help street vendors rebuild their businesses post
-                  COVID. <Anchor href="https://fundraisers.giveindia.org/fundraisers/empowering-our-street-vendors-to-rebuild-their-livelihoods" target="_blank" rel="noopener noreferrer">Link to the fundraiser</Anchor>
-                </Text>
+
               </Card>
             </Grid.Col>
             <Grid.Col span={6}>
