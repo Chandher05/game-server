@@ -7,7 +7,7 @@ import { useStoreState } from 'easy-peasy';
 
 function Home() {
   const Navigate = useNavigate();
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
   const [opened, setOpened] = useState(false);
   const theme = useMantineTheme();
 

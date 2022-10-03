@@ -1,8 +1,9 @@
 
 import { useState } from 'react';
-import { IconGauge, IconActivity, IconColumns, IconTrophy, IconUser, IconAdjustmentsAlt } from '@tabler/icons';
-import { Box, NavLink, Navbar as Nav } from '@mantine/core';
+import { IconActivity, IconColumns, IconTrophy, IconUser, IconAdjustmentsAlt, IconLogout } from '@tabler/icons';
+import { Box, NavLink, Navbar as Nav, ActionIcon, Button } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../Providers/Firebase/config'
 
 const data = [
   { icon: IconActivity, label: 'Game Room', url: '' },
@@ -36,10 +37,17 @@ function NavLinks({ setOpened }) {
   return <Box sx={{ width: '100%' }}>{items}</Box>;
 }
 
-function Navbar({opened, setOpened}) {
+function Navbar({ opened, setOpened }) {
   return (
     <Nav hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 200, lg: 300 }}>
-      <NavLinks setOpened={setOpened}></NavLinks>
+      <Nav.Section grow>
+        <NavLinks setOpened={setOpened}></NavLinks>
+      </Nav.Section>
+      <Nav.Section style={{ padding: '20px' }}>
+        <Button fullWidth variant="outline" leftIcon={<IconLogout />} color="red" onClick={logout}>
+          Logout
+        </Button>
+      </Nav.Section>
     </Nav>
   )
 }

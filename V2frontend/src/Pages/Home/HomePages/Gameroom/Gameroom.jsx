@@ -11,7 +11,7 @@ function Gameroom() {
   const Navigate = useNavigate();
   const [gameCode, setGameCode] = useState("");
   const [opened, setOpened] = useState(false);
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

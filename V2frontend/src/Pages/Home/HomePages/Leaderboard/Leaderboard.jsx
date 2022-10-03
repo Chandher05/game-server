@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { BackgroundImage, Button, Table } from "@mantine/core";
-import { useStoreState } from 'easy-peasy';
+import { Button, Table } from "@mantine/core";
 import { IconArrowsSort } from '@tabler/icons';
 import { useToggle } from '@mantine/hooks';
 
@@ -11,7 +10,7 @@ function Leaderboard() {
   const [sortColumn, setSortColumn] = useState("");
   const [sortTypeDecrease, setSortTypeDecrease] = useState(true);
   const [showAverage, toggleAverage] = useToggle([false, true]);
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API + "/users/leaderboard", {

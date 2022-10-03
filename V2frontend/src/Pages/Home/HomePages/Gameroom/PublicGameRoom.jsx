@@ -33,7 +33,7 @@ const useStyles = createStyles((theme) => ({
 
 export function PublicGameRoom({ joinGame, spectateGame }) {
   const [games, setGames] = useState([]);
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API + "/game/public", {

@@ -5,7 +5,7 @@ import { useStoreState } from 'easy-peasy';
 
 function Users() {
   const [data, setData] = useState([]);
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API + "/admin/allUsers", {
@@ -48,7 +48,7 @@ function Demo({ data }) {
 function UserRow({ element }) {
 
 
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   const deactivateUser = () => {
     fetch(import.meta.env.VITE_API + `/admin/deactivate/${element._id}`, {

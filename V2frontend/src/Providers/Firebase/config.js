@@ -11,7 +11,7 @@ import {
 
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-
+let authTimeout; // Global variable for Auth - access token timeout
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_FIREBASE,
@@ -32,8 +32,8 @@ const signInWithGoogle = async () => {
     const user = res.user;
     console.log('Calling POST on Login')
     await user.getIdToken().then(function (idToken) {  // <------ Check this line
-      localStorage.setItem("access_token", idToken)
-      console.log(idToken, 'this is from idtoken')
+
+      refeshToken();
       fetch(`${import.meta.env.VITE_API}/users/login`, {
         headers: {
           Authorization: `Bearer ${idToken}`,
@@ -49,19 +49,33 @@ const signInWithGoogle = async () => {
 };
 
 const logout = () => {
+  clearTimeout(authTimeout);
+  sessionStorage.removeItem('access_token')
   signOut(auth);
+
 };
 
-const getIdTokenOfUser = () => {
-  return new Promise(async (res, err) => {
-    const user = auth.currentUser;
-    if (user) {
-      return res(await user.getIdToken())
-    }
-    else {
-      err("User not available")
-    }
-  })
+const getIdTokenOfUser = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    return await user.getIdToken()
+  }
+  else {
+    err("User not available")
+  }
+}
+
+
+async function refeshToken() {
+  const user = auth.currentUser;
+  if (user) {
+    const idToken = await user.getIdToken()
+    console.log('IdTokem from Refresh Token', idToken)
+    sessionStorage.setItem("access_token", idToken)
+    authTimeout = setTimeout(() => {
+      refeshToken();
+    }, 3480000);
+  }
 }
 
 

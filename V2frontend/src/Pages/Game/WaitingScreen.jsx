@@ -11,7 +11,7 @@ function WaitingScreen() {
   let params = useParams()
   let GameCode = params.gameId;
   const Navigate = useNavigate();
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API + "/users/userStatus", {
@@ -42,7 +42,7 @@ function DisplayData() {
   let GameCode = params.gameId;
   const Navigate = useNavigate();
   const [data, setData] = useState([]);
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
 
 

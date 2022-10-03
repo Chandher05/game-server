@@ -136,7 +136,7 @@ function GameRoom() {
     "playerStatus": "SPECTATING",
     "isAdmin": false
   });
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API + "/users/userStatus", {

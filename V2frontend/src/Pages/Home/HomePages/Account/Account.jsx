@@ -12,7 +12,7 @@ function Account() {
   const [editDisabled, setEditDisabled] = useState(true);
   const [userNames, setUserNames] = useState([]);
   const [selectedUserNameToUpdate, setSelectedUserNameToUpdate] = useState("");
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API + "/users/profile", {
@@ -58,7 +58,7 @@ export default Account;
 
 function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, setEditDisabled }) {
 
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
   const changeUserName = (e) => {
     setProfileUserName(e.target.value)
   }
@@ -111,7 +111,7 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
   const [newUsername, setNewUsername] = useState("");
   const [comments, setComments] = useState("");
   const [opened, setOpened] = useState(false);
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
 
   const requestClaimUserName = async () => {

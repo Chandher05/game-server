@@ -5,7 +5,7 @@ import { useStoreState } from 'easy-peasy';
 
 function Messages() {
   const [data, setData] = useState([]);
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API + "/admin/messages", {
@@ -48,7 +48,7 @@ function Demo({ data }) {
 function UserRow({ element }) {
 
 
-  const authId = useStoreState((state) => state.authId);
+  const authId = sessionStorage.getItem('access_token');
 
   const markMessageAsSeen = () => {
     fetch(import.meta.env.VITE_API + `/admin/messages/seen/${element._id}`, {
@@ -70,7 +70,7 @@ function UserRow({ element }) {
       <td>{element.body}</td>
       <td>{element.createdAt}</td>
       {/* TODO: Show a pop up to confirm before marking seen */}
-      <td>{element.seen? "":<button onClick={markMessageAsSeen}>Mark Seen</button>}</td>
+      <td>{element.seen ? "" : <button onClick={markMessageAsSeen}>Mark Seen</button>}</td>
     </tr>
   )
 }
