@@ -441,14 +441,14 @@ exports.reportUser = async (req, res) => {
 			from: config.nodemailer.EMAIL_ID,
 			to: req.body.email,
 			subject: "You have reported an user on declare game",
-			html: `<p><b>Reported user: </b>${userObj1.userName}</p><p><b>Total games: </b>${userObj1.totalGames}</p>`
+			html: `<p>Thank you for reporting ${userObj1.userName}. We are currently considering the request only if they have inappropriate username. Please send us a message from <b>'Accounts'</b> tab if you have reported the user for any other reason.</p><p><b>Total games played by ${userObj1.userName}: </b>${userObj1.totalGames}</p>`
 		});
 
 		let messageObj = {
 			userUID: req.body.userUID,
 			email: req.body.email,
 			subject: `Reported User`,
-			body: `User ID: ${req.params.userId} || Reported user: ${userObj1.userName}`
+			body: `${req.params.userId} || ${userObj1.userName}`
 		}
 		let newMessage = new Messages(messageObj)
 		await newMessage.save()

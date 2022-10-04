@@ -8,8 +8,8 @@ function Messages() {
   const [data, setData] = useState([]);
 
   const getAdminMessages = useCallback(
-    () => {
-      const authId = getIdTokenOfUser();
+    async () => {
+      const authId = await getIdTokenOfUser();
       fetch(import.meta.env.VITE_API + "/admin/messages", {
         headers: {
           Authorization: `Bearer ${authId}`,

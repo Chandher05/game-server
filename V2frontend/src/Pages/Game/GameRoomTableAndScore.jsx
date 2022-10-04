@@ -179,7 +179,7 @@ function PlayerStatsModel({ userId, userStats, opened, setOpened, isAdmin, curre
         showNotification({
           variant: 'outline',
           color: 'green',
-          title: 'User reported'
+          title: 'User reported. Lookout for an email'
         })
         setOpened(false)
       } else {
