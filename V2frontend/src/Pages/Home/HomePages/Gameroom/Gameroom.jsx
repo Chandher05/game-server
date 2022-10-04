@@ -1,8 +1,7 @@
-import { Button, Center, Group, Input, Stack, Select, Modal, SegmentedControl, Container } from "@mantine/core";
+import { Button, Center, Group, Input, Stack, Container } from "@mantine/core";
 import { useState, useEffect } from 'react';
 import { IconBrandAppleArcade, IconFriends, IconEye } from '@tabler/icons'
 import { useNavigate } from 'react-router-dom';
-import { useStoreState } from "easy-peasy";
 import CreateGameModal from "./CreateGameModal";
 import PublicGameRoom from "./PublicGameRoom";
 import { showNotification } from '@mantine/notifications';

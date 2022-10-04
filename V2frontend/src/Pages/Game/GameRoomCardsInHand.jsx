@@ -1,11 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text, Center, Menu, ActionIcon, Stack, Loader, Space, Title, MediaQuery } from "@mantine/core";
-import { useStoreState } from 'easy-peasy';
-import { useNavigate } from 'react-router-dom';
+import { Box, Button, Grid, Image, Group, Text, Center, Stack, Loader, Space, MediaQuery } from "@mantine/core";
 import { useParams } from "react-router-dom";
-import { GetGameUpdates, LeaveGame, NextRound, RestartGame, DropCards, Declare } from '../../Providers/Socket/emitters'
-import { CommonGameData, CardsInHand } from '../../Providers/Socket/listeners';
-import { IconPlayCard, IconUser, IconRun, IconSettings, IconMessageCircle, IconTrash, IconArrowsLeftRight, IconLogout } from '@tabler/icons';
+import { DropCards, Declare } from '../../Providers/Socket/emitters';
 
 // sample data
 

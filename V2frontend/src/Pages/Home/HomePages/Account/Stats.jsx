@@ -1,7 +1,4 @@
-import { useState } from 'react';
-
-import { createStyles, UnstyledButton, Text, Paper, Group, Center } from '@mantine/core';
-import { IconSwimming, IconBike, IconRun, IconChevronDown, IconChevronUp } from '@tabler/icons';
+import { createStyles, Text, Paper, Group, Center } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   root: {

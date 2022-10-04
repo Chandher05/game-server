@@ -1,8 +1,5 @@
-import { IconHeart } from '@tabler/icons';
 import { useState, useEffect } from 'react';
-import { useStoreState } from "easy-peasy";
-import { Card, Image, Text, Group, Space, Button, Divider, createStyles, Grid } from '@mantine/core';
-import { IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
+import { Card, Text, Group, Space, Button, Divider, createStyles, Grid } from '@mantine/core';
 import { useCallback } from 'react';
 import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
 

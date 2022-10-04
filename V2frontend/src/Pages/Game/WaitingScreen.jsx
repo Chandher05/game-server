@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu, Loader } from "@mantine/core";
-import { IconCheck, IconCopy, IconMessageCircle, IconClockHour4, IconBrandGoogleOne, IconWorld, IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
-import { useStoreState } from 'easy-peasy';
+import { IconCheck, IconCopy, IconClockHour4, IconBrandGoogleOne, IconWorld, IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetLobbyUpdates, StartGame } from '../../Providers/Socket/emitters'

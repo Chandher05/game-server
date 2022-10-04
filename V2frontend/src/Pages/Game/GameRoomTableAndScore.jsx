@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text, Center, Menu, ActionIcon, Stack, Loader, Space, Title, MediaQuery, Divider } from "@mantine/core";
-import { useStoreState } from 'easy-peasy';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Button, Grid, Image, createStyles, Card, Group, Modal, Text, Stack, Space, MediaQuery, Divider } from "@mantine/core";
 import { useParams } from "react-router-dom";
-import { RemovePlayer } from '../../Providers/Socket/emitters'
-import { CommonGameData, CardsInHand } from '../../Providers/Socket/listeners';
-import { IconPlayCard, IconUser, IconRun, IconSettings, IconMessageCircle, IconTrash, IconArrowsLeftRight, IconLogout } from '@tabler/icons';
+import { RemovePlayer } from '../../Providers/Socket/emitters';
+import { IconUser, IconRun } from '@tabler/icons';
 import { StatsControls } from '../Home/HomePages/Account/Stats'
 import { showNotification } from '@mantine/notifications';
+import { getIdTokenOfUser } from '../../Providers/Firebase/config';
 
 const getCardImage = (cardNum) => {
   cardNum -= 1

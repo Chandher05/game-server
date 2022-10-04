@@ -1,11 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text, Center, Menu, ActionIcon, Stack, Loader, Space, Title, MediaQuery } from "@mantine/core";
-import { useStoreState } from 'easy-peasy';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Alert, Button, Grid, Text, Center, ActionIcon, Loader, Space, Title } from "@mantine/core";
 import { useParams } from "react-router-dom";
-import { GetGameUpdates, LeaveGame, NextRound, RestartGame, DropCards, Declare } from '../../Providers/Socket/emitters'
-import { CommonGameData, CardsInHand } from '../../Providers/Socket/listeners';
-import { IconPlayCard, IconUser, IconRun, IconSettings, IconMessageCircle, IconTrash, IconArrowsLeftRight, IconLogout } from '@tabler/icons';
+import { LeaveGame, NextRound, RestartGame } from '../../Providers/Socket/emitters';
+import { IconPlayCard, IconLogout } from '@tabler/icons';
 
 function GameRoomNotifications({ commonData }) {
   let params = useParams()

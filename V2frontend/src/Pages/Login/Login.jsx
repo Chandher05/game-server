@@ -2,7 +2,6 @@ import {
   Text,
   Paper,
   Group,
-  Container,
   Center
 } from '@mantine/core';
 import { GoogleButton } from './GoogleButton';

@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text, Center, Menu, ActionIcon, Stack, Loader, Space, Title, MediaQuery } from "@mantine/core";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
-import { GetGameUpdates, LeaveGame, NextRound, RestartGame, DropCards, Declare } from '../../Providers/Socket/emitters'
+import { GetGameUpdates } from '../../Providers/Socket/emitters'
 import { CommonGameData, CardsInHand } from '../../Providers/Socket/listeners';
-import { IconPlayCard, IconUser, IconRun, IconSettings, IconMessageCircle, IconTrash, IconArrowsLeftRight, IconLogout } from '@tabler/icons';
 import GameRoomNotifications from './GameRoomNotifications';
 import GameRoomTableAndScore from './GameRoomTableAndScore';
 import GameRoomCardsInHand from './GameRoomCardsInHand';

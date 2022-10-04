@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useStoreState } from 'easy-peasy';
 import { Button, Center, Select, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
