@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetLobbyUpdates, StartGame } from '../../Providers/Socket/emitters'
 import { LobbyListener } from '../../Providers/Socket/listeners'
-import { getIdTokenOfUser } from '../../Providers/Firebase/config';
+import { getIdTokenOfUser, logout } from '../../Providers/Firebase/config';
 import { showNotification } from '@mantine/notifications';
 
 function WaitingScreen() {
@@ -29,6 +29,14 @@ function WaitingScreen() {
             Navigate(`/waiting/${json.gameId}`)
           } else if (json.status == "GAME_ROOM") {
             Navigate(`/game/${json.gameId}`)
+          } else if (json.status == "INACTIVE") {
+            showNotification({
+              variant: 'outline',
+              color: 'red',
+              title: 'Something went wrong!',
+              message: "User inactive"
+            })
+            logout()
           }
         })
       } else {

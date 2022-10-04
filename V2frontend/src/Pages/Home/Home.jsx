@@ -3,7 +3,7 @@ import { AppShell, Header, Title, MediaQuery, Burger, useMantineTheme } from '@m
 import { Outlet, useNavigate } from 'react-router-dom'
 import Navbar from "./Navbar";
 import { useState, useEffect, useCallback } from 'react';
-import { getIdTokenOfUser } from '../../Providers/Firebase/config';
+import { getIdTokenOfUser, logout } from '../../Providers/Firebase/config';
 import { showNotification } from '@mantine/notifications';
 
 
@@ -27,6 +27,14 @@ function Home() {
               Navigate(`/waiting/${json.gameId}`)
             } else if (json.status == "GAME_ROOM") {
               Navigate(`/game/${json.gameId}`)
+            } else if (json.status == "INACTIVE") {
+              showNotification({
+                variant: 'outline',
+                color: 'red',
+                title: 'Something went wrong!',
+                message: "User inactive"
+              })
+              logout()
             }
           })
         } else {

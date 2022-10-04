@@ -14,9 +14,10 @@ export default function GoogleLogin() {
   // const location = useLocation();
 
   const signIn = async () => {
-    await signInWithGoogle();
-
-    navigate("/");
+    let user = await signInWithGoogle()
+    if(user != null) {
+      navigate("/");
+    }
   };
 
   return (

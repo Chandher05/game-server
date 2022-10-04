@@ -314,6 +314,15 @@ exports.userStatus = async (req, res) => {
 				.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
 				.send({ msg: "User not found in database" })
 		}
+		if (!reqUserObj.isActive) {
+			return res
+				.status(constants.STATUS_CODE.SUCCESS_STATUS)
+				.send({
+					status: "INACTIVE",
+					gameId: null
+				})
+		}
+
 		req.body.userId = reqUserObj._id
 		let timestamp = Date.now() - 1000 * 90
 

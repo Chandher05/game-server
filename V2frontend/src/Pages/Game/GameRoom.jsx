@@ -8,7 +8,7 @@ import GameRoomTableAndScore from './GameRoomTableAndScore';
 import GameRoomCardsInHand from './GameRoomCardsInHand';
 import GameRoomDetailedScore from './GameRoomDetailedScore';
 import { useCallback } from 'react';
-import { getIdTokenOfUser } from '../../Providers/Firebase/config';
+import { getIdTokenOfUser, logout } from '../../Providers/Firebase/config';
 import { showNotification } from '@mantine/notifications';
 
 // sample data
@@ -155,6 +155,14 @@ function GameRoom() {
             Navigate(`/waiting/${json.gameId}`)
           } else if (json.status == "GAME_ROOM" && GameCode != json.gameId) {
             Navigate(`/game/${json.gameId}`)
+          } else if (json.status == "INACTIVE") {
+            showNotification({
+              variant: 'outline',
+              color: 'red',
+              title: 'Something went wrong!',
+              message: "User inactive"
+            })
+            logout()
           }
         })
       } else {

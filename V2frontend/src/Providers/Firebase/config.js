@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { showNotification } from '@mantine/notifications';
 
 let authTimeout; // Global variable for Auth - access token timeout
 // Your web app's Firebase configuration
@@ -39,13 +40,33 @@ const signInWithGoogle = async () => {
           Authorization: `Bearer ${idToken}`,
         },
         method: 'POST',
+      }).then(async (response) => {
+        if (response.ok) {
+          return user;
+        } else {
+          throw await response.json()
+        }
+      }).catch((error) => {
+        signOut(auth);
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: error.msg
+        })
       })
     });
-    return user;
+    
   } catch (err) {
-    console.error(err);
-    alert(err.message);
+    signOut(auth);
+    showNotification({
+      variant: 'outline',
+      color: 'red',
+      title: 'Something went wrong!',
+      message: error.msg
+    })
   }
+  return null;
 };
 
 const logout = () => {
