@@ -135,12 +135,15 @@ exports.emitDataToAllInGame = (gameId) => {
                 playerTotals = playerTotals[game.currentPlayer.toString()]
                 if (playerTotals.isPair) {
                     playerDeclaredType = "PAIR"
+                    allPlayers[game.currentPlayer.toString()]["roundScore"] = game.endWithPair
                 } else if (playerTotals.isSame) {
                     playerDeclaredType = "SAME"
+                    allPlayers[game.currentPlayer.toString()]["roundScore"] *= 2
                 } else if (playerTotals.isLowest) {
                     playerDeclaredType = "LOWEST"
                 } else {
                     playerDeclaredType = "NOT_LOWEST"
+                    allPlayers[game.currentPlayer.toString()]["roundScore"] = game.wrongCall
                 }
             }
 

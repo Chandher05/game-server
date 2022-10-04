@@ -42,6 +42,15 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
     )
   })
 
+  let playerEligibleToDeclare = false
+  if (commonData.canPlayersDeclare && commonData.currentPlayer && !commonData.isRoundComplete && !commonData.isGameComplete) {
+    if (calculateScore() < 15) {
+      playerEligibleToDeclare = true
+    } else if (cardsInHand.length == 2 && (cardsInHand[0] - cardsInHand[1]) % 13 == 0) {
+      playerEligibleToDeclare = true
+    }
+  }
+
   let playerCardsInHandGrid = (
     <Box
       sx={(theme) => ({
@@ -97,7 +106,7 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
           <Button
             color={'yellow.7'}
             fullWidth={true}
-            hidden={commonData.canPlayersDeclare && commonData.currentPlayer && calculateScore() < 15 && !commonData.isRoundComplete && !commonData.isGameComplete ? false : true}
+            hidden={!playerEligibleToDeclare}
             onClick={() => Declare(GameCode)}>
             Declare
           </Button>
