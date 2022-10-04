@@ -1,21 +1,28 @@
 
 import { useState, useEffect } from 'react';
 import { Table } from "@mantine/core";
-import { useStoreState } from 'easy-peasy';
+import { useCallback } from 'react';
+import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
 
 function Users() {
   const [data, setData] = useState([]);
-  const authId = sessionStorage.getItem('access_token');
+
+  const getAllUsers = useCallback(
+    async () => {
+      const authId = await getIdTokenOfUser();
+      fetch(import.meta.env.VITE_API + "/admin/allUsers", {
+        headers: {
+          Authorization: `Bearer ${authId}`,
+        },
+      }).then(async (response) => {
+        if (response.ok) setData(await response.json());
+      });
+    }, []
+  )
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_API + "/admin/allUsers", {
-      headers: {
-        Authorization: `Bearer ${authId}`,
-      },
-    }).then(async (response) => {
-      if (response.ok) setData(await response.json());
-    });
-  }, [])
+    getAllUsers()
+  }, [getAllUsers])
 
   return <Demo data={data}></Demo>
 }
@@ -47,10 +54,8 @@ function Demo({ data }) {
 
 function UserRow({ element }) {
 
-
-  const authId = sessionStorage.getItem('access_token');
-
-  const deactivateUser = () => {
+  const deactivateUser = async () => {
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + `/admin/deactivate/${element._id}`, {
       method: 'POST',
       headers: {

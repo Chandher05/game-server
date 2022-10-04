@@ -24,7 +24,6 @@ function GameRoomTableAndScore({ commonData }) {
   const [userStats, setUserStats] = useState({});
   const [opened, setOpened] = useState(false);
   const [userId, setUserId] = useState("");
-  const authId = sessionStorage.getItem('access_token');
 
   let discardPile = commonData["discardPile"].map((element, i) => {
     return <Image key={element} width={'75px'} src={`/Cards/${getCardImage(element)}`}></Image>
@@ -35,7 +34,8 @@ function GameRoomTableAndScore({ commonData }) {
     hasPlayerLeft[element.userId] = element.hasPlayerLeft
   })
 
-  const showUserStats = (userId) => {
+  const showUserStats = async (userId) => {
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/users/stats/" + userId, {
       headers: {
         Authorization: `Bearer ${authId}`,
@@ -133,15 +133,15 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete, showUserSt
           </Text>
         </Grid.Col>
         <Grid.Col span={4}>
-        {
-          isRoundComplete || isGameComplete ?
-            <Text size="md" color="dimmed">
-              {item.roundScore}
-            </Text> :
-            <Group spacing={'xs'}>
-              {cards}
-            </Group>
-        }
+          {
+            isRoundComplete || isGameComplete ?
+              <Text size="md" color="dimmed">
+                {item.roundScore}
+              </Text> :
+              <Group spacing={'xs'}>
+                {cards}
+              </Group>
+          }
         </Grid.Col>
       </Grid>
     )
@@ -159,9 +159,9 @@ function PlayerStatsModel({ userId, userStats, opened, setOpened, isAdmin, curre
 
   let params = useParams()
   let GameCode = params.gameId;
-  const authId = sessionStorage.getItem('access_token');
 
-  const reportPlayer = () => {
+  const reportPlayer = async () => {
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/users/report/" + userId, {
       method: 'POST',
       headers: {

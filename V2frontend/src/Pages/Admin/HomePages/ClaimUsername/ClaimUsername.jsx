@@ -1,30 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useStoreState } from 'easy-peasy';
 import { Button, Center, Select, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
+import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
 
 function ClaimUserName() {
   const [userNames, setUserNames] = useState([]);
-  const authId = sessionStorage.getItem('access_token');
+
+  const getUserNames = useCallback(
+    async () => {
+      const authId = await getIdTokenOfUser();
+      fetch(import.meta.env.VITE_API + "/users/userNames", {
+        headers: {
+          Authorization: `Bearer ${authId}`,
+        },
+      }).then(async (response) => {
+        if (response.ok) setUserNames(await response.json())
+      });
+    }, []
+  )
+
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_API + "/users/userNames", {
-      headers: {
-        Authorization: `Bearer ${authId}`,
-      },
-    }).then(async (response) => {
-      if (response.ok) setUserNames(await response.json())
-    });
+    getUserNames();
+  }, [])
 
-
-  }, [authId])
-
-  return <Demo userNames={userNames} authId={authId}></Demo>
+  return <Demo userNames={userNames} ></Demo>
 }
 
 export default ClaimUserName;
 
-function Demo({ userNames, authId }) {
+function Demo({ userNames }) {
 
   const [currentUserName, setcurrentUserName] = useState("");
   const [oldUserName, setoldUserName] = useState("");
@@ -35,7 +41,8 @@ function Demo({ userNames, authId }) {
       currentUserName,
       oldUserName,
       newUserName,
-    }
+    };
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/users/claim", {
       method: 'POST',
       headers: {

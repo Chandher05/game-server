@@ -1,21 +1,29 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Table } from "@mantine/core";
-import { useStoreState } from 'easy-peasy';
+import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
 
 function Messages() {
   const [data, setData] = useState([]);
-  const authId = sessionStorage.getItem('access_token');
+
+  const getAdminMessages = useCallback(
+    () => {
+      const authId = getIdTokenOfUser();
+      fetch(import.meta.env.VITE_API + "/admin/messages", {
+        headers: {
+          Authorization: `Bearer ${authId}`,
+        },
+      }).then(async (response) => {
+        if (response.ok) setData(await response.json());
+      });
+    },
+    [],
+  );
+
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_API + "/admin/messages", {
-      headers: {
-        Authorization: `Bearer ${authId}`,
-      },
-    }).then(async (response) => {
-      if (response.ok) setData(await response.json());
-    });
-  }, [])
+    getAdminMessages();
+  }, [getAdminMessages])
 
   return <Demo data={data}></Demo>
 }
@@ -48,9 +56,8 @@ function Demo({ data }) {
 function UserRow({ element }) {
 
 
-  const authId = sessionStorage.getItem('access_token');
-
-  const markMessageAsSeen = () => {
+  const markMessageAsSeen = async () => {
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + `/admin/messages/seen/${element._id}`, {
       method: 'POST',
       headers: {

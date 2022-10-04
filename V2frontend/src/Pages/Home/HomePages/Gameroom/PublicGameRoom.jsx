@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { useStoreState } from "easy-peasy";
 import { Card, Image, Text, Group, Space, Button, Divider, createStyles, Grid } from '@mantine/core';
 import { IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
+import { useCallback } from 'react';
+import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -33,9 +35,9 @@ const useStyles = createStyles((theme) => ({
 
 export function PublicGameRoom({ joinGame, spectateGame }) {
   const [games, setGames] = useState([]);
-  const authId = sessionStorage.getItem('access_token');
 
-  useEffect(() => {
+  const getPublicGames = useCallback(async () => {
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/game/public", {
       headers: {
         Authorization: `Bearer ${authId}`,
@@ -48,6 +50,10 @@ export function PublicGameRoom({ joinGame, spectateGame }) {
       }
     });
   }, [])
+
+  useEffect(() => {
+    getPublicGames();
+  }, [getPublicGames])
 
   let gameCards = games.map((element) => (
     <Grid.Col lg={4} md={6} sm={12} key={element.gameId}><BadgeCard data={element} description='Public game' joinGame={joinGame} spectateGame={spectateGame}></BadgeCard></Grid.Col>

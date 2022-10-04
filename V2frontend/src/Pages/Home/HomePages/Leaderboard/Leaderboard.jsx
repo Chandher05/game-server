@@ -1,8 +1,9 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button, Table } from "@mantine/core";
 import { IconArrowsSort } from '@tabler/icons';
 import { useToggle } from '@mantine/hooks';
+import { getIdTokenOfUser } from '../../../../Providers/Firebase/config'
 
 
 function Leaderboard() {
@@ -10,26 +11,36 @@ function Leaderboard() {
   const [sortColumn, setSortColumn] = useState("");
   const [sortTypeDecrease, setSortTypeDecrease] = useState(true);
   const [showAverage, toggleAverage] = useToggle([false, true]);
-  const authId = sessionStorage.getItem('access_token');
+
+  const getLeaderboardData = useCallback(
+    async () => {
+      const authId = await getIdTokenOfUser();
+      console.log(authId, 'authid from eladerboard function async')
+      fetch(import.meta.env.VITE_API + "/users/leaderboard", {
+        headers: {
+          Authorization: `Bearer ${authId}`,
+        },
+      }).then(async (response) => {
+        if (response.ok) {
+          response.json().then(json => {
+            for (var obj of json) {
+              obj["avgTotalWins"] = getAverage(obj, "totalWins")
+              obj["avgTotalDeclares"] = getAverage(obj, "totalDeclares")
+              obj["avgTotalFifties"] = getAverage(obj, "totalFifties")
+              obj["avgTotalPairs"] = getAverage(obj, "totalPairs")
+            }
+            setData(json);
+          })
+        }
+      });
+    },
+    [],
+  );
+
+
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_API + "/users/leaderboard", {
-      headers: {
-        Authorization: `Bearer ${authId}`,
-      },
-    }).then(async (response) => {
-      if (response.ok) {
-        response.json().then(json => {
-          for (var obj of json) {
-            obj["avgTotalWins"] = getAverage(obj, "totalWins")
-            obj["avgTotalDeclares"] = getAverage(obj, "totalDeclares")
-            obj["avgTotalFifties"] = getAverage(obj, "totalFifties")
-            obj["avgTotalPairs"] = getAverage(obj, "totalPairs")
-          }
-          setData(json);
-        })
-      }
-    });
+    getLeaderboardData()
   }, [])
 
 

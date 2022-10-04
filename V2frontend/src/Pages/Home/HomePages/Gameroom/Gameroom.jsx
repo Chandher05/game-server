@@ -6,12 +6,13 @@ import { useStoreState } from "easy-peasy";
 import CreateGameModal from "./CreateGameModal";
 import PublicGameRoom from "./PublicGameRoom";
 import { showNotification } from '@mantine/notifications';
+import { getIdTokenOfUser } from "../../../../Providers/Firebase/config";
 
 function Gameroom() {
   const Navigate = useNavigate();
   const [gameCode, setGameCode] = useState("");
   const [opened, setOpened] = useState(false);
-  const authId = sessionStorage.getItem('access_token');
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -19,7 +20,8 @@ function Gameroom() {
     setGameCode(queryGamecode)
   }, [])
 
-  const createGame = (maxScore, scoreWhenEndWithPair, scoreWhenWrongCall, canDeclareFirstRound, autoplayTimer, isPublicGame) => {
+  const createGame = async (maxScore, scoreWhenEndWithPair, scoreWhenWrongCall, canDeclareFirstRound, autoplayTimer, isPublicGame) => {
+    const authId = await getIdTokenOfUser();
     const data = {
       'maxScore': maxScore,
       'scoreWhenEndWithPair': scoreWhenEndWithPair,
@@ -54,7 +56,8 @@ function Gameroom() {
       })
     })
   }
-  const joinGame = (gameId) => {
+  const joinGame = async (gameId) => {
+    const authId = await getIdTokenOfUser();
     if (gameId.length == 0) {
       showNotification({
         variant: 'outline',

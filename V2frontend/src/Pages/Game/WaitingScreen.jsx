@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu, Loader } from "@mantine/core";
 import { IconCheck, IconCopy, IconMessageCircle, IconClockHour4, IconBrandGoogleOne, IconWorld, IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons'
 import { useStoreState } from 'easy-peasy';
@@ -6,14 +6,16 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetLobbyUpdates, StartGame } from '../../Providers/Socket/emitters'
 import { LobbyListener } from '../../Providers/Socket/listeners'
+import { getIdTokenOfUser } from '../../Providers/Firebase/config';
 
 function WaitingScreen() {
   let params = useParams()
   let GameCode = params.gameId;
   const Navigate = useNavigate();
-  const authId = sessionStorage.getItem('access_token');
 
-  useEffect(() => {
+
+  const getUserStatus = useCallback(async () => {
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/users/userStatus", {
       headers: {
         Authorization: `Bearer ${authId}`,
@@ -34,6 +36,10 @@ function WaitingScreen() {
     GetLobbyUpdates(GameCode)
   }, [])
 
+  useEffect(() => {
+    getUserStatus();
+  }, [])
+
   return <DisplayData></DisplayData>
 }
 
@@ -42,12 +48,12 @@ function DisplayData() {
   let GameCode = params.gameId;
   const Navigate = useNavigate();
   const [data, setData] = useState([]);
-  const authId = sessionStorage.getItem('access_token');
+
 
 
 
   const leaveGame = async () => {
-
+    const authId = await getIdTokenOfUser();
     const data = {
       gameId: GameCode
     }

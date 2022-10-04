@@ -1,10 +1,11 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button, Select, Modal, SegmentedControl, Center, Stack, Text, Group, ActionIcon, Textarea } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { IconPencil } from '@tabler/icons';
 import { showNotification } from '@mantine/notifications';
 import { StatsControls } from './Stats'
+import { getIdTokenOfUser } from '../../../../Providers/Firebase/config'
 
 function Account() {
   const [profileData, setProfileData] = useState([]);
@@ -12,38 +13,45 @@ function Account() {
   const [editDisabled, setEditDisabled] = useState(true);
   const [userNames, setUserNames] = useState([]);
   const [selectedUserNameToUpdate, setSelectedUserNameToUpdate] = useState("");
-  const authId = sessionStorage.getItem('access_token');
+
+
+
+  const getAccountDetails = useCallback(
+    async () => {
+      const authId = await getIdTokenOfUser();
+      fetch(import.meta.env.VITE_API + "/users/profile", {
+        headers: {
+          Authorization: `Bearer ${authId}`,
+        },
+      }).then(async (response) => {
+        if (response.ok) {
+          response.json().then(json => {
+            setProfileData(json)
+            setProfileUserName(json.userName)
+          })
+        }
+      });
+      fetch(import.meta.env.VITE_API + "/users/userNames", {
+        headers: {
+          Authorization: `Bearer ${authId}`,
+        },
+      }).then(async (response) => {
+        if (response.ok) {
+          response.json().then(json => {
+            setUserNames(json)
+          })
+        }
+      });
+    },
+    [],
+  );
+
+
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_API + "/users/profile", {
-      headers: {
-        Authorization: `Bearer ${authId}`,
-      },
-    }).then(async (response) => {
-      if (response.ok) {
-        response.json().then(json => {
-          setProfileData(json)
-          setProfileUserName(json.userName)
-        })
-      }
-    });
+    getAccountDetails();
+  }, [getAccountDetails])
 
-
-
-    fetch(import.meta.env.VITE_API + "/users/userNames", {
-      headers: {
-        Authorization: `Bearer ${authId}`,
-      },
-    }).then(async (response) => {
-      if (response.ok) {
-        response.json().then(json => {
-          setUserNames(json)
-        })
-      }
-    });
-
-
-  }, [])
   return (
     // Can we add send message also in this page?
     <div>
@@ -58,7 +66,7 @@ export default Account;
 
 function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, setEditDisabled }) {
 
-  const authId = sessionStorage.getItem('access_token');
+
   const changeUserName = (e) => {
     setProfileUserName(e.target.value)
   }
@@ -67,10 +75,11 @@ function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, 
     setEditDisabled(!editDisabled)
   }
 
-  const saveUserName = () => {
+  const saveUserName = async () => {
     const data = {
       newUserName: playerUserName
     }
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/users/update", {
       method: 'PUT',
       headers: {
@@ -111,8 +120,6 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
   const [newUsername, setNewUsername] = useState("");
   const [comments, setComments] = useState("");
   const [opened, setOpened] = useState(false);
-  const authId = sessionStorage.getItem('access_token');
-
 
   const requestClaimUserName = async () => {
 
@@ -121,6 +128,7 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
       oldUserName: selectedUserNameToUpdate,
       newUserName: newUsername
     }
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/users/claim", {
       method: 'POST',
       headers: {
@@ -154,10 +162,11 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
     setComments(e.target.value)
   }
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const data = {
       description: comments
     }
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/users/sendMessage", {
       method: 'POST',
       headers: {

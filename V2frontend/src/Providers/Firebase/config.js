@@ -33,7 +33,7 @@ const signInWithGoogle = async () => {
     console.log('Calling POST on Login')
     await user.getIdToken().then(function (idToken) {  // <------ Check this line
 
-      refeshToken();
+      // refeshToken();
       fetch(`${import.meta.env.VITE_API}/users/login`, {
         headers: {
           Authorization: `Bearer ${idToken}`,
@@ -66,17 +66,17 @@ const getIdTokenOfUser = async () => {
 }
 
 
-async function refeshToken() {
-  const user = auth.currentUser;
-  if (user) {
-    const idToken = await user.getIdToken(true);
-    console.log('IdTokem from Refresh Token', idToken)
-    sessionStorage.setItem("access_token", idToken)
-    authTimeout = setTimeout(() => {
-      refeshToken();
-    }, 3480000); //58 min - refresh token 
-  }
-}
+// async function refeshToken() {
+//   const user = auth.currentUser;
+//   if (user) {
+//     const idToken = await user.getIdToken(true);
+//     console.log('IdTokem from Refresh Token', idToken)
+//     sessionStorage.setItem("access_token", idToken)
+//     authTimeout = setTimeout(() => {
+//       refeshToken();
+//     }, 3480000); //58 min - refresh token 
+//   }
+// }
 
 
 

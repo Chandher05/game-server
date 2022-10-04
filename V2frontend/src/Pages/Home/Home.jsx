@@ -2,32 +2,42 @@
 import { AppShell, Header, Title, MediaQuery, Burger, useMantineTheme } from '@mantine/core';
 import { Outlet, useNavigate } from 'react-router-dom'
 import Navbar from "./Navbar";
-import { useState, useEffect } from 'react';
-import { useStoreState } from 'easy-peasy';
+import { useState, useEffect, useCallback } from 'react';
+import { getIdTokenOfUser } from '../../Providers/Firebase/config';
+
 
 function Home() {
   const Navigate = useNavigate();
-  const authId = sessionStorage.getItem('access_token');
   const [opened, setOpened] = useState(false);
   const theme = useMantineTheme();
 
+
+  const getUserStatus = useCallback(
+    async () => {
+      const authId = await getIdTokenOfUser();
+      fetch(import.meta.env.VITE_API + "/users/userStatus", {
+        headers: {
+          Authorization: `Bearer ${authId}`,
+        },
+      }).then(async (response) => {
+        if (response.ok) {
+          response.json().then(json => {
+            if (json.status == "LOBBY") {
+              Navigate(`/waiting/${json.gameId}`)
+            } else if (json.status == "GAME_ROOM") {
+              Navigate(`/game/${json.gameId}`)
+            }
+          })
+        };
+      });
+    },
+    [],
+  )
+
+
   useEffect(() => {
-    fetch(import.meta.env.VITE_API + "/users/userStatus", {
-      headers: {
-        Authorization: `Bearer ${authId}`,
-      },
-    }).then(async (response) => {
-      if (response.ok) {
-        response.json().then(json => {
-          if (json.status == "LOBBY") {
-            Navigate(`/waiting/${json.gameId}`)
-          } else if (json.status == "GAME_ROOM") {
-            Navigate(`/game/${json.gameId}`)
-          }
-        })
-      };
-    });
-  }, [])
+    getUserStatus();
+  }, [getUserStatus])
 
   return (
     <AppShell

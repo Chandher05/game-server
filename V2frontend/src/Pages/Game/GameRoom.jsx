@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text, Center, Menu, ActionIcon, Stack, Loader, Space, Title, MediaQuery } from "@mantine/core";
-import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetGameUpdates, LeaveGame, NextRound, RestartGame, DropCards, Declare } from '../../Providers/Socket/emitters'
@@ -10,6 +9,8 @@ import GameRoomNotifications from './GameRoomNotifications';
 import GameRoomTableAndScore from './GameRoomTableAndScore';
 import GameRoomCardsInHand from './GameRoomCardsInHand';
 import GameRoomDetailedScore from './GameRoomDetailedScore';
+import { useCallback } from 'react';
+import { getIdTokenOfUser } from '../../Providers/Firebase/config';
 
 // sample data
 
@@ -149,9 +150,11 @@ function GameRoom() {
     "playerStatus": "SPECTATING",
     "isAdmin": false
   });
-  const authId = sessionStorage.getItem('access_token');
 
-  useEffect(() => {
+
+
+  const getUserStatus = useCallback(async () => {
+    const authId = await getIdTokenOfUser();
     fetch(import.meta.env.VITE_API + "/users/userStatus", {
       headers: {
         Authorization: `Bearer ${authId}`,
@@ -171,6 +174,10 @@ function GameRoom() {
     });
     GetGameUpdates(GameCode)
   }, [])
+
+  useEffect(() => {
+    getUserStatus()
+  }, [getUserStatus])
 
 
   CommonGameData((status, data) => {
