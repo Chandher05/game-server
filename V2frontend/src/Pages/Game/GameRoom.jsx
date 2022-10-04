@@ -9,6 +9,7 @@ import { IconPlayCard, IconUser, IconRun, IconSettings, IconMessageCircle, IconT
 import GameRoomNotifications from './GameRoomNotifications';
 import GameRoomTableAndScore from './GameRoomTableAndScore';
 import GameRoomCardsInHand from './GameRoomCardsInHand';
+import GameRoomDetailedScore from './GameRoomDetailedScore';
 
 // sample data
 
@@ -68,30 +69,30 @@ const sampleData =
       "previousScores": [10, 20, 30, 10, 10],
       "currentPlayer": false,
       "userId": "63255f7295b9972f5cb956ab"
-    // },
-    // {
-    //   "userName": "User eliminated",
-    //   "isAdmin": false,
-    //   "hasPlayerLeft": false,
-    //   "isEliminated": true,
-    //   "cardsInHand": 0,
-    //   "roundScore": null,
-    //   "totalScore": 120,
-    //   "previousScores": [40, 40, 40],
-    //   "currentPlayer": false,
-    //   "userId": "63255f729512972f5cbb26ab"
-    // },
-    // {
-    //   "userName": "User eliminated",
-    //   "isAdmin": false,
-    //   "hasPlayerLeft": false,
-    //   "isEliminated": true,
-    //   "cardsInHand": 0,
-    //   "roundScore": null,
-    //   "totalScore": 120,
-    //   "previousScores": [40, 40, 40],
-    //   "currentPlayer": false,
-    //   "userId": "63255f729512972f5cbb26ab"
+    },
+    {
+      "userName": "User eliminated",
+      "isAdmin": false,
+      "hasPlayerLeft": false,
+      "isEliminated": true,
+      "cardsInHand": 0,
+      "roundScore": null,
+      "totalScore": 120,
+      "previousScores": [40, 40, 40, -1, -1],
+      "currentPlayer": false,
+      "userId": "63255f729512972f5cbb26ab"
+    },
+    {
+      "userName": "User eliminated",
+      "isAdmin": false,
+      "hasPlayerLeft": false,
+      "isEliminated": true,
+      "cardsInHand": 0,
+      "roundScore": null,
+      "totalScore": 120,
+      "previousScores": [40, 40, 40, -1, -1],
+      "currentPlayer": false,
+      "userId": "63255f729512972f5cbb26ab"
     }
   ],
   "canPlayersDeclare": true,
@@ -213,6 +214,7 @@ function GameRoom() {
       <GameRoomNotifications commonData={commonData} />
       <GameRoomTableAndScore commonData={commonData} />
       <GameRoomCardsInHand commonData={commonData} selected={selected} cardsInHand={cardsInHand} selectCards={selectCards} />
+      <GameRoomDetailedScore commonData={commonData} />
     </div >
   )
 }

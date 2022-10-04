@@ -105,6 +105,7 @@ var declareRound = (gameId, userId, isAutoPlay) => {
         for (var player of gameMembers) {
             beforeScores[player.userId.toString()] = player.score
             if (player.isEliminated == true) {
+                allScores[player.userId.toString()] = -1
                 continue
             }
             total = 0
@@ -167,7 +168,20 @@ var declareRound = (gameId, userId, isAutoPlay) => {
         // Update scores of all members
         for (var player in beforeScores) {
             var previousScore = beforeScores[player]
-            if (previousScore + allScores[player] > game.maxScore) {
+            if (allScores[player] == -1) {
+                await GameMember.updateOne(
+                    {
+                        gameId: gameId,
+                        userId: player
+                    },
+                    {
+                        $push: {
+                            roundScores: allScores[player]
+                        },
+                        isEliminated: true
+                    }
+                )
+            } else if (previousScore + allScores[player] > game.maxScore) {
                 await GameMember.updateOne(
                     {
                         gameId: gameId,
