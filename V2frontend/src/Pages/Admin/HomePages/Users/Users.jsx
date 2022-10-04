@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Table } from "@mantine/core";
 import { useCallback } from 'react';
 import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
+import { showNotification } from '@mantine/notifications';
 
 function Users() {
   const [data, setData] = useState([]);
@@ -15,8 +16,18 @@ function Users() {
           Authorization: `Bearer ${authId}`,
         },
       }).then(async (response) => {
-        if (response.ok) setData(await response.json());
-      });
+        if (response.ok) setData(await response.json()) 
+        else {
+          throw await response.json()
+        }
+      }).catch((error) => {
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: error.msg
+        })
+      })
     }, []
   )
 
@@ -62,8 +73,18 @@ function UserRow({ element }) {
         Authorization: `Bearer ${authId}`,
       },
     }).then(async (response) => {
-      if (response.ok) setData(await response.json());
-    });
+      if (response.ok) setData(await response.json())
+      else {
+        throw await response.json()
+      }
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: error.msg
+      })
+    })
   }
 
 

@@ -32,7 +32,7 @@ exports.createGame = async (req, res) => {
 		})
 		if (game.length > 0) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User is already part of a game. Please refresh page")
+				.send({ msg: "User is already part of a game. Please refresh page" })
 		}
 
 		game = await Game.find({
@@ -42,7 +42,7 @@ exports.createGame = async (req, res) => {
 
 		if (game.length > 5) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("Game rooms are full! Please wait for a few minutes")
+				.send({ msg: "Game rooms are full! Please wait for a few minutes" })
 		}
 
 		game = await Game.findOne({
@@ -58,12 +58,12 @@ exports.createGame = async (req, res) => {
 				})
 		}
 
-		let maxScore = req.body.maxScore ? req.body.maxScore : 100 
-		let scoreWhenEndWithPair = req.body.scoreWhenEndWithPair ? req.body.scoreWhenEndWithPair : -25 
+		let maxScore = req.body.maxScore ? req.body.maxScore : 100
+		let scoreWhenEndWithPair = req.body.scoreWhenEndWithPair ? req.body.scoreWhenEndWithPair : -25
 		let scoreWhenWrongCall = req.body.scoreWhenWrongCall ? req.body.scoreWhenWrongCall : 50
-		let canDeclareFirstRound = req.body.canDeclareFirstRound != null ? req.body.canDeclareFirstRound : true 
-		let autoplayTimer = req.body.autoplayTimer ? req.body.autoplayTimer : 60 
-		let isPublicGame = req.body.isPublicGame != null ? req.body.isPublicGame : false 
+		let canDeclareFirstRound = req.body.canDeclareFirstRound != null ? req.body.canDeclareFirstRound : true
+		let autoplayTimer = req.body.autoplayTimer ? req.body.autoplayTimer : 60
+		let isPublicGame = req.body.isPublicGame != null ? req.body.isPublicGame : false
 
 		let gameId = await GenerateId(6)
 		const gameData = new Game({
@@ -98,7 +98,7 @@ exports.createGame = async (req, res) => {
 		console.log(`Error while creating game ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -127,22 +127,23 @@ exports.joinGame = async (req, res) => {
 		})
 		if (game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send(`User is already part of a game ${game.gameId}.`)
+				.send({ msg: `User is already part of a game ${game.gameId}.` })
 		}
 
 
 		game = await Game.findOne({
-			gameId: req.body.gameId
+			gameId: req.body.gameId,
+			isEnded: false
 		})
 		if (!game) {
-			return res.status(constants.STATUS_CODE.NO_CONTENT_STATUS)
-				.send("Game does not exist")
+			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
+				.send({ msg: "Game code does not exist" })
 		} else if (game.players.includes(req.body.userId)) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User has already joined game. Please refresh.")
+				.send({ msg: "User has already joined game. Please refresh." })
 		} else if (game.players.length + game.waiting.length === 5) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("Game is full")
+				.send({ msg: "Game is full" })
 		} else if (game.isStarted == true) {
 
 			let hasPlayerLeft = await GameMember.findOne({
@@ -245,7 +246,7 @@ exports.joinGame = async (req, res) => {
 		console.log(`Error while joining game ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -275,13 +276,13 @@ exports.quitFromLobby = async (req, res) => {
 		})
 		if (!game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("Game does not exist")
+				.send({ msg: "Game code does not exist" })
 		} else if (game.isStarted) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("Game has already started")
+				.send({ msg: "Game has already started" })
 		} else if (game.isEnded) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("Game has already ended")
+				.send({ msg: "Game has already ended" })
 		} else if (req.body.userId.toString() === game.createdUser.toString()) {
 			let newCreatedUser
 			if (game.players.length > 1) {
@@ -331,7 +332,7 @@ exports.quitFromLobby = async (req, res) => {
 		console.log(`Error in game/quitFromLobby ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -359,7 +360,7 @@ exports.spectateGame = async (req, res) => {
 		})
 		if (game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send(`User is already part of a game ${game.gameId}.`)
+				.send({ msg: `User is already part of a game ${game.gameId}.` })
 		}
 
 		game = await Game.findOne({
@@ -368,13 +369,13 @@ exports.spectateGame = async (req, res) => {
 
 		if (!game) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send(`Invalid game id`)
+				.send({ msg: `Game code does not exist` })
 		} else if (game.isEnded) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send(`Game has ended`)
+				.send({ msg: `Game has ended` })
 		} else if (!game.isStarted) {
 			return res.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send(`Wait for game to start`)
+				.send({ msg: `Wait for game to start` })
 		}
 
 
@@ -396,7 +397,7 @@ exports.spectateGame = async (req, res) => {
 		console.log(`Error in game/spectateGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -434,6 +435,6 @@ exports.getPublicGames = async (req, res) => {
 		console.log(`Error in game/spectateGame ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }

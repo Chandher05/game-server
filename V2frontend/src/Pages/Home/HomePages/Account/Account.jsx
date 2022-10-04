@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Select, Modal, SegmentedControl, Center, Stack, Text, Group, ActionIcon, Textarea } from "@mantine/core";
-import { useStoreState } from 'easy-peasy';
 import { IconPencil } from '@tabler/icons';
 import { showNotification } from '@mantine/notifications';
 import { StatsControls } from './Stats'
@@ -29,8 +28,17 @@ function Account() {
             setProfileData(json)
             setProfileUserName(json.userName)
           })
+        } else {
+          throw await response.json()
         }
-      });
+      }).catch((error) => {
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: error.msg
+        })
+      })
       fetch(import.meta.env.VITE_API + "/users/userNames", {
         headers: {
           Authorization: `Bearer ${authId}`,
@@ -40,8 +48,17 @@ function Account() {
           response.json().then(json => {
             setUserNames(json)
           })
+        } else {
+          throw await response.json()
         }
-      });
+      }).catch((error) => {
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: error.msg
+        })
+      })
     },
     [],
   );
@@ -89,8 +106,17 @@ function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, 
       body: JSON.stringify(data)
     }).then(async (response) => {
       if (response.ok) setEditDisabled(!editDisabled)
-      // TODO: Error message
-    });
+      else {
+        throw await response.json()
+      }
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: error.msg
+      })
+    })
   }
 
   // TODO: Edit and update username
@@ -146,14 +172,14 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
         })
         setOpened(false)
       } else {
-        throw new Error(response)
+        throw await response.json()
       }
     }).catch((error) => {
       showNotification({
         variant: 'outline',
         color: 'red',
         title: 'Something went wrong!',
-        message: 'Please refresh the page and try again'
+        message: error.msg
       })
     })
   };
@@ -184,14 +210,14 @@ function ClaimUserName({ userNames, profileData, selectedUserNameToUpdate, setSe
         })
         setComments("")
       } else {
-        throw new Error(response)
+        throw await response.json()
       }
     }).catch((error) => {
       showNotification({
         variant: 'outline',
         color: 'red',
         title: 'Something went wrong!',
-        message: 'Please refresh the page and try again'
+        message: error.msg
       })
     })
   }

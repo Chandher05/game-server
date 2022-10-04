@@ -3,7 +3,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Button, Table } from "@mantine/core";
 import { IconArrowsSort } from '@tabler/icons';
 import { useToggle } from '@mantine/hooks';
-import { getIdTokenOfUser } from '../../../../Providers/Firebase/config'
+import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
+import { showNotification } from '@mantine/notifications';
 
 
 function Leaderboard() {
@@ -31,8 +32,17 @@ function Leaderboard() {
             }
             setData(json);
           })
+        } else {
+          throw await response.json()
         }
-      });
+      }).catch((error) => {
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: error.msg
+        })
+      })
     },
     [],
   );

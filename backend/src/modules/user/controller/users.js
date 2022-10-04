@@ -44,13 +44,13 @@ exports.loginUser = async (req, res) => {
 		} else if (user.isActive) {
 			return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send(user)
 		} else if (!user.isActive) {
-			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS).send("USER_INACTIVE")
+			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS).send({ msg: "USER_INACTIVE" })
 		}
 	} catch (error) {
 		console.log(`Error while logging in user ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -76,7 +76,7 @@ exports.getUserProfile = async (req, res) => {
 		console.log(`Error while getting user profile details ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -98,7 +98,7 @@ exports.updateUserProfile = async (req, res) => {
 		if (user) {
 			return res
 				.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send(constants.MESSAGES.USER_ALREADY_EXISTS)
+				.send({ msg: constants.MESSAGES.USER_ALREADY_EXISTS })
 		}
 
 		let userObj = await Users.findOne({
@@ -106,7 +106,7 @@ exports.updateUserProfile = async (req, res) => {
 		})
 
 		if (!userObj) {
-			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS).send("USER_NOT_FOUND")
+			return res.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS).send({ msg: "USER_NOT_FOUND" })
 		}
 
 		let details = await Users.findOneAndUpdate(
@@ -128,13 +128,13 @@ exports.updateUserProfile = async (req, res) => {
 				}
 			)
 		}
-		return res.status(200).send("USER_UPDATED")
+		return res.status(200).send({ msg: "USER_UPDATED" })
 
 	} catch (error) {
 		console.log(`Error while updating user profile details ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -148,11 +148,11 @@ exports.sendMessage = async (req, res) => {
 
 	try {
 		let user = await Users.findOne({ userUID: req.body.userUID })
-		
+
 		if (!user) {
 			return res
 				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-				.send("Not a valid user")
+				.send({ msg: "Not a valid user" })
 		}
 
 		transporter.sendMail({
@@ -172,13 +172,13 @@ exports.sendMessage = async (req, res) => {
 		let newMessage = new Messages(messageObj)
 		await newMessage.save()
 
-		return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send(null)
+		return res.status(constants.STATUS_CODE.SUCCESS_STATUS).send({})
 
 	} catch (error) {
 		console.log(`Error while reporting bug ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -198,7 +198,7 @@ exports.getStats = async (req, res) => {
 		if (!user) {
 			return res
 				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-				.send("User does not exist")
+				.send({ msg: "User does not exist" })
 		}
 
 		const returnValue = {
@@ -218,7 +218,7 @@ exports.getStats = async (req, res) => {
 		console.log(`Error while getting stats ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -233,8 +233,8 @@ exports.leaderboard = async (req, res) => {
 		let allUsers = await Users.find({
 			isActive: true
 		}).sort('userName')
-		
-		let	user,
+
+		let user,
 			userId,
 			allUsersData = []
 
@@ -262,7 +262,7 @@ exports.leaderboard = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -293,7 +293,7 @@ exports.allUsers = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -312,7 +312,7 @@ exports.userStatus = async (req, res) => {
 		if (!reqUserObj) {
 			return res
 				.status(constants.STATUS_CODE.CONFLICT_ERROR_STATUS)
-				.send("User not found in database")
+				.send({ msg: "User not found in database" })
 		}
 		req.body.userId = reqUserObj._id
 		let timestamp = Date.now() - 1000 * 90
@@ -365,7 +365,7 @@ exports.userStatus = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -381,7 +381,7 @@ exports.userNames = async (req, res) => {
 		let allUsers = await Users.find({
 			isActive: true
 		})
-		
+
 		let listOfUserNames = []
 		for (var obj of allUsers) {
 			listOfUserNames.push(obj.userName)
@@ -395,7 +395,7 @@ exports.userNames = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -416,8 +416,8 @@ exports.reportUser = async (req, res) => {
 
 		if (!userObj1) {
 			return res
-			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-			.send("Invalid user ID")
+				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send({ msg: "Invalid user ID" })
 		}
 
 		transporter.sendMail({
@@ -443,17 +443,17 @@ exports.reportUser = async (req, res) => {
 		}
 		let newMessage = new Messages(messageObj)
 		await newMessage.save()
-		
+
 		return res
 			.status(constants.STATUS_CODE.SUCCESS_STATUS)
-			.send("Request sent")
+			.send({ msg: "Request sent" })
 
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -473,23 +473,23 @@ exports.claimOldUsername = async (req, res) => {
 
 		if (newUserName != currentUserName && newUserName != oldUserName) {
 			return res
-			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-			.send("New username has to either current or old username")
+				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send({ msg: "New username has to either current or old username" })
 		}
 
 		console.log(req.body)
 		if (currentUserName == oldUserName) {
 			return res
-			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-			.send("Old username cannot be same as current username")
+				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send({ msg: "Old username cannot be same as current username" })
 		}
 		let userObj1 = await Users.findOne({ userName: currentUserName })
-		let userObj2 = await Users.findOne({ userName: oldUserName }) 
+		let userObj2 = await Users.findOne({ userName: oldUserName })
 
 		if (!userObj1 || !userObj2) {
 			return res
-			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-			.send("Username(s) do not exist")
+				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send({ msg: "Username(s) do not exist" })
 		}
 
 		transporter.sendMail({
@@ -516,15 +516,15 @@ exports.claimOldUsername = async (req, res) => {
 		}
 		let newMessage = new Messages(messageObj)
 		await newMessage.save()
-		
+
 		return res
 			.status(constants.STATUS_CODE.SUCCESS_STATUS)
-			.send("Request sent")
+			.send({ msg: "Request sent" })
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }

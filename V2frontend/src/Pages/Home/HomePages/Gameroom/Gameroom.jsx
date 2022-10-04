@@ -44,20 +44,20 @@ function Gameroom() {
           Navigate(`/waiting/${gameId}`)
         })
       } else {
-        throw new Error(response)
+        throw await response.json()
       }
-    }).catch((err) => {
+    }).catch((error) => {
       showNotification({
         variant: 'outline',
         color: 'red',
         title: 'Something went wrong!',
-        message: 'Check game code and try again'
+        message: error.msg
       })
     })
   }
   const joinGame = async (gameId) => {
     const authId = await getIdTokenOfUser();
-    if (gameId.length == 0) {
+    if (!gameId || gameId.length == 0) {
       showNotification({
         variant: 'outline',
         color: 'red',
@@ -86,20 +86,20 @@ function Gameroom() {
             }
           })
         } else {
-          throw new Error(response)
+          throw await response.json()
         }
       }).catch((error) => {
         showNotification({
           variant: 'outline',
           color: 'red',
           title: 'Something went wrong!',
-          message: 'Please refresh the page and try again'
+          message: error.msg
         })
       })
     }
   }
-  const spectateGame = (gameId) => {
-    if (gameId.length == 0) {
+  const spectateGame = async (gameId) => {
+    if (!gameId || gameId.length == 0) {
       showNotification({
         variant: 'outline',
         color: 'red',
@@ -110,6 +110,7 @@ function Gameroom() {
       const data = {
         gameId: gameId
       }
+      const authId = await getIdTokenOfUser();
       fetch(import.meta.env.VITE_API + "/game/spectate", {
         method: 'POST',
         headers: {
@@ -121,14 +122,14 @@ function Gameroom() {
         if (response.ok) {
           Navigate(`/game/${gameId}`)
         } else {
-          throw new Error()
+          throw await response.json()
         }
       }).catch((error) => {
         showNotification({
           variant: 'outline',
           color: 'red',
           title: 'Something went wrong!',
-          message: "Check game code and try again"
+          message: error.msg
         })
       })
     }

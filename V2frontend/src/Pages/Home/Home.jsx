@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import Navbar from "./Navbar";
 import { useState, useEffect, useCallback } from 'react';
 import { getIdTokenOfUser } from '../../Providers/Firebase/config';
+import { showNotification } from '@mantine/notifications';
 
 
 function Home() {
@@ -28,8 +29,17 @@ function Home() {
               Navigate(`/game/${json.gameId}`)
             }
           })
-        };
-      });
+        } else {
+          throw await response.json()
+        }
+      }).catch((error) => {
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: error.msg
+        })
+      })
     },
     [],
   )

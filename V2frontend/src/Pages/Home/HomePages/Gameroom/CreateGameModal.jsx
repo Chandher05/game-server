@@ -9,9 +9,9 @@ function CreateGameModal({ opened, setOpened, createGame }) {
   const [maxScore, setMaxScore] = useState(100);
   const [scoreWhenEndWithPair, setScoreWhenEndWithPair] = useState(-25);
   const [scoreWhenWrongCall, setScoreWhenWrongCall] = useState(50);
-  const [canDeclareFirstRound, setCanDeclareFirstRound] = useState(true);
+  const [canDeclareFirstRound, setCanDeclareFirstRound] = useState("true");
   const [autoplayTimer, setAutoplayTimer] = useState(60);
-  const [isPublicGame, setIsPublicGame] = useState(false);
+  const [isPublicGame, setIsPublicGame] = useState("false");
 
 
   function done() {
@@ -27,6 +27,7 @@ function CreateGameModal({ opened, setOpened, createGame }) {
       <Group position="apart" p={3}>
         Max score
         <SegmentedControl
+          color={'green'}
           data={[
             { label: 100, value: 100 },
             { label: 200, value: 200 },
@@ -41,6 +42,7 @@ function CreateGameModal({ opened, setOpened, createGame }) {
       <Group position="apart" p={3}>
         Ending with a pair
         <SegmentedControl
+          color={'green'}
           data={[
             { label: -15, value: -15 },
             { label: -25, value: -25 },
@@ -55,6 +57,7 @@ function CreateGameModal({ opened, setOpened, createGame }) {
       <Group position="apart" p={4}>
         Score for wrong call
         <SegmentedControl
+          color={'red'}
           data={[
             { label: 25, value: 25 },
             { label: 50, value: 50 },
@@ -69,8 +72,8 @@ function CreateGameModal({ opened, setOpened, createGame }) {
         Can declare first round
         <SegmentedControl
           data={[
-            { label: "YES", value: true },
-            { label: "NO", value: false }
+            { label: "YES", value: "true" },
+            { label: "NO", value: "false" }
           ]}
           transitionDuration={250}
           value={canDeclareFirstRound}
@@ -81,7 +84,6 @@ function CreateGameModal({ opened, setOpened, createGame }) {
       <Group position="apart" p={4}>
         Autoplay timer
         <SegmentedControl
-          color={'red'}
           data={[
             { label: '45s', value: 45 },
             { label: '60s', value: 60 },
@@ -96,8 +98,8 @@ function CreateGameModal({ opened, setOpened, createGame }) {
         Public game
         <SegmentedControl
           data={[
-            { label: "YES", value: true },
-            { label: "NO", value: false }
+            { label: "YES", value: "true" },
+            { label: "NO", value: "false" }
           ]}
           transitionDuration={250}
           value={isPublicGame}

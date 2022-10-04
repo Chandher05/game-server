@@ -24,7 +24,7 @@ function GameRoomNotifications({ commonData }) {
   }
 
   const userNames = commonData["players"].map((element) => (
-    <th>{element.userName}</th>
+    <th key={element.userName}>{element.userName}</th>
   ));
 
   return (

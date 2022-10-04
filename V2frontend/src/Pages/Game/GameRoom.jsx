@@ -9,20 +9,9 @@ import GameRoomCardsInHand from './GameRoomCardsInHand';
 import GameRoomDetailedScore from './GameRoomDetailedScore';
 import { useCallback } from 'react';
 import { getIdTokenOfUser } from '../../Providers/Firebase/config';
+import { showNotification } from '@mantine/notifications';
 
 // sample data
-
-const getCardImage = (cardNum) => {
-  cardNum -= 1
-  const cardValue = cardNum % 13
-  const cardSuit = parseInt(cardNum / 13)
-  const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"]
-  const suits = ["C", "D", "H", "S"]
-  let image = values[cardValue] + suits[cardSuit] + ".svg"
-  return image
-}
-
-
 const sampleData =
 {
   "lastPlayedUser": "Jayasurya17",
@@ -168,8 +157,18 @@ function GameRoom() {
             Navigate(`/game/${json.gameId}`)
           }
         })
-      };
-    });
+      } else {
+        throw await response.json()
+      }
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: error.msg
+      })
+      Navigate(`/`)
+    })
     GetGameUpdates(GameCode)
   }, [])
 

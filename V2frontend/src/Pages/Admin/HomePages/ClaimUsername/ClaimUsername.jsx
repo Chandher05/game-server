@@ -15,7 +15,17 @@ function ClaimUserName() {
         },
       }).then(async (response) => {
         if (response.ok) setUserNames(await response.json())
-      });
+        else {
+          throw await response.json()
+        }
+      }).catch((error) => {
+        showNotification({
+          variant: 'outline',
+          color: 'red',
+          title: 'Something went wrong!',
+          message: error.msg
+        })
+      })
     }, []
   )
 
@@ -56,17 +66,17 @@ function Demo({ userNames }) {
           color: 'green',
           title: 'Success'
         })
+      } else {
+        throw await response.json()
       }
-      throw new Error(response)
-      // TODO: Error response
     }).catch((error) => {
       showNotification({
         variant: 'outline',
         color: 'red',
         title: 'Something went wrong!',
-        message: 'Please check the values and try again'
+        message: error.msg
       })
-    });
+    })
 
   };
 

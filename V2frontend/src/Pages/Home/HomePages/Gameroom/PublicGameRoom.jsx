@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, Text, Group, Space, Button, Divider, createStyles, Grid } from '@mantine/core';
 import { useCallback } from 'react';
 import { getIdTokenOfUser } from '../../../../Providers/Firebase/config';
+import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -44,8 +45,17 @@ export function PublicGameRoom({ joinGame, spectateGame }) {
         response.json().then(json => {
           setGames(json);
         })
+      } else {
+        throw await response.json()
       }
-    });
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: error.msg
+      })
+    })
   }, [])
 
   useEffect(() => {

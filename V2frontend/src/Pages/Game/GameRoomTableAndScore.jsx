@@ -45,8 +45,17 @@ function GameRoomTableAndScore({ commonData }) {
           setOpened(true)
           setUserId(userId)
         })
-      };
-    });
+      } else {
+        throw await response.json()
+      }
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: error.msg
+      })
+    })
   }
 
   return (
@@ -106,10 +115,9 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete, showUserSt
   const { classes } = useStyles();
 
   const items = data.map((item) => {
-    let cards = [...Array(item.cardsInHand)].map((e, i) => { return <Image width={'8px'} src='/Cards/1B.svg' /> });
+    let cards = [...Array(item.cardsInHand)].map((e, i) => { return <Image key={i} width={'8px'} src='/Cards/1B.svg' /> });
     return (
-      // <Group position="apart" className={classes.item} noWrap spacing="sm" key={item.userId} style={{ padding: '2px', backgroundColor: item.currentPlayer ? '#06283D' : '' }}>
-      <Grid className={classes.item} style={{ backgroundColor: item.currentPlayer ? '#06283D' : '' }}>
+      <Grid key={item.userId} className={classes.item} style={{ backgroundColor: item.currentPlayer ? '#06283D' : '' }}>
         <Grid.Col span={2}>
           <Text size="sm" color={item.isEliminated ? "#F66B0E" : "dimmed"} p={2}>
             {item.totalScore}
@@ -175,14 +183,14 @@ function PlayerStatsModel({ userId, userStats, opened, setOpened, isAdmin, curre
         })
         setOpened(false)
       } else {
-        throw new Error(response)
+        throw await response.json()
       }
     }).catch((error) => {
       showNotification({
         variant: 'outline',
         color: 'red',
         title: 'Something went wrong!',
-        message: 'Please refresh the page and try again'
+        message: error.msg
       })
       setOpened(false)
     })

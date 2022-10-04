@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu, Loader } from "@mantine/core";
+import { Center, CopyButton, Stack, Tooltip, ActionIcon, Group, Title, Text, Button, Table, Menu, Loader, Grid } from "@mantine/core";
 import { IconCheck, IconCopy, IconClockHour4, IconBrandGoogleOne, IconWorld, IconSortAscending2, IconLayersLinked, IconX } from '@tabler/icons';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { GetLobbyUpdates, StartGame } from '../../Providers/Socket/emitters'
 import { LobbyListener } from '../../Providers/Socket/listeners'
 import { getIdTokenOfUser } from '../../Providers/Firebase/config';
+import { showNotification } from '@mantine/notifications';
 
 function WaitingScreen() {
   let params = useParams()
@@ -30,8 +31,18 @@ function WaitingScreen() {
             Navigate(`/game/${json.gameId}`)
           }
         })
-      };
-    });
+      } else {
+        throw await response.json()
+      }
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: error.msg
+      })
+      Navigate(`/`)
+    })
     GetLobbyUpdates(GameCode)
   }, [])
 
@@ -65,8 +76,17 @@ function DisplayData() {
       body: JSON.stringify(data)
     }).then(async (response) => {
       if (response.ok) Navigate(`/`)
-      // TODO: Error response
-    });
+      else {
+        throw await response.json()
+      }
+    }).catch((error) => {
+      showNotification({
+        variant: 'outline',
+        color: 'red',
+        title: 'Something went wrong!',
+        message: error.msg
+      })
+    })
 
   };
 
@@ -106,20 +126,29 @@ function DisplayData() {
             </Menu.Dropdown>
           </Menu>
           <Title order={1}>
-            <Group position='apart'>
-              Code: <Text color={'blue'}>
-                {GameCode}
-              </Text>
-              <CopyGameCode GameCode={GameCode} />
-            </Group>
+            <Grid>
+              <Grid.Col span={10}>
+                <Group>
+                  <Text>Code:</Text>
+                  <Text color={'blue'}>{GameCode}</Text>
+                </Group>
+              </Grid.Col>
+              <Grid.Col span={2}>
+                <CopyGameCode GameCode={GameCode} />
+              </Grid.Col>
+            </Grid>
           </Title>
           <Title order={4}>
-            <Group position='apart'>
-              <Text color={'blue'}>
-                {window.location.origin + "?gamecode=" + GameCode}
-              </Text>
-              <CopyGameCode GameCode={window.location.origin + "?gamecode=" + GameCode} />
-            </Group>
+            <Grid>
+              <Grid.Col span={10}>
+                <Text color={'blue'} size="sm">
+                  {window.location.origin + "?gamecode=" + GameCode}
+                </Text>
+              </Grid.Col>
+              <Grid.Col span={2}>
+                <CopyGameCode GameCode={window.location.origin + "?gamecode=" + GameCode} />
+              </Grid.Col>
+            </Grid>
           </Title>
           <Title order={5} color="grey">Share this with your friends for them to join.</Title>
           <Title order={3}>Friends who have joined</Title>

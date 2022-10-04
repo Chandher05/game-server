@@ -73,7 +73,7 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
               hidden={commonData.currentPlayer && cardsInHand.length < 6 && !commonData.isRoundComplete && !commonData.isGameComplete ? false : true}
               disabled={selected.length == 0}
               onClick={() => DropCards(GameCode, selected, 'Table')}>
-              Pick from table
+              Table
             </Button>
           </Grid.Col>
           <Grid.Col span={4}>
@@ -86,7 +86,7 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
               hidden={commonData.currentPlayer && cardsInHand.length < 6 && !commonData.isRoundComplete && !commonData.isGameComplete ? false : true}
               disabled={selected.length == 0}
               onClick={() => DropCards(GameCode, selected, 'Deck')}>
-              Pick from deck
+              Deck
             </Button>
           </Grid.Col>
         </Grid>

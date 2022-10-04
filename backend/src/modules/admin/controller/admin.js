@@ -29,7 +29,7 @@ exports.allUsers = async (req, res) => {
 		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-				.send("Not an admin")
+				.send({ msg: "Not an admin" })
 		}
 
 		let allUsers = await Users.find().sort('userName')
@@ -42,7 +42,7 @@ exports.allUsers = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -58,7 +58,7 @@ exports.getMessages = async (req, res) => {
 		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-				.send("Not an admin")
+				.send({ msg: "Not an admin" })
 		}
 
 		let allMessages = await Messages.find().sort('-createdAt')
@@ -71,7 +71,7 @@ exports.getMessages = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -87,7 +87,7 @@ exports.claimOldUsername = async (req, res) => {
 		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-				.send("Not an admin")
+				.send({ msg: "Not an admin" })
 		}
 
 		const currentUserName = req.body.newUserName
@@ -97,14 +97,10 @@ exports.claimOldUsername = async (req, res) => {
 		if (newUserName != currentUserName && newUserName != oldUserName) {
 			return res
 				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-				.send("New username has to either current or old username")
+				.send({ msg: "New username has to either current or old username" })
 		}
 
 		let oldUserNameObj = await Users.findOne({ userName: oldUserName })
-		if (oldUserNameObj && oldUserNameObj.email) {
-			socket.emit('claim-username-response', "CANNOT_CLAIM_USERNAME")
-			return
-		}
 		let currentUserNameObj = await Users.findOne({ userName: currentUserName })
 
 		if (oldUserNameObj && currentUserNameObj) {
@@ -112,13 +108,13 @@ exports.claimOldUsername = async (req, res) => {
 			if (oldUserNameObj.email) {
 				return res
 					.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-					.send("Cannot claim username with email address")
+					.send({ msg: "Cannot claim username with email address" })
 			}
 
 			if (!currentUserNameObj.email) {
 				return res
 					.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-					.send("Current username does not have email address")
+					.send({ msg: "Current username does not have email address" })
 			}
 
 			let randomUserName = Math.random().toString(36).substring(2,)
@@ -195,18 +191,18 @@ exports.claimOldUsername = async (req, res) => {
 
 			return res
 				.status(constants.STATUS_CODE.ACCEPTED_STATUS)
-				.send("Update success")
+				.send({ msg: "Update success" })
 		} else {
 			return res
 				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-				.send("Invalid usernames")
+				.send({ msg: "Invalid usernames" })
 		}
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -222,7 +218,7 @@ exports.markMessageAsSeen = async (req, res) => {
 		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-				.send("Not an admin")
+				.send({ msg: "Not an admin" })
 		}
 
 		if (req.params.messageId == "null") {
@@ -246,7 +242,7 @@ exports.markMessageAsSeen = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -257,13 +253,13 @@ exports.markMessageAsSeen = async (req, res) => {
  * @param  {Object} req request object
  * @param  {Object} res response object
  */
- exports.markMessageAsUnseen = async (req, res) => {
+exports.markMessageAsUnseen = async (req, res) => {
 	try {
 
 		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-				.send("Not an admin")
+				.send({ msg: "Not an admin" })
 		}
 
 		if (req.params.messageId == "null") {
@@ -287,7 +283,7 @@ exports.markMessageAsSeen = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }
 
@@ -303,7 +299,7 @@ exports.deactivateUser = async (req, res) => {
 		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-				.send("Not an admin")
+				.send({ msg: "Not an admin" })
 		}
 
 		if (req.params.userId == "null") {
@@ -327,6 +323,6 @@ exports.deactivateUser = async (req, res) => {
 		console.log(`Error while getting getAllUsers ${error}`)
 		return res
 			.status(constants.STATUS_CODE.INTERNAL_SERVER_ERROR_STATUS)
-			.send(error.message)
+			.send({ msg: error.message })
 	}
 }

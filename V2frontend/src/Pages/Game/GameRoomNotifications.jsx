@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, Grid, Text, Center, ActionIcon, Loader, Space, Title } from "@mantine/core";
+import { Alert, Button, Grid, Text, Center, ActionIcon, Loader, Space, Title, Modal, Group } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import { LeaveGame, NextRound, RestartGame } from '../../Providers/Socket/emitters';
 import { IconPlayCard, IconLogout } from '@tabler/icons';
@@ -20,7 +20,7 @@ function GameRoomNotifications({ commonData }) {
   } else if (commonData.playerDeclaredType == "SAME") {
     userActionTitle = "GG " + commonData.lastPlayedUser
     userActionColor = "yellow.1"
-  } else if (commonData.playerDeclaredType == "PAIR") {
+  } else if (commonData.playerDeclaredType == "NOT_LOWEST") {
     userActionTitle = commonData.lastPlayedUser + " got banboozled"
     userActionColor = "red.1"
   } else {
