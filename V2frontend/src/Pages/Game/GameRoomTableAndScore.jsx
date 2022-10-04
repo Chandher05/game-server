@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text, Center, Menu, ActionIcon, Stack, Loader, Space, Title, MediaQuery } from "@mantine/core";
+import { Alert, Box, Button, Grid, Image, createStyles, Card, Group, Modal, Text, Center, Menu, ActionIcon, Stack, Loader, Space, Title, MediaQuery, Divider } from "@mantine/core";
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
@@ -27,7 +27,7 @@ function GameRoomTableAndScore({ commonData }) {
   const authId = sessionStorage.getItem('access_token');
 
   let discardPile = commonData["discardPile"].map((element, i) => {
-    return <Image key={element} width={'100px'} src={`/Cards/${getCardImage(element)}`}></Image>
+    return <Image key={element} width={'75px'} src={`/Cards/${getCardImage(element)}`}></Image>
   })
 
   let hasPlayerLeft = {}
@@ -53,19 +53,20 @@ function GameRoomTableAndScore({ commonData }) {
 
   return (
     <Grid>
-      <Grid.Col span={6} >
+      <Grid.Col span={5} >
         <Group>
           {discardPile}
           <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
-            <Image width={'100px'} src={'/Cards/1B.svg'}></Image>
+            <Image width={'75px'} src={'/Cards/1B.svg'}></Image>
           </MediaQuery>
 
         </Group>
       </Grid.Col>
 
-      <Grid.Col span={6} style={{ minHeight: '200px' }}>
+      <Grid.Col span={7} style={{ minHeight: '200px' }}>
         <PlayersCards data={commonData.players} isRoundComplete={commonData.isRoundComplete} isGameComplete={commonData.isGameComplete} showUserStats={showUserStats} />
         <PlayerStatsModel userId={userId} userStats={userStats} opened={opened} setOpened={setOpened} isAdmin={commonData.isAdmin} currentUserId={commonData.userId} hasPlayerLeft={hasPlayerLeft[userId]} />
+        <WaitingPlayers waitingPlayers={commonData.waitingPlayers} />
       </Grid.Col>
     </Grid>
   )
@@ -84,8 +85,8 @@ const useStyles = createStyles((theme) => ({
 
   item: {
     '& + &': {
-      paddingTop: theme.spacing.sm,
-      marginTop: theme.spacing.sm,
+      paddingTop: theme.spacing.xs,
+      marginTop: theme.spacing.xs,
       borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
         }`,
     },
@@ -107,41 +108,47 @@ export function PlayersCards({ data, isRoundComplete, isGameComplete, showUserSt
   const { classes } = useStyles();
 
   const items = data.map((item) => {
-    let cards = [...Array(item.cardsInHand)].map((e, i) => { return <Image width={'10px'} src='/Cards/1B.svg' /> });
-    return <Group position="apart" className={classes.item} noWrap spacing="xl" key={item.userId} style={{ padding: '5px', backgroundColor: item.currentPlayer ? '#06283D' : '' }}>
-      <Group>
-        <Text size="md" color={item.isEliminated ? "#F66B0E" : "dimmed"} p={5}>
-          {item.totalScore}
-        </Text>
-        <Text onClick={() => showUserStats(item.userId)}>{item.userName}</Text>
+    let cards = [...Array(item.cardsInHand)].map((e, i) => { return <Image width={'8px'} src='/Cards/1B.svg' /> });
+    return (
+      // <Group position="apart" className={classes.item} noWrap spacing="sm" key={item.userId} style={{ padding: '2px', backgroundColor: item.currentPlayer ? '#06283D' : '' }}>
+      <Grid className={classes.item} style={{ backgroundColor: item.currentPlayer ? '#06283D' : '' }}>
+        <Grid.Col span={2}>
+          <Text size="sm" color={item.isEliminated ? "#F66B0E" : "dimmed"} p={2}>
+            {item.totalScore}
+          </Text>
+        </Grid.Col>
+        <Grid.Col span={6}>
+          <Text onClick={() => showUserStats(item.userId)} size="sm">
+            {item.userName}
+            {
+              item.isAdmin ?
+                <IconUser size={15} /> :
+                <></>
+            }
+            {
+              item.hasPlayerLeft ?
+                <IconRun size={15} /> :
+                <></>
+            }
+          </Text>
+        </Grid.Col>
+        <Grid.Col span={4}>
         {
-          item.isAdmin ?
-            <IconUser /> :
-            <></>
+          isRoundComplete || isGameComplete ?
+            <Text size="md" color="dimmed">
+              {item.roundScore}
+            </Text> :
+            <Group spacing={'xs'}>
+              {cards}
+            </Group>
         }
-        {
-          item.hasPlayerLeft ?
-            <IconRun /> :
-            <></>
-        }
-      </Group>
-      {
-        isRoundComplete || isGameComplete ?
-          <Text size="md" color="dimmed">
-            {item.roundScore}
-          </Text> :
-          <Group spacing={'xs'}>
-            {cards}
-          </Group>
-      }
-    </Group>
+        </Grid.Col>
+      </Grid>
+    )
   });
 
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
-      <Text size="lg" className={classes.title} weight={500}>
-        Players
-      </Text>
       {items}
     </Card>
   );
@@ -199,8 +206,26 @@ function PlayerStatsModel({ userId, userStats, opened, setOpened, isAdmin, curre
       <Space h="xl" />
       <Group position="apart">
         <Button color={'red.7'} onClick={reportPlayer} hidden={currentUserId === userId}>Report</Button>
-        <Button color={'yellow.7'} onClick={removePlayerFromGame} hidden={!isAdmin || currentUserId === userId || hasPlayerLeft }>Remove player</Button>
+        <Button color={'yellow.7'} onClick={removePlayerFromGame} hidden={!isAdmin || currentUserId === userId || hasPlayerLeft}>Remove player</Button>
       </Group>
     </Modal>
+  )
+}
+
+function WaitingPlayers({ waitingPlayers }) {
+
+  if (waitingPlayers.length == 0) {
+    return <></>
+  }
+
+  return (
+    <Stack>
+      <Divider my="lxs" label="Waiting for next game" labelPosition="center" />
+      {
+        waitingPlayers.map((player) => {
+          return <Text key={player} size="xs">{player}</Text>
+        })
+      }
+    </Stack>
   )
 }

@@ -41,7 +41,7 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
     return (
       <Image
         onClick={() => selectCards(element)}
-        style={{ width: '100px', cursor: 'pointer', margin: '5px', padding: '4px', backgroundColor: (selected.includes(element) ? '#FAB005' : '') }}
+        style={{ width: '75px', cursor: 'pointer', margin: '5px', padding: '4px', backgroundColor: (selected.includes(element) ? '#FAB005' : '') }}
         src={`/Cards/${getCardImage(element)}`}
         key={element} />
     )
@@ -64,6 +64,7 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
           <Grid.Col span={4}>
             <Button
               color={'indigo.7'}
+              size={'xs'}
               fullWidth={true}
               hidden={commonData.currentPlayer && cardsInHand.length == 6 && !commonData.isRoundComplete && !commonData.isGameComplete ? false : true}
               disabled={selected.length == 0}
@@ -72,6 +73,7 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
             </Button>
             <Button
               color={'blue.7'}
+              size={'sm'}
               fullWidth={true}
               hidden={commonData.currentPlayer && cardsInHand.length < 6 && !commonData.isRoundComplete && !commonData.isGameComplete ? false : true}
               disabled={selected.length == 0}
@@ -130,8 +132,9 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
           :
           commonData.playerStatus === "WAITING" ?
             <Grid.Col span={12} padding={'10px'}>
+              <Space h="xl" />
               <Center>
-                <Loader variant="dots" /> <Space w="xl" /> <Text>Waiting current for game to end</Text>
+                <Loader variant="dots" /> <Space w="xl" /> <Text>Enjoy the current game while you're waiting</Text>
               </Center>
             </Grid.Col> :
             <></>

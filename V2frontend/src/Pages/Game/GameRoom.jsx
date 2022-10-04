@@ -28,15 +28,15 @@ const sampleData =
   "lastPlayedUser": "Jayasurya17",
   "lastPlayedAction": "will start the game",
   "discardPile": [1, 14, 27],
-  "isRoundComplete": true,
+  "isRoundComplete": false,
   "playerDeclaredType": "",
   "isGameComplete": false,
-  "waitingPlayers": [],
+  "waitingPlayers": ["Jayasurya17", "Jayasurya17"],
   "players": [
     {
       "userName": "Jayasurya17",
-      "isAdmin": true,
-      "hasPlayerLeft": false,
+      "isAdmin": false,
+      "hasPlayerLeft": true,
       "isEliminated": false,
       "cardsInHand": 6,
       "roundScore": null,
@@ -47,7 +47,7 @@ const sampleData =
     },
     {
       "userName": "Under The Lamp Club",
-      "isAdmin": false,
+      "isAdmin": true,
       "hasPlayerLeft": false,
       "isEliminated": false,
       "cardsInHand": 5,
@@ -68,23 +68,35 @@ const sampleData =
       "previousScores": [10, 20, 30, 10, 10],
       "currentPlayer": false,
       "userId": "63255f7295b9972f5cb956ab"
-    },
-    {
-      "userName": "User eliminated",
-      "isAdmin": false,
-      "hasPlayerLeft": false,
-      "isEliminated": true,
-      "cardsInHand": 0,
-      "roundScore": null,
-      "totalScore": 120,
-      "previousScores": [40, 40, 40],
-      "currentPlayer": false,
-      "userId": "63255f729512972f5cbb26ab"
+    // },
+    // {
+    //   "userName": "User eliminated",
+    //   "isAdmin": false,
+    //   "hasPlayerLeft": false,
+    //   "isEliminated": true,
+    //   "cardsInHand": 0,
+    //   "roundScore": null,
+    //   "totalScore": 120,
+    //   "previousScores": [40, 40, 40],
+    //   "currentPlayer": false,
+    //   "userId": "63255f729512972f5cbb26ab"
+    // },
+    // {
+    //   "userName": "User eliminated",
+    //   "isAdmin": false,
+    //   "hasPlayerLeft": false,
+    //   "isEliminated": true,
+    //   "cardsInHand": 0,
+    //   "roundScore": null,
+    //   "totalScore": 120,
+    //   "previousScores": [40, 40, 40],
+    //   "currentPlayer": false,
+    //   "userId": "63255f729512972f5cbb26ab"
     }
   ],
   "canPlayersDeclare": true,
   "playerStatus": "PLAYING",
-  "isAdmin": false,
+  "isAdmin": true,
   "currentPlayer": true
 }
 
