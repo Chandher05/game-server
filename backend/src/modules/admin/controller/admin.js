@@ -26,7 +26,7 @@ let transporter = nodemailer.createTransport({
 exports.allUsers = async (req, res) => {
 	try {
 
-		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
+		if (!config.adminPortalAccess.includes(req.body.email)) {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
 				.send({ msg: "Not an admin" })
@@ -55,7 +55,7 @@ exports.allUsers = async (req, res) => {
 exports.getMessages = async (req, res) => {
 	try {
 
-		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
+		if (!config.adminPortalAccess.includes(req.body.email)) {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
 				.send({ msg: "Not an admin" })
@@ -84,7 +84,7 @@ exports.getMessages = async (req, res) => {
 exports.claimOldUsername = async (req, res) => {
 	try {
 
-		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
+		if (!config.adminPortalAccess.includes(req.body.email)) {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
 				.send({ msg: "Not an admin" })
@@ -189,6 +189,48 @@ exports.claimOldUsername = async (req, res) => {
 							`
 			});
 
+			transporter.sendMail({
+				from: config.nodemailer.EMAIL_ID,
+				to: config.adminEmail,
+				subject: "Request to claim username in declare game complete",
+				// text: "Hello world?", 
+				html: `<p><b>User stats from ${currentUserName} and ${oldUserName} has been merged into single account with username: </b>${newUserName}</p>
+						<p><b>User stats</b></p>
+						<table>
+							<tr>
+								<th></th>
+								<th>Previous</th>
+								<th>Current</th>
+							</tr>
+							<tr>
+								<td>Total Games</td>
+								<td>${currentUserNameObj.totalGames}</td>
+								<td>${currentUserNameObj.totalGames + oldUserNameObj.totalGames}</td>
+							</tr>
+							<tr>
+								<td>Total wins</td>
+								<td>${currentUserNameObj.totalWins}</td>
+								<td>${currentUserNameObj.totalWins + oldUserNameObj.totalWins}</td>
+							</tr>
+							<tr>
+								<td>Declares</td>
+								<td>${currentUserNameObj.totalDeclares}</td>
+								<td>${currentUserNameObj.totalDeclares + oldUserNameObj.totalDeclares}</td>
+							</tr>
+							<tr>
+								<td>-25's</td>
+								<td>${currentUserNameObj.totalFifties}</td>
+								<td>${currentUserNameObj.totalFifties + oldUserNameObj.totalFifties}</td>
+							</tr>
+							<tr>
+								<td>+50's</td>
+								<td>${currentUserNameObj.totalPairs}</td>
+								<td>${currentUserNameObj.totalPairs + oldUserNameObj.totalPairs}</td>
+							</tr>
+							</table>
+							`
+			});
+
 			return res
 				.status(constants.STATUS_CODE.ACCEPTED_STATUS)
 				.send({ msg: "Update success" })
@@ -215,7 +257,7 @@ exports.claimOldUsername = async (req, res) => {
 exports.markMessageAsSeen = async (req, res) => {
 	try {
 
-		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
+		if (!config.adminPortalAccess.includes(req.body.email)) {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
 				.send({ msg: "Not an admin" })
@@ -256,7 +298,7 @@ exports.markMessageAsSeen = async (req, res) => {
 exports.markMessageAsUnseen = async (req, res) => {
 	try {
 
-		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
+		if (!config.adminPortalAccess.includes(req.body.email)) {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
 				.send({ msg: "Not an admin" })
@@ -296,7 +338,7 @@ exports.markMessageAsUnseen = async (req, res) => {
 exports.deactivateUser = async (req, res) => {
 	try {
 
-		if (req.body.email != "jayasurya1796@gmail.com" && req.body.email != "cheatan.r@gmail.com") {
+		if (!config.adminPortalAccess.includes(req.body.email)) {
 			return res
 				.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
 				.send({ msg: "Not an admin" })

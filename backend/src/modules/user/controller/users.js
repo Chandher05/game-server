@@ -157,7 +157,7 @@ exports.sendMessage = async (req, res) => {
 
 		transporter.sendMail({
 			from: config.nodemailer.EMAIL_ID,
-			to: "jayasurya1796@gmail.com",
+			to: config.adminEmail,
 			subject: "A new message from declare game",
 			// text: "Hello world?", 
 			html: `<p><b>Email address: </b>${req.body.email}</p><p>${req.body.description}</p>`
@@ -431,7 +431,7 @@ exports.reportUser = async (req, res) => {
 
 		transporter.sendMail({
 			from: config.nodemailer.EMAIL_ID,
-			to: "jayasurya1796@gmail.com",
+			to: config.adminEmail,
 			subject: "User reported in declare game",
 			// text: "Hello world?", 
 			html: `<p><b>By email address: </b>${req.body.email}</p><p><b>Reported user: </b>${userObj1.userName}</p>`
@@ -503,7 +503,7 @@ exports.claimOldUsername = async (req, res) => {
 
 		transporter.sendMail({
 			from: config.nodemailer.EMAIL_ID,
-			to: "jayasurya1796@gmail.com",
+			to: config.adminEmail,
 			subject: "Request to claim old username",
 			// text: "Hello world?", 
 			html: `<p><b>Email address: </b>${req.body.email}</p><p><b>Current username: </b>${currentUserName}</p><p><b>Old username: </b>${oldUserName}</p><p><b>New username: </b>${newUserName}</p>`
