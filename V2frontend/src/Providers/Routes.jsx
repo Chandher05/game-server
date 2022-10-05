@@ -63,13 +63,10 @@ function PrivateGoogleRoute({ children, ...rest }) {
 	const setUserName = useStoreActions((actions) => actions.setUserName);
 	const setPhotoURL = useStoreActions((actions) => actions.setPhotoURL);
 
-	// console.log(`Autheticated - ${auth}`)
-	// console.log(`User - ${user.getIdToken()}`)
 
 	useEffect(() => {
 
 		const idToken = async () => {
-			// console.log(await user.getIdToken())
 			if (user) {
 				await user.getIdToken().then(function (idToken) {  // <------ Check this line
 					console.log(idToken); // It shows the Firebase token now

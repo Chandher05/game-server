@@ -31,7 +31,6 @@ const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
     const user = res.user;
-    console.log('Calling POST on Login')
     await user.getIdToken().then(function (idToken) {  // <------ Check this line
 
       // refeshToken();
@@ -91,7 +90,6 @@ const getIdTokenOfUser = async () => {
 //   const user = auth.currentUser;
 //   if (user) {
 //     const idToken = await user.getIdToken(true);
-//     console.log('IdTokem from Refresh Token', idToken)
 //     sessionStorage.setItem("access_token", idToken)
 //     authTimeout = setTimeout(() => {
 //       refeshToken();

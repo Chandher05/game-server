@@ -140,7 +140,6 @@ function Gameroom() {
   }
 
 
-  // console.log(window.location.origin)
   return (
     <>
       <CreateGameModal opened={opened} setOpened={setOpened} createGame={createGame} />
