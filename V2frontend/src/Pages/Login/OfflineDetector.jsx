@@ -14,7 +14,7 @@ export default function OfflineDetector() {
   return (
     <>
       <Offline><Divider my="xs" label="You are offline!" color={'red'} labelPosition="center" /></Offline>
-      {socketConnected? "":<Divider my="xs" label="Please refresh to connect to server" color={'red'} labelPosition="center" />}
+      {socketConnected ? "" : <Divider my="xs" label="Please refresh to connect to server" color={'red'} labelPosition="center" />}
     </>
   );
 }
