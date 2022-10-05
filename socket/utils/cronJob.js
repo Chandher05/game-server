@@ -70,7 +70,7 @@ cron.schedule("*/5 * * * * *", async () => {
         }
     } catch (err) {
         if (err.message) {
-            console.log("Cron job err 1", err.message)
+            console.log("Cron job err", err.message)
         }
         console.log("Cron job err", err)
     }

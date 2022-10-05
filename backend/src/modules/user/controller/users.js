@@ -486,7 +486,6 @@ exports.claimOldUsername = async (req, res) => {
 				.send({ msg: "New username has to either current or old username" })
 		}
 
-		console.log(req.body)
 		if (currentUserName == oldUserName) {
 			return res
 				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)

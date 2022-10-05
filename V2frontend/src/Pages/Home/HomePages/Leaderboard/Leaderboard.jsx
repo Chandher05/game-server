@@ -16,7 +16,6 @@ function Leaderboard() {
   const getLeaderboardData = useCallback(
     async () => {
       const authId = await getIdTokenOfUser();
-      console.log(authId, 'authid from eladerboard function async')
       fetch(import.meta.env.VITE_API + "/users/leaderboard", {
         headers: {
           Authorization: `Bearer ${authId}`,

@@ -11,12 +11,8 @@ function Login({ handleAuth }) {
       handleAuth(true);
       Navigate(`/admin/users`)
     }
-    console.log(adminPassword === import.meta.env.VITE_ADMIN_PASSWORD, adminPassword, import.meta.env.VITE_ADMIN_PASSWORD)
   };
 
-  const updateAdminPassword = (e) => {
-    setAdminPassword(e.target.value)
-  }
 
   return (
     <>
