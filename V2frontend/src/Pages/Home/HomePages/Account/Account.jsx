@@ -85,7 +85,8 @@ function Stats({ profileData, playerUserName, setProfileUserName, editDisabled, 
 
 
   const changeUserName = (e) => {
-    setProfileUserName(e.target.value)
+    let newUserName = e.target.value.replace(/\W/g, '')
+    setProfileUserName(newUserName.toLowerCase())
   }
 
   const toggleEdit = (e) => {

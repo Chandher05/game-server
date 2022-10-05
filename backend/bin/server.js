@@ -58,9 +58,10 @@ var checkAuth = async (req, res, next) => {
 		let decodedToken = await admin.auth().verifyIdToken(authToken)
 		const uid = decodedToken.uid;
 		let userRecord = await admin.auth().getUser(uid)
+		let newUserName = userRecord.displayName.replace(/\W/g, '')
 		req.body.userUID = uid
 		req.body.email = userRecord.email
-		req.body.userName = userRecord.displayName
+		req.body.userName = newUserName.toLowerCase()
 		next()
 	} catch (err) {
 		res.status(403).send('Unauthorized')
