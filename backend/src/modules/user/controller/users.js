@@ -186,52 +186,52 @@ exports.reportBug = async (req, res) => {
 				.send("Not a valid user")
 		}
 
-		var attachments = []
-		for (var file of req.files) {
-			if (file.size > 20971520) {
-				return res
-				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-				.send("Single file cannot be more than 20 MB")
-			}
-			// var url = await S3.fileupload(user.userName, file)
-			attachments.push({
-				filename: file.originalname,
-				// path: url
-				content: new Buffer(file.buffer)
-			})
-		}
+		// var attachments = []
+		// for (var file of req.files) {
+		// 	if (file.size > 20971520) {
+		// 		return res
+		// 		.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+		// 		.send("Single file cannot be more than 20 MB")
+		// 	}
+		// 	// var url = await S3.fileupload(user.userName, file)
+		// 	attachments.push({
+		// 		filename: file.originalname,
+		// 		// path: url
+		// 		content: new Buffer(file.buffer)
+		// 	})
+		// }
 
-		let transporter = nodemailer.createTransport({
-			host: 'smtp.gmail.com',
-			port: 465,
-			secure: true,
-			// service: 'gmail',
-			auth: {
-				user: config.nodemailer.EMAIL_ID,
-				pass: config.nodemailer.PASSWORD,
-			},
-		});
+		// let transporter = nodemailer.createTransport({
+		// 	host: 'smtp.gmail.com',
+		// 	port: 465,
+		// 	secure: true,
+		// 	// service: 'gmail',
+		// 	auth: {
+		// 		user: config.nodemailer.EMAIL_ID,
+		// 		pass: config.nodemailer.PASSWORD,
+		// 	},
+		// });
 
-		transporter.sendMail({
-			from: config.nodemailer.EMAIL_ID,
-			to: "jayasurya1796@gmail.com",
-			subject: "A new bug report from declare game",
-			// text: "Hello world?", 
-			html: `<p><b>Email address: </b>${req.body.email}</p><p><b>Username: </b>${user.userName}</p><p>${req.body.description}</p>`,
-			attachments: attachments
-		});
+		// transporter.sendMail({
+		// 	from: config.nodemailer.EMAIL_ID,
+		// 	to: "jayasurya1796@gmail.com",
+		// 	subject: "A new bug report from declare game",
+		// 	// text: "Hello world?", 
+		// 	html: `<p><b>Email address: </b>${req.body.email}</p><p><b>Username: </b>${user.userName}</p><p>${req.body.description}</p>`,
+		// 	attachments: attachments
+		// });
 
-		transporter.sendMail({
-			from: config.nodemailer.EMAIL_ID,
-			to: req.body.email,
-			subject: "We have received your bug report",
-			// text: "Hello world?", 
-			html: `<p>Thank you for reporting. We will work on it as soon as possible. 
-			The good thing about this game is that you can create as many accounts as you wish. 
-			So if your game is not responding, we're sorry about it but please logout and create a new 
-			account to play more games</p><p><b>Your description of the bug</b></p><p>${req.body.description}</p>`,
-			attachments: attachments
-		});
+		// transporter.sendMail({
+		// 	from: config.nodemailer.EMAIL_ID,
+		// 	to: req.body.email,
+		// 	subject: "We have received your bug report",
+		// 	// text: "Hello world?", 
+		// 	html: `<p>Thank you for reporting. We will work on it as soon as possible. 
+		// 	The good thing about this game is that you can create as many accounts as you wish. 
+		// 	So if your game is not responding, we're sorry about it but please logout and create a new 
+		// 	account to play more games</p><p><b>Your description of the bug</b></p><p>${req.body.description}</p>`,
+		// 	attachments: attachments
+		// });
 
 		return res.status(200).send(null)
 
@@ -258,8 +258,8 @@ exports.getStats = async (req, res) => {
 
 		if (!user) {
 			return res
-			.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
-			.send("User does not exist")
+				.status(constants.STATUS_CODE.BAD_REQUEST_ERROR_STATUS)
+				.send("User does not exist")
 		}
 
 		const returnValue = {
@@ -271,8 +271,8 @@ exports.getStats = async (req, res) => {
 		}
 
 		return res
-		.status(constants.STATUS_CODE.SUCCESS_STATUS)
-		.send(returnValue)
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send(returnValue)
 
 	} catch (error) {
 		console.log(`Error while getting stats ${error}`)
@@ -300,11 +300,11 @@ exports.leaderboard = async (req, res) => {
 			userId = user._id
 
 			let ratio = 0
-            if (user.totalGames > 0) {
-                ratio = user.totalDeclares / user.totalGames
+			if (user.totalGames > 0) {
+				ratio = user.totalDeclares / user.totalGames
 			}
 			ratio = ratio.toFixed(2)
-			
+
 			allUsersData.push({
 				userId: userId,
 				userName: user.userName,
@@ -318,8 +318,8 @@ exports.leaderboard = async (req, res) => {
 		}
 
 		return res
-		.status(constants.STATUS_CODE.SUCCESS_STATUS)
-		.send(allUsersData)
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send(allUsersData)
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
@@ -337,12 +337,12 @@ exports.leaderboard = async (req, res) => {
 exports.enableUpdatePassword = async (req, res) => {
 	try {
 
-		let data = new UpdatePassword({ userId : req.body.userId })
+		let data = new UpdatePassword({ userId: req.body.userId })
 		await data.save()
 
 		return res
-		.status(constants.STATUS_CODE.SUCCESS_STATUS)
-		.send("Success")
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send("Success")
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
@@ -370,8 +370,8 @@ exports.disableUpdatePassword = async (req, res) => {
 		)
 
 		return res
-		.status(constants.STATUS_CODE.SUCCESS_STATUS)
-		.send("Success")
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send("Success")
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
@@ -391,7 +391,7 @@ exports.updatePassword = async (req, res) => {
 
 		if (!req.body.password) {
 			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-			.send("Invalid details")
+				.send("Invalid details")
 		}
 
 		let cutoff = Date.now() - 2
@@ -399,16 +399,16 @@ exports.updatePassword = async (req, res) => {
 			userId: req.body.userId,
 			isActive: {
 				$gt: {
-					cutoff	
+					cutoff
 				}
 			},
 			isActive: true
 		})
 
 
-		if (data.length === 0 ) {
+		if (data.length === 0) {
 			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-			.send("Invalid details")
+				.send("Invalid details")
 		}
 
 		await Users.findByIdAndUpdate(
@@ -429,8 +429,8 @@ exports.updatePassword = async (req, res) => {
 		)
 
 		return res
-		.status(constants.STATUS_CODE.SUCCESS_STATUS)
-		.send("Success")
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send("Success")
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
@@ -453,24 +453,24 @@ exports.isUpdatePasswordActive = async (req, res) => {
 			userId: req.body.userId,
 			isActive: {
 				$gt: {
-					cutoff	
+					cutoff
 				}
 			},
 			isActive: true
 		})
 
 
-		if (data.length === 0 ) {
+		if (data.length === 0) {
 			return res.status(constants.STATUS_CODE.UNAUTHORIZED_ERROR_STATUS)
-			.send("Invalid details")
+				.send("Invalid details")
 		}
 
 		data = await Users.findById(req.body.userId)
 		delete data.password
 
 		return res
-		.status(constants.STATUS_CODE.SUCCESS_STATUS)
-		.send(data)
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send(data)
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
@@ -488,7 +488,7 @@ exports.isUpdatePasswordActive = async (req, res) => {
  */
 exports.allUsers = async (req, res) => {
 	try {
-		
+
 		let data = await Users.find()
 		let returnValue = []
 
@@ -500,8 +500,8 @@ exports.allUsers = async (req, res) => {
 		}
 
 		return res
-		.status(constants.STATUS_CODE.SUCCESS_STATUS)
-		.send(returnValue)
+			.status(constants.STATUS_CODE.SUCCESS_STATUS)
+			.send(returnValue)
 
 	} catch (error) {
 		console.log(`Error while getting getAllUsers ${error}`)
