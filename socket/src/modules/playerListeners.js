@@ -192,7 +192,7 @@ var PlayerListeners = (socket) => {
 		const userUID = socket.handshake.userUID
 		const email = socket.handshake.email
 		let reqUserId = useruid_userid[userUID].toString()
-		console.log(body);
+		
 		try {
 			var game = await Game.findOne({ gameId: body.gameId })
 			if (!game) {
@@ -201,7 +201,7 @@ var PlayerListeners = (socket) => {
 				let playersInGame = game.players
 				playersInGame = playersInGame.concat(game.waiting)
 				playersInGame = playersInGame.concat(game.spectators)
-				console.log(playersInGame);
+				
 				for (var id of playersInGame) {
 					return emitToUserId(id, 'reactions', 'SUCCESS', body)
 				}

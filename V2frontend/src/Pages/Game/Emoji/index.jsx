@@ -69,7 +69,6 @@ function Emoji() {
 
   Reactions((status, body) => {
     if (status == "SUCCESS") {
-      console.log(body);
       setEmoji(body.data);
       setDisplay(true);
       setTimeout(() => setDisplay(false), 5000)
