@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Image, Group, Text, Center, Stack, Loader, Space, MediaQuery } from "@mantine/core";
 import { useParams } from "react-router-dom";
-import { DropCards, Declare } from '../../Providers/Socket/emitters';
+import { DropCards, Declare, RestartGame, NextRound } from '../../Providers/Socket/emitters';
 
 // sample data
 
@@ -110,6 +110,21 @@ function GameRoomCardsInHand({ commonData, selected, cardsInHand, selectCards })
             onClick={() => Declare(GameCode)}>
             Declare
           </Button>
+          <Center>
+          {
+            commonData.isGameComplete && !commonData.isAdmin ?
+              <><Loader variant="bars" /> <Space w="xs" /> <Text>Admin will start new game</Text></> :
+              commonData.isRoundComplete && !commonData.isAdmin ?
+                <><Loader variant="bars" /> <Space w="xs" /> <Text>Admin will start next round</Text></> :
+                commonData.isGameComplete && commonData.isAdmin ?
+
+                  <Button onClick={() => RestartGame(GameCode)}>Start new game</Button> :
+                  commonData.isRoundComplete && commonData.isAdmin ?
+
+                    <Button onClick={() => NextRound(GameCode)}>Start next round</Button> :
+                    <></>
+          }
+        </Center>
         </Group>
       </Stack>
 

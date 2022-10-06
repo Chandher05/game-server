@@ -18,10 +18,10 @@ const sampleData =
   "lastPlayedUser": "Jayasurya17",
   "lastPlayedAction": "will start the game",
   "discardPile": [1, 14, 27],
-  "isRoundComplete": false,
+  "isRoundComplete": true,
   "playerDeclaredType": "",
   "isGameComplete": false,
-  "waitingPlayers": ["Jayasurya17", "Jayasurya17"],
+  "waitingPlayers": [],
   "players": [
     {
       "userName": "Jayasurya17",
@@ -86,7 +86,7 @@ const sampleData =
   ],
   "canPlayersDeclare": true,
   "playerStatus": "PLAYING",
-  "isAdmin": true,
+  "isAdmin": false,
   "currentPlayer": true
 }
 

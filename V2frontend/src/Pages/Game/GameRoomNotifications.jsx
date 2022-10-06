@@ -57,27 +57,10 @@ function GameRoomNotifications({ commonData }) {
           </Menu.Dropdown>
         </Menu>
       </Grid.Col>
-      <Grid.Col span={6}>
+      <Grid.Col span={10}>
         <Alert color={userActionColor} icon={<IconPlayCard size={'2rem'} />} title={userActionTitle} radius="md">
           {commonData.lastPlayedAction}
         </Alert>
-      </Grid.Col>
-      <Grid.Col span={4}>
-        <Center>
-          {
-            commonData.isGameComplete && !commonData.isAdmin ?
-              <><Loader variant="bars" /> <Space w="xs" /> <Text>Admin will start new game</Text></> :
-              commonData.isRoundComplete && !commonData.isAdmin ?
-                <><Loader variant="bars" /> <Space w="xs" /> <Text>Admin will start next round</Text></> :
-                commonData.isGameComplete && commonData.isAdmin ?
-
-                  <Button onClick={() => RestartGame(GameCode)}>Start new game</Button> :
-                  commonData.isRoundComplete && commonData.isAdmin ?
-
-                    <Button onClick={() => NextRound(GameCode)}>Start next round</Button> :
-                    <></>
-          }
-        </Center>
       </Grid.Col>
       <Grid.Col span={1}>
         <Center>

@@ -203,7 +203,7 @@ var PlayerListeners = (socket) => {
 				playersInGame = playersInGame.concat(game.spectators)
 				
 				for (var id of playersInGame) {
-					return emitToUserId(id, 'reactions', 'SUCCESS', body)
+					emitToUserId(id, 'reactions', 'SUCCESS', body)
 				}
 			} else {
 				return socket.emit('reactions', "ERROR", "Game has not yet started")
