@@ -150,7 +150,7 @@ exports.emitDataToAllInGame = (gameId) => {
             let waitingPlayers = []
             let waitingPlayerObj
             for (var member of game.waiting) {
-                waitingPlayerObj = await Users.findById(member._id)
+                waitingPlayerObj = await Users.findById(member)
                 waitingPlayers.push(waitingPlayerObj.userName)
             }
             let data = {
@@ -161,7 +161,7 @@ exports.emitDataToAllInGame = (gameId) => {
                 isRoundComplete: game.isRoundComplete,
                 playerDeclaredType: game.isRoundComplete ? playerDeclaredType : "", // PAIR, LOWEST, SAME, HIGHEST
                 isGameComplete: game.isEnded,
-                waitingPlayers: game.isEnded ? waitingPlayers : [],
+                waitingPlayers: waitingPlayers,
                 // currentPlayer: game.currentPlayer.toString(),
                 players: arrOfPlayers,
                 // isAdmin: null
