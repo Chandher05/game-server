@@ -4,6 +4,7 @@ import { IconActivity, IconColumns, IconTrophy, IconUser, IconAdjustmentsAlt, Ic
 import { Box, NavLink, Navbar as Nav, ActionIcon, Button } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../Providers/Firebase/config'
+import { useEffect } from 'react';
 
 const data = [
   { icon: IconActivity, label: 'Game Room', url: '' },
@@ -16,6 +17,11 @@ const data = [
 function NavLinks({ setOpened }) {
   const navigate = useNavigate();
   const [active, setActive] = useState(0);
+  const currUrl = window.location.pathname.substring(1);
+  useEffect(() => {
+    setActive(data.findIndex((element) => currUrl == element.url));
+  }, [])
+
 
   const onClickNavigate = (index) => {
     setOpened(false)

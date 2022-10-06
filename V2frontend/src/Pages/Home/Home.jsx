@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import { useState, useEffect, useCallback } from 'react';
 import { getIdTokenOfUser, logout } from '../../Providers/Firebase/config';
 import { showNotification } from '@mantine/notifications';
+import OfflineDetector from '../Login/OfflineDetector';
 
 
 function Home() {
@@ -81,6 +82,7 @@ function Home() {
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
       })}
     >
+      <OfflineDetector />
       <Outlet />
     </AppShell>
   )

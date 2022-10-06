@@ -65,11 +65,9 @@ function PrivateGoogleRoute({ children, ...rest }) {
 
 
 	useEffect(() => {
-
 		const idToken = async () => {
 			if (user) {
 				await user.getIdToken().then(function (idToken) {  // <------ Check this line
-					console.log(idToken); // It shows the Firebase token now
 					setAuthId({ authId: idToken });
 					return idToken;
 				});
