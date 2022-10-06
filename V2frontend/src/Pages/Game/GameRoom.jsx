@@ -10,6 +10,7 @@ import GameRoomDetailedScore from './GameRoomDetailedScore';
 import { useCallback } from 'react';
 import { getIdTokenOfUser, logout } from '../../Providers/Firebase/config';
 import { showNotification } from '@mantine/notifications';
+import Emoji from './Emoji';
 
 // sample data
 const sampleData =
@@ -88,7 +89,6 @@ const sampleData =
   "isAdmin": true,
   "currentPlayer": true
 }
-
 
 // Valid values
 // {
@@ -223,6 +223,7 @@ function GameRoom() {
 
   return (
     <div style={{ padding: '20px' }}>
+      <Emoji></Emoji>
       <GameRoomNotifications commonData={commonData} />
       <GameRoomTableAndScore commonData={commonData} />
       <GameRoomCardsInHand commonData={commonData} selected={selected} cardsInHand={cardsInHand} selectCards={selectCards} />

@@ -192,21 +192,22 @@ var PlayerListeners = (socket) => {
 		const userUID = socket.handshake.userUID
 		const email = socket.handshake.email
 		let reqUserId = useruid_userid[userUID].toString()
-
+		console.log(body);
 		try {
 			var game = await Game.findOne({ gameId: body.gameId })
-            if (!game) {
-                return socket.emit('reactions', "ERROR", "Reacting to invalid game id")
-            } else if (game.isStarted) {
-                let playersInGame = game.players
+			if (!game) {
+				return socket.emit('reactions', "ERROR", "Reacting to invalid game id")
+			} else if (game.isStarted) {
+				let playersInGame = game.players
 				playersInGame = playersInGame.concat(game.waiting)
 				playersInGame = playersInGame.concat(game.spectators)
-                for (var id of playersInGame) {
-					return emitToUserId(id, 'reactions', body.data)
-                }
-            } else {
+				console.log(playersInGame);
+				for (var id of playersInGame) {
+					return emitToUserId(id, 'reactions', 'SUCCESS', body)
+				}
+			} else {
 				return socket.emit('reactions', "ERROR", "Game has not yet started")
-            }
+			}
 		} catch (err) {
 			if (err.message) {
 				return socket.emit('reactions', "ERROR", err.message)
@@ -222,9 +223,9 @@ var PlayerListeners = (socket) => {
 
 		try {
 			var game = await Game.findOne({ gameId: body.gameId })
-            if (!game) {
-                return socket.emit('common-game-data', "ERROR", "Requested game updates for invalid game id")
-            }
+			if (!game) {
+				return socket.emit('common-game-data', "ERROR", "Requested game updates for invalid game id")
+			}
 
 			let gameMember = await GameMember.findOne({
 				gameId: body.gameId,
@@ -251,9 +252,9 @@ var PlayerListeners = (socket) => {
 
 		try {
 			var game = await Game.findOne({ gameId: body.gameId })
-            if (!game) {
-                return socket.emit('common-game-data', "ERROR", "Requested game updates for invalid game id")
-            }
+			if (!game) {
+				return socket.emit('common-game-data', "ERROR", "Requested game updates for invalid game id")
+			}
 
 			let gameMember = await GameMember.findOne({
 				gameId: body.gameId,

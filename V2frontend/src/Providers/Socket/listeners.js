@@ -66,6 +66,7 @@ export function Reactions(cb) {
                 message: data
             })
         } else {
+            console.log(status);
             cb(status, data)
         }
     })
