@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import nodemailer from 'nodemailer';
+// import nodemailer from 'nodemailer';
 import Users from '../../../models/mongoDB/users';
 import GameMember from '../../../models/mongoDB/gameMember';
 import UpdatePassword from '../../../models/mongoDB/updatePassword';
